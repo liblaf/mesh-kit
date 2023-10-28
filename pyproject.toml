@@ -1,0 +1,29 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
+
+[tool.poetry]
+authors = ["liblaf <i@liblaf.me>"]
+description = ""
+name = "mesh-kit"
+readme = "README.md"
+version = "0.0.0"
+
+[tool.poetry.dependencies]
+matplotlib = "^3.8.0"
+numpy = "^1.26.1"
+opencv-python = "^4.8.1.78"
+pynrrd = "^1.0.0"
+python = ">=3.10,<3.13"
+pyvista = { extras = ["all"], version = "^0.42.3" }
+trimesh = { extras = ["all"], version = "^4.0.1" }
+typer = "^0.9.0"
+
+[tool.poetry.scripts]
+mesh-kit = "mesh_kit.cmd.__main__:app"
+mk = "mesh_kit.cmd.__main__:app"
+
+[[tool.poetry.source]]
+name = "mirrors"
+priority = "default"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"

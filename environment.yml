@@ -1,0 +1,11 @@
+name: mesh-kit
+
+channels:
+  - conda-forge
+  - defaults
+  - nvidia
+  - pytorch
+  - pytorch3d
+
+dependencies:
+  - python=3.10
