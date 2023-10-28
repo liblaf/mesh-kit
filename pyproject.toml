@@ -7,7 +7,7 @@ authors = ["liblaf <i@liblaf.me>"]
 description = ""
 name = "mesh-kit"
 readme = "README.md"
-version = "0.0.0"
+version = "0.0.1"
 
 [tool.poetry.dependencies]
 matplotlib = "^3.8.0"
