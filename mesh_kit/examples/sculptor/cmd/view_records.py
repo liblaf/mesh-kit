@@ -1,4 +1,3 @@
-import math
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Annotated, cast
@@ -9,6 +8,7 @@ from numpy.typing import NDArray
 from pyvista import PolyData
 from pyvista.plotting.plotter import Plotter
 from typer import Argument
+from vtkmodules.vtkInteractionWidgets import vtkSliderWidget
 
 from mesh_kit.common.cli import run
 
@@ -18,29 +18,26 @@ def slider_callback(
     records: Sequence[PolyData],
     source_landmarks: Sequence[NDArray],
     target_landmarks: Sequence[NDArray],
-) -> Callable[[float], None]:
-    def callback(value: float) -> None:
-        t: int = math.floor(value)
+) -> Callable[[float, vtkSliderWidget], None]:
+    def callback(value: float, widget: vtkSliderWidget) -> None:
+        widget.GetSliderRepresentation().SetValue(round(value))
+        t: int = round(widget.GetSliderRepresentation().GetValue())
         plotter.add_mesh(
             mesh=records[t], color="red", opacity=0.2, name="source", pickable=False
         )
-        plotter.add_point_labels(
+        plotter.add_points(
             points=source_landmarks[t],
-            labels=[""] * len(source_landmarks[t]),
-            point_color="red",
+            color="red",
             point_size=16,
             name="source-landmarks",
             render_points_as_spheres=True,
-            always_visible=True,
         )
-        plotter.add_point_labels(
+        plotter.add_points(
             points=target_landmarks[t],
-            labels=[""] * len(target_landmarks[t]),
-            point_color="green",
+            color="green",
             point_size=16,
             name="target-landmarks",
             render_points_as_spheres=True,
-            always_visible=True,
         )
 
     return callback
@@ -68,27 +65,27 @@ def main(
         for filepath in records_filepath
     ]
     plotter: Plotter = Plotter()
-
-    plotter.add_slider_widget(
-        callback=slider_callback(
-            plotter=plotter,
-            records=records,
-            source_landmarks=source_landmarks,
-            target_landmarks=target_landmarks,
-        ),
-        rng=(0, len(records)),
+    callback: Callable[[float, vtkSliderWidget], None] = slider_callback(
+        plotter=plotter,
+        records=records,
+        source_landmarks=source_landmarks,
+        target_landmarks=target_landmarks,
+    )
+    slider: vtkSliderWidget = plotter.add_slider_widget(
+        callback=callback,
+        rng=(0, len(records) - 1),
         value=0,
+        title="Step",
+        pass_widget=True,
+        fmt="%.f",
+    )
+    plotter.add_key_event(
+        "n", lambda: callback(slider.GetSliderRepresentation().GetValue() + 1, slider)  # type: ignore
+    )
+    plotter.add_key_event(
+        "p", lambda: callback(slider.GetSliderRepresentation().GetValue() - 1, slider)  # type: ignore
     )
     plotter.add_mesh(mesh=target, color="green", opacity=0.2)
-    plotter.add_floor()
-
-    def callback(point, picker) -> None:
-        print(type(point), point)
-        print(type(picker), picker)
-
-    plotter.enable_surface_point_picking(
-        callback=print, color="blue", point_size=16, render_points_as_spheres=True
-    )
     plotter.show()
 
 
