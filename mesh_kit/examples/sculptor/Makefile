@@ -1,16 +1,21 @@
 DEVICE := cuda
 SHELL  := bash
-TARGET := 孔梓语
+TARGET ?= TARGET
 
+CMD_DIR      := cmd
 DATA_DIR     := data
+RECORDS_DIR  := $(DATA_DIR)/records
 TARGET_DIR   := $(DATA_DIR)/$(TARGET)
 TEMPLATE_DIR := $(DATA_DIR)/template
-CMD_DIR      := cmd
 
-TARGET_FILES += $(TARGET_DIR)/pre/02-skull.ply
-TARGET_FILES += $(TARGET_DIR)/pre/02-skull-sparse-landmarks.txt
+TARGET_FILES += $(TEMPLATE_DIR)/03-skull.ply
+TARGET_FILES += $(TEMPLATE_DIR)/03-skull-landmarks.txt
+TARGET_FILES += $(TARGET_DIR)/pre/04-skull.ply
 
 all: $(TARGET_FILES)
+
+clean:
+	@ $(RM) --recursive --verbose $(RECORDS_DIR)
 
 ###############
 # Auxiliaries #
@@ -20,9 +25,10 @@ CMD_DIR    := cmd
 MANUAL     := bash scripts/manual.sh
 MESH_FIX   := MeshFix
 PYTHON     := python
-ALIGN      := $(PYTHON) $(CMD_DIR)/align.py --device=$(DEVICE)
+ALIGN      := $(PYTHON) $(CMD_DIR)/align.py
 CT_TO_MESH := $(PYTHON) $(CMD_DIR)/CT_to_mesh.py
-DENSIFY    := $(PYTHON) $(CMD_DIR)/densify.py
+REGISTER   := $(PYTHON) $(CMD_DIR)/register.py --records=$(RECORDS_DIR) --normal-weight=10.0 --threshold=2.0
+SIMPLIFY   := $(PYTHON) $(CMD_DIR)/simplify.py --face-count=-1
 
 ##########
 # Target #
@@ -43,71 +49,77 @@ $(eval $(call CT_to_mesh,pre,skull,250.0))
 $(eval $(call CT_to_mesh,post,face,0.0))
 $(eval $(call CT_to_mesh,post,skull,250.0))
 
-define manual_selection
-$(TARGET_DIR)/$(1)/01-$(2)-sparse-landmarks.txt: $(TARGET_DIR)/$(1)/02-$(2).ply
+define simplify
+$(TARGET_DIR)/$(1)/02-$(2).ply: $(TARGET_DIR)/$(1)/01-$(2).ply $(CMD_DIR)/simplify.py
+	$(SIMPLIFY) $$< $$@
+endef
+$(eval $(call simplify,pre,face))
+$(eval $(call simplify,pre,skull))
+$(eval $(call simplify,post,face))
+$(eval $(call simplify,post,skull))
+
+define select
+$(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt: $(TARGET_DIR)/$(1)/02-$(2).ply
 	$(MANUAL) Select $$< $$@
 endef
-$(eval $(call manual_selection,pre,face))
-$(eval $(call manual_selection,pre,skull))
-$(eval $(call manual_selection,post,face))
-$(eval $(call manual_selection,post,skull))
+$(eval $(call select,pre,face))
+$(eval $(call select,pre,skull))
+$(eval $(call select,post,face))
+$(eval $(call select,post,skull))
 
 define align
-TARGETS      := $(TARGET_DIR)/$(1)/02-$(2).ply
-TARGETS      += $(TARGET_DIR)/$(1)/02-$(2)-sparse-landmarks.txt
-REQUIREMENTS := $(TEMPLATE_DIR)/03-$(2).ply
-REQUIREMENTS += $(TEMPLATE_DIR)/03-$(2)-sparse-landmarks.txt
-REQUIREMENTS += $(TARGET_DIR)/$(1)/01-$(2).ply
-REQUIREMENTS += $(TARGET_DIR)/$(1)/01-$(2)-sparse-landmarks.txt
-$(TARGETS) &: $(REQUIREMENTS)
-	$(ALIGN) \
-		--source-landmarks=$(TEMPLATE_DIR)/03-$(2)-sparse-landmarks.txt \
-		--target-landmarks=$(TARGET_DIR)/$(1)/01-$(2)-sparse-landmarks.txt \
-		--output=$(TARGET_DIR)/$(1)/02-$(2).ply \
-		--output-landmarks=$(TARGET_DIR)/$(1)/02-$(2)-sparse-landmarks.txt \
-		$(TEMPLATE_DIR)/03-$(2).ply $(TARGET_DIR)/$(1)/01-$(2).ply
+$(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/03-$(2)-landmarks.txt &: $(TEMPLATE_DIR)/03-$(2).ply $(TEMPLATE_DIR)/03-$(2)-landmarks.txt $(TARGET_DIR)/$(1)/02-$(2).ply $(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt $(CMD_DIR)/align.py
+	$(ALIGN) --output=$(TARGET_DIR)/$(1)/03-$(2).ply $(TEMPLATE_DIR)/03-$(2).ply $(TARGET_DIR)/$(1)/02-$(2).ply
 endef
 $(eval $(call align,pre,face))
 $(eval $(call align,pre,skull))
 $(eval $(call align,post,face))
 $(eval $(call align,post,skull))
 
-define densify
-TARGETS := $(TARGET_DIR)/$(1)/02-$(2)-dense-landmarks.txt
-TARGETS += $(TARGET_DIR)/$(1)/01-$(2)-dense-landmarks.txt
-REQUIREMENTS := $(TARGET_DIR)/$(1)/02-$(2).ply
-REQUIREMENTS += $(TARGET_DIR)/$(1)/02-$(2)-sparse-landmarks.txt
-REQUIREMENTS += $(TARGET_DIR)/$(1)/01-$(2).ply
-REQUIREMENTS += $(TARGET_DIR)/$(1)/01-$(2)-sparse-landmarks.txt
-$(TARGETS) &: $(REQUIREMENTS)
-	$(DENSIFY) \
-		--source-landmarks=$(TARGET_DIR)/$(1)/02-$(2)-sparse-landmarks.txt \
-		--target-landmarks=$(TARGET_DIR)/$(1)/01-$(2)-sparse-landmarks.txt \
-		--output-source-landmarks=$(TARGET_DIR)/$(1)/02-$(2)-dense-landmarks.txt \
-		--output-target-landmarks=$(TARGET_DIR)/$(1)/01-$(2)-dense-landmarks.txt \
-		$(TARGET_DIR)/$(1)/02-$(2).ply $(TARGET_DIR)/$(1)/01-$(2).ply
+define register
+$(TARGET_DIR)/$(1)/04-$(2).ply: $(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/03-$(2)-landmarks.txt $(TARGET_DIR)/$(1)/02-$(2).ply $(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt $(CMD_DIR)/register.py
+	@ mkdir --parents --verbose $(RECORDS_DIR)
+	$(REGISTER) --output=$$@ $(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/02-$(2).ply
 endef
-$(eval $(call densify,pre,face))
-$(eval $(call densify,pre,skull))
-$(eval $(call densify,post,face))
-$(eval $(call densify,post,skull))
+$(eval $(call register,pre,face))
+$(eval $(call register,pre,skull))
+$(eval $(call register,post,face))
+$(eval $(call register,post,skull))
 
 ############
 # Template #
 ############
 
-$(TEMPLATE_DIR)/00-%.ply:
-	@ mkdir --parents --verbose $(@D)
-	wget --output-document=$@ https://raw.githubusercontent.com/liblaf/sculptor/main/model/template/$*.ply
+define download
+$(TEMPLATE_DIR)/00-$(1).ply:
+	@ mkdir --parents --verbose $$(@D)
+	wget --output-document=$$@ https://raw.githubusercontent.com/liblaf/sculptor/main/model/template/$(1).ply
+endef
+$(eval $(call download,face))
+$(eval $(call download,skull))
 
-$(TEMPLATE_DIR)/01-%.ply: $(TEMPLATE_DIR)/00-%.ply $(CMD_DIR)/template/%.py
-	$(PYTHON) $(CMD_DIR)/template/$*.py $< $@
+define pre-process
+$(TEMPLATE_DIR)/01-$(1).ply: $(TEMPLATE_DIR)/00-$(1).ply $(CMD_DIR)/template/$(1).py
+	$(PYTHON) $(CMD_DIR)/template/$(1).py $$< $$@
+endef
+$(eval $(call pre-process,face))
+$(eval $(call pre-process,skull))
 
-$(TEMPLATE_DIR)/02-%.ply: $(TEMPLATE_DIR)/01-%.ply
-	$(MANUAL) Edit $< $@
+define edit
+$(TEMPLATE_DIR)/02-$(1).ply: $(TEMPLATE_DIR)/01-$(1).ply
+	$(MANUAL) Edit $$< $$@
+endef
+$(eval $(call edit,face))
+$(eval $(call edit,skull))
 
-$(TEMPLATE_DIR)/03-%.ply: $(TEMPLATE_DIR)/02-%.ply
-	$(MESH_FIX) $< $@
+define mesh-fix
+$(TEMPLATE_DIR)/03-$(1).ply: $(TEMPLATE_DIR)/02-$(1).ply
+	$(MESH_FIX) $$< $$@
+endef
+$(eval $(call mesh-fix,face))
+$(eval $(call mesh-fix,skull))
 
-$(TEMPLATE_DIR)/03-%-sparse-landmarks.txt: $(TEMPLATE_DIR)/03-%.ply
-	$(MANUAL) Select $< $@
+define select
+$(TEMPLATE_DIR)/03-$(1)-landmarks.txt: $(TEMPLATE_DIR)/03-$(1).ply
+	$(MANUAL) Select $$< $$@
+endef

@@ -4,6 +4,8 @@ from typing import Optional
 import typer
 from typer import Typer
 
+import mesh_kit.common.logging
+
 
 def add_command(app: Typer, command: Callable, name: Optional[str] = None) -> None:
     if isinstance(command, Typer):
@@ -13,6 +15,7 @@ def add_command(app: Typer, command: Callable, name: Optional[str] = None) -> No
 
 
 def run(command: Callable) -> None:
+    mesh_kit.common.logging.init()
     if isinstance(command, Typer):
         command()
     else:
