@@ -3,7 +3,7 @@ import logging
 from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
-from typing import Annotated, cast
+from typing import Annotated, Optional, cast
 
 import numpy as np
 import pyvista as pv
@@ -24,14 +24,44 @@ class Name(str, Enum):
     TARGET = "target"
 
 
-@dataclasses.dataclass(kw_only=True)
-class Data:
+class UI:
     meshes: dict[Name, PolyData]
     landmarks: dict[Name, NDArray]
-    colors: dict[Name, str]
 
     plotter: Plotter
-    slider: vtkSliderWidget
+    colors: dict[Name, str]
+    visible: dict[Name, bool]
+
+    def __init__(
+        self,
+        source: PolyData,
+        source_landmarks: NDArray,
+        target: PolyData,
+        target_landmarks: NDArray,
+    ) -> None:
+        self.meshes = {Name.SOURCE: source, Name.TARGET: target}
+        self.landmarks = {Name.SOURCE: source_landmarks, Name.TARGET: target_landmarks}
+
+        self.plotter = Plotter()
+        self.colors = {Name.SOURCE: "red", Name.TARGET: "green"}
+        self.visible = {Name.SOURCE: True, Name.TARGET: True}
+
+        self.plotter.enable_surface_point_picking(callback=callback_pick(ui=self))
+        self.plotter.add_key_event("a", callback_align(ui=self))  # type: ignore
+        self.plotter.add_key_event("d", callback_delete(ui=self))  # type: ignore
+        self.plotter.add_key_event("h", callback_hide(ui=self))  # type: ignore
+        self.plotter.add_key_event("Right", callback_next(ui=self))  # type: ignore
+        self.plotter.add_key_event("Left", callback_previous(ui=self))  # type: ignore
+        self.plotter.add_slider_widget(
+            callback=callback_slider(ui=self),
+            rng=(0, self.landmarks[Name.SOURCE].shape[0] - 1),
+            title="Landmark Index",
+            fmt="%.f",
+        )
+        self.align()
+        self.active_index = 0
+        self.plot_mesh(name=Name.TARGET)
+        self.plot_landmarks(name=Name.TARGET)
 
     def align(self) -> None:
         matrix: NDArray
@@ -76,15 +106,28 @@ class Data:
         self.plot_active_landmark(name=Name.TARGET)
 
     def plot_mesh(self, name: Name) -> None:
-        self.plotter.add_mesh(
-            mesh=self.meshes[name], color=self.colors[name], opacity=0.3, name=name
-        )
+        if self.visible[name]:
+            color: Optional[str] = (
+                self.colors[name] if self.visible[Name.SOURCE] else None
+            )
+            opacity: Optional[float] = 0.3 if self.visible[Name.SOURCE] else None
+            self.plotter.add_mesh(
+                mesh=self.meshes[name],
+                color=color,
+                opacity=opacity,
+                reset_camera=False,
+                name=f"{name}-mesh",
+                smooth_shading=True,
+                pickable=(name == Name.TARGET),
+            )
+        else:
+            self.plotter.remove_actor(actor=f"{name}-mesh", reset_camera=False)  # type: ignore
 
     def plot_landmarks(self, name: Name) -> None:
         mesh: PolyData = self.meshes[name]
         landmarks: NDArray = self.landmarks[name]
         if np.all(landmarks < 0):
-            self.plotter.remove_actor(f"{name}-landmarks")  # type: ignore
+            self.plotter.remove_actor(actor=f"{name}-landmarks", reset_camera=False)  # type: ignore
         else:
             self.plotter.add_point_labels(
                 points=mesh.points[landmarks[landmarks >= 0]],
@@ -92,6 +135,7 @@ class Data:
                 point_color=self.colors[name],
                 point_size=16,
                 name=f"{name}-landmarks",
+                shape_color=self.colors[name],
                 render_points_as_spheres=True,
                 reset_camera=False,
                 always_visible=True,
@@ -101,7 +145,9 @@ class Data:
         mesh: PolyData = self.meshes[name]
         landmarks: NDArray = self.landmarks[name]
         if landmarks[self.active_index] < 0:
-            self.plotter.remove_actor(f"{name}-landmark-active")  # type: ignore
+            self.plotter.remove_actor(
+                actor=f"{name}-landmark-active", reset_camera=False
+            )  # type: ignore
         else:
             self.plotter.add_points(
                 points=mesh.points[landmarks[self.active_index]],
@@ -139,45 +185,58 @@ class Data:
         self.plot_active_landmark(name=Name.SOURCE)
         self.plot_active_landmark(name=Name.TARGET)
 
+    @property
+    def slider(self) -> vtkSliderWidget:
+        return self.plotter.slider_widgets[0]
 
-def callback_pick(data: Data) -> Callable[[NDArray], None]:
+
+def callback_pick(ui: UI) -> Callable[[NDArray], None]:
     def callback(point: NDArray) -> None:
-        data.pick(point=point)
+        ui.pick(point=point)
 
     return callback
 
 
-def callback_align(data: Data) -> Callable[[], None]:
+def callback_align(ui: UI) -> Callable[[], None]:
     def callback() -> None:
-        data.align()
+        ui.align()
 
     return callback
 
 
-def callback_delete(data: Data) -> Callable[[], None]:
+def callback_delete(ui: UI) -> Callable[[], None]:
     def callback() -> None:
-        data.delete()
+        ui.delete()
 
     return callback
 
 
-def callback_next(data: Data) -> Callable[[], None]:
+def callback_hide(ui: UI) -> Callable[[], None]:
     def callback() -> None:
-        data.active_index += 1
+        ui.visible[Name.SOURCE] = not ui.visible[Name.SOURCE]
+        ui.plot_mesh(name=Name.SOURCE)
+        ui.plot_mesh(name=Name.TARGET)
 
     return callback
 
 
-def callback_previous(data: Data) -> Callable[[], None]:
+def callback_next(ui: UI) -> Callable[[], None]:
     def callback() -> None:
-        data.active_index -= 1
+        ui.active_index += 1
 
     return callback
 
 
-def callback_slider(data: Data) -> Callable[[float], None]:
+def callback_previous(ui: UI) -> Callable[[], None]:
+    def callback() -> None:
+        ui.active_index -= 1
+
+    return callback
+
+
+def callback_slider(ui: UI) -> Callable[[float], None]:
     def callback(value: float) -> None:
-        data.active_index = round(value)
+        ui.active_index = round(value)
 
     return callback
 
@@ -194,33 +253,14 @@ def main(
     target_landmarks: NDArray = mesh_kit.registration.landmarks.position_to_index(
         mesh=target, position=np.loadtxt(landmarks_filepath(target_filepath))
     )
-    plotter: Plotter = Plotter()
-    data: Data = Data(
-        meshes={Name.SOURCE: source, Name.TARGET: target},
-        landmarks={Name.SOURCE: source_landmarks, Name.TARGET: target_landmarks},
-        colors={Name.SOURCE: "red", Name.TARGET: "green"},
-        plotter=plotter,
-        slider=vtkSliderWidget(),
+    target_landmarks = np.resize(target_landmarks, new_shape=source_landmarks.shape)
+    ui: UI = UI(
+        source=source,
+        source_landmarks=source_landmarks,
+        target=target,
+        target_landmarks=target_landmarks,
     )
-    plotter.enable_surface_point_picking(callback=callback_pick(data=data))
-    plotter.add_key_event("a", callback_align(data=data))  # type: ignore
-    plotter.add_key_event("d", callback_delete(data=data))  # type: ignore
-    plotter.add_key_event("Right", callback_next(data=data))  # type: ignore
-    plotter.add_key_event("Left", callback_previous(data=data))  # type: ignore
-    slider: vtkSliderWidget = plotter.add_slider_widget(
-        callback=callback_slider(data=data),
-        rng=(0, source_landmarks.shape[0] - 1),
-        title="Landmark Index",
-        fmt="%.f",
-    )
-    data.slider = slider
-    data.plot_mesh(name=Name.SOURCE)
-    data.plot_mesh(name=Name.TARGET)
-    data.plot_landmarks(name=Name.SOURCE)
-    data.plot_landmarks(name=Name.TARGET)
-    data.align()
-    data.active_index = 0
-    plotter.show()
+    ui.plotter.show()
 
 
 if __name__ == "__main__":

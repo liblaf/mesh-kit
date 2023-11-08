@@ -1,3 +1,4 @@
+import dataclasses
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Annotated, cast
@@ -13,32 +14,78 @@ from vtkmodules.vtkInteractionWidgets import vtkSliderWidget
 from mesh_kit.common.cli import run
 
 
-def slider_callback(
-    plotter: Plotter,
-    records: Sequence[PolyData],
-    source_landmarks: Sequence[NDArray],
-    target_landmarks: Sequence[NDArray],
-) -> Callable[[float, vtkSliderWidget], None]:
-    def callback(value: float, widget: vtkSliderWidget) -> None:
-        widget.GetSliderRepresentation().SetValue(round(value))
-        t: int = round(widget.GetSliderRepresentation().GetValue())
-        plotter.add_mesh(
-            mesh=records[t], color="red", opacity=0.2, name="source", pickable=False
+@dataclasses.dataclass(kw_only=True)
+class UI:
+    source: Sequence[PolyData]
+    target: PolyData
+    source_landmarks: Sequence[NDArray]
+    target_landmarks: Sequence[NDArray]
+
+    plotter: Plotter
+
+    def plot_source(self) -> None:
+        self.plotter.add_mesh(
+            mesh=self.source[self.step], color="red", opacity=0.2, name="source"
         )
-        plotter.add_points(
-            points=source_landmarks[t],
+
+    def plot_source_landmarks(self) -> None:
+        self.plotter.add_points(
+            points=self.source_landmarks[self.step],
             color="red",
             point_size=16,
             name="source-landmarks",
             render_points_as_spheres=True,
         )
-        plotter.add_points(
-            points=target_landmarks[t],
+
+    def plot_target(self) -> None:
+        self.plotter.add_mesh(
+            mesh=self.target, color="green", opacity=0.2, name="target"
+        )
+
+    def plot_target_landmarks(self) -> None:
+        self.plotter.add_points(
+            points=self.target_landmarks[self.step],
             color="green",
             point_size=16,
             name="target-landmarks",
             render_points_as_spheres=True,
         )
+
+    @property
+    def step(self) -> int:
+        return round(self.slider.GetSliderRepresentation().GetValue())
+
+    @step.setter
+    def step(self, value: int) -> None:
+        self.slider.GetSliderRepresentation().SetValue(round(value))
+        self.plot_source()
+        self.plot_source_landmarks()
+        self.plot_target_landmarks()
+
+    @property
+    def slider(self) -> vtkSliderWidget:
+        return self.plotter.slider_widgets[0]
+
+
+def callback_slider(
+    ui: UI,
+) -> Callable[[float], None]:
+    def callback(value: float) -> None:
+        ui.step = round(value)
+
+    return callback
+
+
+def callback_next(ui: UI) -> Callable[[], None]:
+    def callback() -> None:
+        ui.step += 1
+
+    return callback
+
+
+def callback_previous(ui: UI) -> Callable[[], None]:
+    def callback() -> None:
+        ui.step -= 1
 
     return callback
 
@@ -65,27 +112,23 @@ def main(
         for filepath in records_filepath
     ]
     plotter: Plotter = Plotter()
-    callback: Callable[[float, vtkSliderWidget], None] = slider_callback(
-        plotter=plotter,
-        records=records,
+    ui: UI = UI(
+        source=records,
+        target=target,
         source_landmarks=source_landmarks,
         target_landmarks=target_landmarks,
+        plotter=plotter,
     )
-    slider: vtkSliderWidget = plotter.add_slider_widget(
-        callback=callback,
+    plotter.add_key_event("Right", callback_next(ui=ui))  # type: ignore
+    plotter.add_key_event("Left", callback_previous(ui=ui))  # type: ignore
+    plotter.add_slider_widget(
+        callback=callback_slider(ui=ui),
         rng=(0, len(records) - 1),
-        value=0,
         title="Step",
-        pass_widget=True,
         fmt="%.f",
     )
-    plotter.add_key_event(
-        "n", lambda: callback(slider.GetSliderRepresentation().GetValue() + 1, slider)  # type: ignore
-    )
-    plotter.add_key_event(
-        "p", lambda: callback(slider.GetSliderRepresentation().GetValue() - 1, slider)  # type: ignore
-    )
-    plotter.add_mesh(mesh=target, color="green", opacity=0.2)
+    ui.plot_target()
+    ui.step = 0
     plotter.show()
 
 

@@ -25,19 +25,6 @@ repos:
     hooks:
       - id: cmake-format
       - id: cmake-lint
-  - repo: https://github.com/cmhughes/latexindent.pl
-    rev: V3.23.3
-    hooks:
-      - id: latexindent
-        files: .(tex|sty|cls|bib)$
-        types:
-          - text
-        args:
-          - --overwriteIfDifferent
-          - --silent
-          - --cruft=/tmp
-          - --modifylinebreaks
-          - --GCString
   - repo: https://github.com/commitizen-tools/commitizen
     rev: 3.12.0
     hooks:
@@ -49,7 +36,7 @@ repos:
       - id: clippy
       - id: fmt
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v17.0.3
+    rev: v17.0.4
     hooks:
       - id: clang-format
         types_or:
@@ -98,7 +85,7 @@ repos:
         args:
           - --profile=black
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.27.0
+    rev: 0.27.1
     hooks:
       - id: check-azure-pipelines
       - id: check-bamboo-spec
@@ -111,7 +98,7 @@ repos:
       - id: check-renovate
       - id: check-travis
   - repo: https://github.com/python-poetry/poetry
-    rev: 1.6.0
+    rev: 1.7.0
     hooks:
       - id: poetry-check
       - id: poetry-export
@@ -155,3 +142,18 @@ repos:
       - id: go-test-repo-mod
       - id: go-vet-mod
       - id: go-vet-repo-mod
+  - repo: local
+    hooks:
+      - id: latexindent
+        name: Pretty LaTeX
+        entry: latexindent
+        language: system
+        files: .(tex|sty|cls|bib)$
+        types:
+          - text
+        args:
+          - --overwriteIfDifferent
+          - --silent
+          - --cruft=/tmp
+          - --modifylinebreaks
+          - --GCString

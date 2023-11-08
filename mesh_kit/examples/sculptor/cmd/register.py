@@ -60,7 +60,7 @@ def select_landmarks(
             target=target,
             normal_weight=normal_weight,
         )
-    idx: NDArray = (source.scale / 100.0 < loss) & (loss < source.scale / 20.0)
+    idx: NDArray = (source.scale / 100.0 < loss) & (loss < source.scale / 50.0)
     source_landmarks = source_landmarks[idx]
     target_landmarks = target_landmarks[idx]
     logging.info(f"num of selected landmarks: {source_landmarks.shape[0]}")
@@ -81,11 +81,23 @@ def main(
 ) -> None:
     source: Trimesh = cast(Trimesh, trimesh.load(source_filepath))
     target: Trimesh = cast(Trimesh, trimesh.load(target_filepath))
-    source_positions: NDArray = np.loadtxt(landmarks_filepath(source_filepath))
-    target_positions: NDArray = np.loadtxt(landmarks_filepath(target_filepath))
+    source_positions_input: NDArray = np.loadtxt(landmarks_filepath(source_filepath))
+    source_landmarks_input: NDArray
+    _, source_landmarks_input = source.nearest.vertex(points=source_positions_input)
+    target_positions_input: NDArray = np.loadtxt(landmarks_filepath(target_filepath))
     source_landmarks: NDArray
-    _, source_landmarks = source.nearest.vertex(points=source_positions)
+    target_positions: NDArray
     for i in tqdm.rich.trrange(num_iters):
+        if i % 2 == 0:
+            source_landmarks = source_landmarks_input
+            target_positions = target_positions_input
+        else:
+            source_landmarks, target_positions = select_landmarks(
+                source=source,
+                target=target,
+                normal_weight=normal_weight,
+                threshold=threshold,
+            )
         if records_filepath is not None:
             source.export(records_filepath / f"{i:02d}.ply")
             np.savetxt(
@@ -114,12 +126,6 @@ def main(
             ),
         )
         source = Trimesh(vertices=result, faces=source.faces)
-        source_landmarks, target_positions = select_landmarks(
-            source=source,
-            target=target,
-            normal_weight=normal_weight,
-            threshold=threshold,
-        )
     source.export(output_filepath)
 
 
