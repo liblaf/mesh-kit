@@ -8,11 +8,12 @@ RECORDS_DIR  := $(DATA_DIR)/records
 TARGET_DIR   := $(DATA_DIR)/$(TARGET)
 TEMPLATE_DIR := $(DATA_DIR)/template
 
-TARGET_FILES += $(TEMPLATE_DIR)/03-skull.ply
-TARGET_FILES += $(TEMPLATE_DIR)/03-skull-landmarks.txt
-TARGET_FILES += $(TARGET_DIR)/pre/04-skull.ply
+TARGET_FILES += $(TARGET_DIR)/pre/05-face.ply
+TARGET_FILES += $(TARGET_DIR)/pre/05-skull.ply
 
 all: $(TARGET_FILES)
+
+check: check-pre check-post
 
 clean:
 	@ $(RM) --recursive --verbose $(RECORDS_DIR)
@@ -21,14 +22,17 @@ clean:
 # Auxiliaries #
 ###############
 
-CMD_DIR    := cmd
-MANUAL     := bash scripts/manual.sh
-MESH_FIX   := MeshFix
-PYTHON     := python
-ALIGN      := $(PYTHON) $(CMD_DIR)/align.py
-CT_TO_MESH := $(PYTHON) $(CMD_DIR)/CT_to_mesh.py
-REGISTER   := $(PYTHON) $(CMD_DIR)/register.py --records=$(RECORDS_DIR) --normal-weight=10.0 --threshold=2.0
-SIMPLIFY   := $(PYTHON) $(CMD_DIR)/simplify.py --face-count=-1
+CMD_DIR      := cmd
+MANUAL       := bash scripts/manual.sh
+MESH_FIX     := MeshFix
+PYTHON       := python
+ALIGN        := $(PYTHON) $(CMD_DIR)/align.py
+CT_TO_MESH   := $(PYTHON) $(CMD_DIR)/CT_to_mesh.py
+PLY2ASCII    := $(PYTHON) $(CMD_DIR)/ply2ascii.py
+REGISTER     := $(PYTHON) $(CMD_DIR)/register.py --records=$(RECORDS_DIR) --normal-weight=10.0 --threshold=2.0
+SIMPLIFY     := $(PYTHON) $(CMD_DIR)/simplify.py --face-count=-1
+TETGEN       := tetgen -p -Y -q -A -O -z -V
+TETGEN_CHECK := $(TETGEN) -d -N -E -F
 
 ##########
 # Target #
@@ -85,6 +89,20 @@ $(eval $(call register,pre,face))
 $(eval $(call register,pre,skull))
 $(eval $(call register,post,face))
 $(eval $(call register,post,skull))
+
+define check
+$(TARGET_DIR)/$(1)/05-$(2).ply: $(TARGET_DIR)/$(1)/04-$(2).ply
+	$(PLY2ASCII) $$< $$@
+
+check-$(1)-$(2): $(TARGET_DIR)/$(1)/05-$(2).ply
+	$(TETGEN_CHECK) $$<
+endef
+$(eval $(call check,pre,face))
+$(eval $(call check,pre,skull))
+$(eval $(call check,post,face))
+$(eval $(call check,post,skull))
+check-pre: check-pre-face check-pre-skull
+check-post: check-post-face check-post-skull
 
 ############
 # Template #

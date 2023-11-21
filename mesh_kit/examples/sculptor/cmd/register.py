@@ -87,6 +87,22 @@ def main(
     target_positions_input: NDArray = np.loadtxt(landmarks_filepath(target_filepath))
     source_landmarks: NDArray
     target_positions: NDArray
+    # smoothness, landmark, normal, max_iter
+    steps: NDArray = np.linspace(
+        [
+            [0.01, 10, 0.5, 10],
+            [0.02, 5, 0.5, 10],
+            [0.03, 2.5, 0.5, 10],
+            [0.01, 0, 0.0, 10],
+        ],
+        [
+            [0.01, 10 / 4, 0.5, 10],
+            [0.02, 5 / 4, 0.5, 10],
+            [0.03, 2.5 / 4, 0.5, 10],
+            [0.01, 0, 0.0, 10],
+        ],
+        num_iters,
+    )
     for i in tqdm.rich.trrange(num_iters):
         if i % 2 == 0:
             source_landmarks = source_landmarks_input
@@ -115,13 +131,7 @@ def main(
                 target_geometry=target,
                 source_landmarks=source_landmarks,
                 target_positions=target_positions,
-                # smoothness, landmark, normal, max_iter
-                steps=[
-                    [0.01, 10, 0.2, 10],
-                    [0.02, 5, 0.2, 10],
-                    [0.03, 2.5, 0.2, 10],
-                    [0.01, 0, 0.0, 10],
-                ],
+                steps=steps[i],
                 distance_threshold=source.scale / 100,
             ),
         )
