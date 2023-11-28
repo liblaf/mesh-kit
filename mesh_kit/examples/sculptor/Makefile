@@ -22,14 +22,13 @@ clean:
 # Auxiliaries #
 ###############
 
-CMD_DIR      := cmd
-MANUAL       := bash scripts/manual.sh
+MANUAL       := @ bash scripts/manual.sh
 MESH_FIX     := MeshFix
 PYTHON       := python
 ALIGN        := $(PYTHON) $(CMD_DIR)/align.py
 CT_TO_MESH   := $(PYTHON) $(CMD_DIR)/CT_to_mesh.py
 PLY2ASCII    := $(PYTHON) $(CMD_DIR)/ply2ascii.py
-REGISTER     := $(PYTHON) $(CMD_DIR)/register.py --records=$(RECORDS_DIR) --normal-weight=10.0 --threshold=2.0
+REGISTER     := $(PYTHON) $(CMD_DIR)/register.py --records=$(RECORDS_DIR)
 SIMPLIFY     := $(PYTHON) $(CMD_DIR)/simplify.py --face-count=-1
 TETGEN       := tetgen -p -Y -q -A -O -z -V
 TETGEN_CHECK := $(TETGEN) -d -N -E -F
@@ -72,7 +71,10 @@ $(eval $(call select,post,face))
 $(eval $(call select,post,skull))
 
 define align
-$(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/03-$(2)-landmarks.txt &: $(TEMPLATE_DIR)/03-$(2).ply $(TEMPLATE_DIR)/03-$(2)-landmarks.txt $(TARGET_DIR)/$(1)/02-$(2).ply $(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt $(CMD_DIR)/align.py
+$(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/03-$(2)-landmarks.txt &: \
+	$(TEMPLATE_DIR)/03-$(2).ply $(TEMPLATE_DIR)/03-$(2)-landmarks.txt \
+	$(TARGET_DIR)/$(1)/02-$(2).ply $(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt \
+	$(CMD_DIR)/align.py
 	$(ALIGN) --output=$(TARGET_DIR)/$(1)/03-$(2).ply $(TEMPLATE_DIR)/03-$(2).ply $(TARGET_DIR)/$(1)/02-$(2).ply
 endef
 $(eval $(call align,pre,face))
