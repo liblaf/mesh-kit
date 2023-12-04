@@ -439,9 +439,7 @@ def _solve_system(
         B[
             4 * num_edges + num_vertices : (4 * num_edges + num_vertices + Ul.shape[0]),
             :,
-        ] = (
-            Ul * weight_landmark
-        )
+        ] = Ul * weight_landmark
     X: npt.NDArray = sparse.linalg.spsolve(A.T * A, A.T * B).toarray()
     testing.assert_shape(X, (4 * num_vertices, 3))
     return X
