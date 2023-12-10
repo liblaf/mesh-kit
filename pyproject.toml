@@ -30,3 +30,6 @@ mk = "mesh_kit.cmd.__main__:app"
 name = "mirrors"
 priority = "default"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+
+[tool.poetry.group.dev.dependencies]
+icecream = "^2.1.3"

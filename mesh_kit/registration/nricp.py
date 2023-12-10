@@ -302,7 +302,7 @@ def _create_Dl_Ul(
     """Create landmark terms (Eq. 11)"""
     if source_landmarks is None or target_positions is None:
         # If no landmarks are provided, return None for both
-        return Dl, Ul
+        return None, None
 
     Dl: npt.NDArray = D[source_landmarks, :]
     Ul: npt.NDArray = target_positions
@@ -439,9 +439,7 @@ def _solve_system(
         B[
             4 * num_edges + num_vertices : (4 * num_edges + num_vertices + Ul.shape[0]),
             :,
-        ] = (
-            Ul * weight_landmark
-        )
+        ] = Ul * weight_landmark
     X: npt.NDArray = sparse.linalg.spsolve(A.T * A, A.T * B).toarray()
     testing.assert_shape(X, (4 * num_vertices, 3))
     return X

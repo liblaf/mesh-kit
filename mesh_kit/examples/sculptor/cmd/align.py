@@ -19,7 +19,7 @@ def main(
     output_filepath: Annotated[Path, Option("--output", dir_okay=False, writable=True)],
 ) -> None:
     source: Trimesh = cast(Trimesh, trimesh.load(source_filepath))
-    target: Trimesh = cast(Trimesh, trimesh.load(target_filepath))
+    # target: Trimesh = cast(Trimesh, trimesh.load(target_filepath))
     matrix: NDArray
     transformed: NDArray
     cost: float

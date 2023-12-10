@@ -2,21 +2,24 @@ from collections.abc import Callable
 from typing import Optional
 
 import typer
-from typer import Typer
 
-import mesh_kit.common.logging
+from mesh_kit.common import logging as mk_logging
+
+__all__ = ["add_command", "run"]
 
 
-def add_command(app: Typer, command: Callable, name: Optional[str] = None) -> None:
-    if isinstance(command, Typer):
+def add_command(
+    app: typer.Typer, command: Callable, name: Optional[str] = None
+) -> None:
+    if isinstance(command, typer.Typer):
         app.add_typer(typer_instance=command, name=name)
     else:
         app.command(name=name)(command)
 
 
 def run(command: Callable) -> None:
-    mesh_kit.common.logging.init()
-    if isinstance(command, Typer):
+    mk_logging.init()
+    if isinstance(command, typer.Typer):
         command()
     else:
         typer.run(command)

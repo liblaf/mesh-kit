@@ -1,5 +1,7 @@
-from pathlib import Path
+import pathlib
+
+__all__ = ["landmarks"]
 
 
-def landmarks_filepath(filepath: Path) -> Path:
-    return filepath.with_stem(filepath.stem + "-landmarks").with_suffix(".txt")
+def landmarks(mesh_path: pathlib.Path) -> pathlib.Path:
+    return mesh_path.with_stem(mesh_path.stem + "-landmarks").with_suffix(".txt")

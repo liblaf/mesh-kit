@@ -1,0 +1,52 @@
+words:
+  - amberg
+  - arange
+  - contourpy
+  - cython
+  - dicom
+  - dmypy
+  - dtype
+  - envrc
+  - gomod
+  - ipynb
+  - kdtree
+  - kron
+  - liblaf
+  - mdurl
+  - mkdocs
+  - ndimage
+  - nptyping
+  - nricp
+  - nrrd
+  - pybuilder
+  - pycache
+  - pyflow
+  - pynrrd
+  - pypa
+  - pypackages
+  - pyparsing
+  - pytype
+  - pyvista
+  - qres
+  - setaf
+  - spsolve
+  - toarray
+  - tqdm
+  - typer
+  - voxel
+  - vtkmodules
+ignorePaths:
+  - "*-lock.*"
+  - "*.lock"
+dictionaries:
+  - bash
+  - cpp
+  - cpp-refined
+  - dotnet
+  - en-gb
+  - golang
+  - makefile
+  - npm
+  - python
+  - python-common
+allowCompoundWords: true
