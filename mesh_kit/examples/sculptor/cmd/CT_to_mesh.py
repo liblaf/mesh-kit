@@ -31,7 +31,7 @@ def main(
     output_path: Annotated[pathlib.Path, typer.Argument(dir_okay=False, writable=True)],
     threshold: Annotated[int, typer.Option()] = 0,
 ) -> None:
-    data: npt.NDArray[np.int16]
+    data: npt.NDArray
     header: nrrd.NRRDHeader
     data, header = nrrd.read(str(ct_path))
 
@@ -44,29 +44,36 @@ def main(
     data = data > threshold
     label: npt.NDArray[np.int32]
     num_features: int
+
+    # remove background
     label, num_features = ndimage.label(
         ~data,
         structure=ndimage.generate_binary_structure(rank=3, connectivity=1),
     )
-    logging.info("num_features: %d", num_features)
+    logging.info("Num Features: %d", num_features)
     data = label != find_largest_object(label)
     data = ndimage.binary_closing(
         data,
         structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
         iterations=2,
     )
+
+    # find largest object
     label, num_features = ndimage.label(
         data,
         structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
     )
-    logging.info("num_features: %d", num_features)
+    logging.info("Num Features: %d", num_features)
     data = label == find_largest_object(label)
+
+    # remove background
     label, num_features = ndimage.label(
         ~data,
         structure=ndimage.generate_binary_structure(rank=3, connectivity=1),
     )
-    logging.info("num_features: %d", num_features)
+    logging.info("Num Features: %d", num_features)
     data = label != find_largest_object(label)
+
     export_voxel(data, output_path)
 
 

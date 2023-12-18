@@ -22,6 +22,9 @@ tqdm = "^4.66.1"
 trimesh = { extras = ["all"], version = "^4.0.1" }
 typer = "^0.9.0"
 
+[tool.poetry.group.dev.dependencies]
+icecream = "^2.1.3"
+
 [tool.poetry.scripts]
 mesh-kit = "mesh_kit.cmd.__main__:app"
 mk = "mesh_kit.cmd.__main__:app"
@@ -30,6 +33,3 @@ mk = "mesh_kit.cmd.__main__:app"
 name = "mirrors"
 priority = "default"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
-
-[tool.poetry.group.dev.dependencies]
-icecream = "^2.1.3"

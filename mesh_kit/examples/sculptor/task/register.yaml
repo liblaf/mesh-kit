@@ -1,0 +1,158 @@
+version: "3"
+
+includes:
+  template:face:
+    taskfile: template.yaml
+    vars:
+      COMPONENT: face
+  template:skull:
+    taskfile: template.yaml
+    vars:
+      COMPONENT: skull
+
+tasks:
+  CT-to-mesh:
+    cmds:
+      - python "{{.ROOT_DIR}}/cmd/CT_to_mesh.py" --threshold="{{.THRESHOLD}}" "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/00-CT.nrrd" "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/01-{{.COMPONENT}}.ply"
+    sources:
+      - "{{.ROOT_DIR}}/cmd/CT_to_mesh.py"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/00-CT.nrrd"
+    generates:
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/01-{{.COMPONENT}}.ply"
+    vars:
+      THRESHOLD: |
+        {{- if eq .COMPONENT "face" -}}
+          0
+        {{- else if eq .COMPONENT "skull" -}}
+          250
+        {{- end -}}
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+        - STAGE
+        - TARGET
+
+  simplify:
+    cmds:
+      - python "{{.ROOT_DIR}}/cmd/simplify.py" --face-count="{{.FACE_COUNT}}" "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/01-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}.ply"
+    deps:
+      - task: CT-to-mesh
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+          STAGE: "{{.STAGE}}"
+          TARGET: "{{.TARGET}}"
+    sources:
+      - "{{.ROOT_DIR}}/cmd/simplify.py"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/01-{{.COMPONENT}}.ply"
+    generates:
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}.ply"
+    vars:
+      FACE_COUNT: -1
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+        - STAGE
+        - TARGET
+
+  annotate-landmarks:
+    deps:
+      - task: simplify
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+          STAGE: "{{.STAGE}}"
+          TARGET: "{{.TARGET}}"
+    sources:
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}.ply"
+    generates:
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}-landmarks.txt"
+    preconditions:
+      - test -s "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}-landmarks.txt"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+        - STAGE
+        - TARGET
+
+  align:
+    cmds:
+      - python "{{.ROOT_DIR}}/cmd/align.py" --output="{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/03-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}.ply"
+    deps:
+      - task: template:{{.COMPONENT}}:annotate-landmarks
+        vars:
+          DATA_DIR: "{{.DATA_DIR}}"
+      - task: annotate-landmarks
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+          STAGE: "{{.STAGE}}"
+          TARGET: "{{.TARGET}}"
+    sources:
+      - "{{.ROOT_DIR}}/cmd/align.py"
+      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply"
+      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}-landmarks.txt"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}.ply"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}-landmarks.txt"
+    generates:
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/03-{{.COMPONENT}}.ply"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/03-{{.COMPONENT}}-landmarks.txt"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+        - STAGE
+        - TARGET
+
+  register:
+    cmds:
+      - cmd: rm --force --recursive "{{.DATA_DIR}}/records"
+        silent: true
+      - cmd: mkdir --parents --verbose "{{.DATA_DIR}}/records"
+        silent: true
+      - python "{{.ROOT_DIR}}/cmd/register.py" --output="{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/04-{{.COMPONENT}}.ply" --records="{{.DATA_DIR}}/records" "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/03-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}.ply"
+    deps:
+      - task: align
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+          STAGE: "{{.STAGE}}"
+          TARGET: "{{.TARGET}}"
+    sources:
+      - "{{.ROOT_DIR}}/cmd/register.py"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/03-{{.COMPONENT}}.ply"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/03-{{.COMPONENT}}-landmarks.txt"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}.ply"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}-landmarks.txt"
+    generates:
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/04-{{.COMPONENT}}.ply"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+        - STAGE
+        - TARGET
+
+  check:
+    cmds:
+      - tetgen -p -Y -q -A -O -z -V -d -N -E -F "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/04-{{.COMPONENT}}.ply"
+    deps:
+      - task: register
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+          STAGE: "{{.STAGE}}"
+          TARGET: "{{.TARGET}}"
+    sources:
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/04-{{.COMPONENT}}.ply"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+        - STAGE
+        - TARGET
+
+run: once

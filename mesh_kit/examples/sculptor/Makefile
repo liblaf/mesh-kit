@@ -8,8 +8,7 @@ RECORDS_DIR  := $(DATA_DIR)/records
 TARGET_DIR   := $(DATA_DIR)/$(TARGET)
 TEMPLATE_DIR := $(DATA_DIR)/template
 
-TARGET_FILES += $(TARGET_DIR)/pre/05-face.ply
-TARGET_FILES += $(TARGET_DIR)/pre/05-skull.ply
+TARGET_FILES += $(TARGET_DIR)/pre/01-face.ply
 
 all: $(TARGET_FILES)
 
@@ -26,7 +25,7 @@ MANUAL       := @ bash scripts/manual.sh
 MESH_FIX     := MeshFix
 PYTHON       := python
 ALIGN        := $(PYTHON) $(CMD_DIR)/align.py
-CT_TO_MESH   := $(PYTHON) $(CMD_DIR)/CT_to_mesh.py
+CT_TO_MESH   := $(PYTHON) $(CMD_DIR)/CT_to_mesh.py --artifact=$(DATA_DIR)/CT_to_mesh
 PLY2ASCII    := $(PYTHON) $(CMD_DIR)/ply2ascii.py
 REGISTER     := $(PYTHON) $(CMD_DIR)/register.py --records=$(RECORDS_DIR)
 SIMPLIFY     := $(PYTHON) $(CMD_DIR)/simplify.py --face-count=-1

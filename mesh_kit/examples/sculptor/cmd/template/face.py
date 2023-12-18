@@ -1,20 +1,28 @@
-from pathlib import Path
-from typing import Annotated, cast
+import pathlib
+from typing import Annotated
 
+import numpy as np
 import trimesh
-from trimesh import Trimesh
-from typer import Argument
+import typer
+from numpy import typing as npt
+from trimesh import bounds
 
-from mesh_kit.common.cli import run
+from mesh_kit.common import cli
 
 
 def main(
-    input_path: Annotated[Path, Argument(exists=True, dir_okay=False)],
-    output_path: Annotated[Path, Argument(dir_okay=False, writable=True)],
+    input_path: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
+    output_path: Annotated[pathlib.Path, typer.Argument(dir_okay=False, writable=True)],
 ) -> None:
-    mesh: Trimesh = cast(Trimesh, trimesh.load(input_path))
+    mesh: trimesh.Trimesh = trimesh.load(input_path)
+    vertex_mask: npt.NDArray = mesh.vertices[:, 2] > -50
+    vertex_mask &= ~bounds.contains(
+        bounds=[[-25, -np.inf, 10], [30, 80, 15]], points=mesh.vertices
+    )
+    face_mask: npt.NDArray = vertex_mask[mesh.faces].all(axis=1)
+    mesh.update_faces(face_mask)
     mesh.export(output_path)
 
 
 if __name__ == "__main__":
-    run(main)
+    cli.run(main)

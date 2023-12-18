@@ -1,21 +1,20 @@
 from pathlib import Path
-from typing import Annotated, cast
+from typing import Annotated
 
 import trimesh
-from trimesh import Trimesh
-from typer import Argument, Option
+import typer
 
-from mesh_kit.common.cli import run
+from mesh_kit.common import cli
 
 
 def main(
-    input_filepath: Annotated[Path, Argument(exists=True, dir_okay=False)],
-    output_filepath: Annotated[Path, Argument(dir_okay=False, writable=True)],
+    input_filepath: Annotated[Path, typer.Argument(exists=True, dir_okay=False)],
+    output_filepath: Annotated[Path, typer.Argument(dir_okay=False, writable=True)],
     *,
-    face_count: Annotated[int, Option()] = -1,
+    face_count: Annotated[int, typer.Option()] = -1,
 ) -> None:
-    source: Trimesh = cast(Trimesh, trimesh.load(input_filepath))
-    output: Trimesh = (
+    source: trimesh.Trimesh = trimesh.load(input_filepath)
+    output: trimesh.Trimesh = (
         source.simplify_quadric_decimation(face_count=face_count)
         if face_count > 0
         else source
@@ -24,4 +23,4 @@ def main(
 
 
 if __name__ == "__main__":
-    run(main)
+    cli.run(main)

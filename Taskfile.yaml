@@ -1,0 +1,7 @@
+version: "3"
+
+tasks:
+  setup:
+    - micromamba --yes create --file="environment.yaml"
+    - micromamba --name="mesh-kit" run poetry install
+    - micromamba --name="mesh-kit" run pip install trimesh[all]

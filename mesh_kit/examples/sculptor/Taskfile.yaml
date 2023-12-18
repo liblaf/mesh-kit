@@ -1,0 +1,46 @@
+version: "3"
+
+vars:
+  DATA_DIR: "{{.HOME}}/Documents/CT"
+
+includes:
+  template:face:
+    taskfile: task/template.yaml
+    vars:
+      COMPONENT: face
+      DATA_DIR: "{{.DATA_DIR}}"
+  register:pre:face:
+    taskfile: task/register.yaml
+    vars:
+      COMPONENT: face
+      DATA_DIR: "{{.DATA_DIR}}"
+      STAGE: pre
+      TARGET: "{{.TARGET}}"
+  register:pre:skull:
+    taskfile: task/register.yaml
+    vars:
+      COMPONENT: skull
+      DATA_DIR: "{{.DATA_DIR}}"
+      STAGE: pre
+      TARGET: "{{.TARGET}}"
+  register:post:face:
+    taskfile: task/register.yaml
+    vars:
+      COMPONENT: face
+      DATA_DIR: "{{.DATA_DIR}}"
+      STAGE: post
+      TARGET: "{{.TARGET}}"
+  register:post:skull:
+    taskfile: task/register.yaml
+    vars:
+      COMPONENT: skull
+      DATA_DIR: "{{.DATA_DIR}}"
+      STAGE: post
+      TARGET: "{{.TARGET}}"
+
+tasks:
+  default:
+    deps:
+      - register:pre:face:check
+
+run: once

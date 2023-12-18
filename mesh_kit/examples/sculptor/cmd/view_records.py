@@ -1,25 +1,24 @@
 import dataclasses
+import pathlib
 from collections.abc import Callable, Sequence
-from pathlib import Path
-from typing import Annotated, cast
+from typing import Annotated
 
 import numpy as np
 import pyvista as pv
-from numpy.typing import NDArray
-from pyvista import PolyData
+import typer
+from numpy import typing as npt
 from pyvista.plotting.plotter import Plotter
-from typer import Argument
-from vtkmodules.vtkInteractionWidgets import vtkSliderWidget
+from vtkmodules import vtkInteractionWidgets
 
-from mesh_kit.common.cli import run
+from mesh_kit.common import cli
 
 
 @dataclasses.dataclass(kw_only=True)
 class UI:
-    source: Sequence[PolyData]
-    target: PolyData
-    source_landmarks: Sequence[NDArray]
-    target_landmarks: Sequence[NDArray]
+    source: Sequence[pv.PolyData]
+    target: pv.PolyData
+    source_landmarks: Sequence[npt.NDArray]
+    target_landmarks: Sequence[npt.NDArray]
 
     plotter: Plotter
 
@@ -63,7 +62,7 @@ class UI:
         self.plot_target_landmarks()
 
     @property
-    def slider(self) -> vtkSliderWidget:
+    def slider(self) -> vtkInteractionWidgets.vtkSliderWidget:
         return self.plotter.slider_widgets[0]
 
 
@@ -91,21 +90,27 @@ def callback_previous(ui: UI) -> Callable[[], None]:
 
 
 def main(
-    records_dirpath: Annotated[Path, Argument(exists=True, file_okay=False)],
-    target_filepath: Annotated[Path, Argument(exists=True, dir_okay=False)],
+    records_dirpath: Annotated[
+        pathlib.Path, typer.Argument(exists=True, file_okay=False)
+    ],
+    target_filepath: Annotated[
+        pathlib.Path, typer.Argument(exists=True, dir_okay=False)
+    ],
 ) -> None:
-    records_filepath: Sequence[Path] = sorted(list(records_dirpath.glob("*.ply")))
-    records: Sequence[PolyData] = [
-        cast(PolyData, pv.read(filepath)) for filepath in records_filepath
+    records_filepath: Sequence[pathlib.Path] = sorted(
+        list(records_dirpath.glob("*.ply"))
+    )
+    records: Sequence[pv.PolyData] = [
+        pv.read(filepath) for filepath in records_filepath
     ]
-    source_landmarks: Sequence[NDArray] = [
+    source_landmarks: Sequence[npt.NDArray] = [
         np.loadtxt(
             filepath.with_stem(filepath.stem + "-source-landmarks").with_suffix(".txt")
         )
         for filepath in records_filepath
     ]
-    target: PolyData = cast(PolyData, pv.read(target_filepath))
-    target_landmarks: Sequence[NDArray] = [
+    target: pv.PolyData = pv.read(target_filepath)
+    target_landmarks: Sequence[npt.NDArray] = [
         np.loadtxt(
             filepath.with_stem(filepath.stem + "-target-landmarks").with_suffix(".txt")
         )
@@ -133,4 +138,4 @@ def main(
 
 
 if __name__ == "__main__":
-    run(main)
+    cli.run(main)

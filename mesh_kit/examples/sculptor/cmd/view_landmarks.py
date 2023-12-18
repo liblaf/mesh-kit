@@ -1,30 +1,30 @@
+import pathlib
 from collections.abc import Sequence
-from pathlib import Path
-from typing import Annotated, cast
+from typing import Annotated
 
 import numpy as np
 import trimesh
-from numpy.typing import NDArray
-from pyvista.plotting.plotter import Plotter
-from trimesh import Trimesh
-from typer import Argument
+import typer
+from numpy import typing as npt
+from pyvista.plotting import plotter
 
-from mesh_kit.common.cli import run
-from mesh_kit.common.path import landmarks_filepath
+from mesh_kit.common import cli, path
 
 COLORS: Sequence[str] = ["green", "red"]
 
 
 def main(
-    mesh_filepath: Annotated[list[Path], Argument(exists=True, dir_okay=False)]
+    mesh_filepath: Annotated[
+        list[pathlib.Path], typer.Argument(exists=True, dir_okay=False)
+    ],
 ) -> None:
-    plotter: Plotter = Plotter()
+    plot: plotter.Plotter = plotter.Plotter()
     for i, filepath in enumerate(mesh_filepath):
-        mesh: Trimesh = cast(Trimesh, trimesh.load(filepath))
-        landmarks: NDArray = np.loadtxt(landmarks_filepath(filepath))
+        mesh: trimesh.Trimesh = trimesh.load(filepath)
+        landmarks: npt.NDArray = np.loadtxt(path.landmarks(filepath))
         color: str = COLORS[i % len(COLORS)]
-        plotter.add_mesh(mesh=mesh, color=color, opacity=0.2)
-        plotter.add_point_labels(
+        plot.add_mesh(mesh=mesh, color=color, opacity=0.2)
+        plot.add_point_labels(
             points=landmarks,
             labels=range(landmarks.shape[0]),
             point_color=color,
@@ -32,8 +32,9 @@ def main(
             render_points_as_spheres=True,
             always_visible=True,
         )
-    plotter.show()
+    plot.show()
 
 
 if __name__ == "__main__":
-    run(main)
+    cli.run(main)
+    cli.run(main)

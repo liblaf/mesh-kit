@@ -1,0 +1,90 @@
+version: "3"
+
+tasks:
+  download:
+    cmds:
+      - cmd: mkdir --parents --verbose "{{.DATA_DIR}}/template"
+        silent: true
+      - wget --output-document="{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply" "https://github.com/liblaf/sculptor/raw/main/model/template/{{.COMPONENT}}.ply"
+    generates:
+      - "{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply"
+    status:
+      - test -s "{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+
+  preprocess:
+    cmds:
+      - python "{{.ROOT_DIR}}/cmd/template/{{.COMPONENT}}.py" "{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/template/01-{{.COMPONENT}}.ply"
+    deps:
+      - task: download
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+    sources:
+      - "{{.ROOT_DIR}}/cmd/template/{{.COMPONENT}}.py"
+      - "{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply"
+    generates:
+      - "{{.DATA_DIR}}/template/01-{{.COMPONENT}}.ply"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+
+  manual-edit:
+    cmds:
+      - cmd: install -D --mode="u=rw,go=r" --no-target-directory --verbose "{{.DATA_DIR}}/template/01-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply"
+        silent: true
+    deps:
+      - task: preprocess
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+    sources:
+      - "{{.DATA_DIR}}/template/01-{{.COMPONENT}}.ply"
+    generates:
+      - "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply"
+    preconditions:
+      - test -s "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+
+  mesh-fix:
+    cmds:
+      - MeshFix "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply"
+    deps:
+      - task: manual-edit
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+    sources:
+      - "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply"
+    generates:
+      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+
+  annotate-landmarks:
+    deps:
+      - task: mesh-fix
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+    sources:
+      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply"
+    generates:
+      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}-landmarks.txt"
+    preconditions:
+      - test -s "{{.DATA_DIR}}/template/03-{{.COMPONENT}}-landmarks.txt"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+
+run: once
