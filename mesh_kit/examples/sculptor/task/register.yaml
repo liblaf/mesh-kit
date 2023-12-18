@@ -155,4 +155,27 @@ tasks:
         - STAGE
         - TARGET
 
+  view-records:
+    cmds:
+      - python "{{.ROOT_DIR}}/cmd/view_records.py" "{{.DATA_DIR}}/records" "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}.ply"
+    deps:
+      - task: register
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+          STAGE: "{{.STAGE}}"
+          TARGET: "{{.TARGET}}"
+    sources:
+      - "{{.ROOT_DIR}}/cmd/view_records.py"
+      - "{{.DATA_DIR}}/records/*.ply"
+      - "{{.DATA_DIR}}/records/*-landmarks.txt"
+      - "{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}/02-{{.COMPONENT}}.ply"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+        - STAGE
+        - TARGET
+    interactive: true
+
 run: once

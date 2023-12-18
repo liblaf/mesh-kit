@@ -48,31 +48,31 @@ def main(
     # remove background
     label, num_features = ndimage.label(
         ~data,
-        structure=ndimage.generate_binary_structure(rank=3, connectivity=1),
-    )
-    logging.info("Num Features: %d", num_features)
-    data = label != find_largest_object(label)
-    data = ndimage.binary_closing(
-        data,
-        structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
-        iterations=2,
-    )
-
-    # find largest object
-    label, num_features = ndimage.label(
-        data,
         structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
     )
     logging.info("Num Features: %d", num_features)
-    data = label == find_largest_object(label)
-
-    # remove background
-    label, num_features = ndimage.label(
-        ~data,
-        structure=ndimage.generate_binary_structure(rank=3, connectivity=1),
-    )
-    logging.info("Num Features: %d", num_features)
     data = label != find_largest_object(label)
+    # data = ndimage.binary_closing(
+    #     data,
+    #     structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
+    #     iterations=2,
+    # )
+
+    # # find largest object
+    # label, num_features = ndimage.label(
+    #     data,
+    #     structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
+    # )
+    # logging.info("Num Features: %d", num_features)
+    # data = label == find_largest_object(label)
+
+    # # remove background
+    # label, num_features = ndimage.label(
+    #     ~data,
+    #     structure=ndimage.generate_binary_structure(rank=3, connectivity=1),
+    # )
+    # logging.info("Num Features: %d", num_features)
+    # data = label != find_largest_object(label)
 
     export_voxel(data, output_path)
 

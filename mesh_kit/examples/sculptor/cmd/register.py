@@ -40,10 +40,10 @@ def main(
     steps: Sequence[npt.ArrayLike] = interpolate.interp1d(
         x=range(4),
         y=[
-            [0.01 * 8, 10, 0.5, 10],
-            [0.02 * 8, 5, 0.5, 10],
-            [0.03 * 8, 2.5, 0.5, 10],
-            [0.01 * 8, 0, 0.0, 10],
+            [0.01, 10, 2.0, 10],
+            [0.02, 5, 2.0, 10],
+            [0.03, 2.5, 2.0, 10],
+            [0.01, 0, 0.0, 10],
         ],
         axis=0,
     )(np.linspace(start=0, stop=3, num=8))
@@ -53,7 +53,7 @@ def main(
         source_landmarks=source_landmarks,
         target_positions=target_positions,
         steps=steps,
-        eps=1e-3,
+        eps=1e-6,
         distance_threshold=distance_threshold,
         return_records=records_filepath is not None,
     )

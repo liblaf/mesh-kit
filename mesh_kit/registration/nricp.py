@@ -376,7 +376,7 @@ def _from_mesh(
     kd_tree: spatial.KDTree = mesh.kdtree
     distances: npt.NDArray
     idx: npt.NDArray
-    distances, idx = kd_tree.query(input_points, neighbors_count)
+    distances, idx = kd_tree.query(input_points * 1.4, neighbors_count)
     testing.assert_shape(distances, (num_vertices, neighbors_count))
     testing.assert_shape(idx, (num_vertices, neighbors_count))
     target_normals: npt.NDArray = mesh.vertex_normals[idx]

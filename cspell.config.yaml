@@ -28,6 +28,7 @@ words:
   - pytype
   - pyvista
   - qres
+  - rclone
   - setaf
   - spsolve
   - toarray
@@ -38,6 +39,7 @@ words:
 ignorePaths:
   - "*-lock.*"
   - "*.lock"
+  - cspell.config.yaml
 dictionaries:
   - bash
   - cpp
