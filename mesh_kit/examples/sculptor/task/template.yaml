@@ -3,21 +3,20 @@ version: "3"
 tasks:
   download:
     cmds:
-      - cmd: mkdir --parents --verbose "{{.DATA_DIR}}/template"
-        silent: true
-      - wget --output-document="{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply" "https://github.com/liblaf/sculptor/raw/main/model/template/{{.COMPONENT}}.ply"
+      - wget --output-document="00-{{.COMPONENT}}.ply" "https://github.com/liblaf/sculptor/raw/main/model/template/{{.COMPONENT}}.ply"
     generates:
-      - "{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply"
+      - 00-{{.COMPONENT}}.ply
     status:
-      - test -s "{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply"
+      - test -s "00-{{.COMPONENT}}.ply"
     requires:
       vars:
         - COMPONENT
         - DATA_DIR
+    dir: "/{{.DATA_DIR}}/template"
 
   preprocess:
     cmds:
-      - python "{{.ROOT_DIR}}/cmd/template/{{.COMPONENT}}.py" "{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/template/01-{{.COMPONENT}}.ply"
+      - python "{{.ROOT_DIR}}/cmd/template/{{.COMPONENT}}.py" "00-{{.COMPONENT}}.ply" "01-{{.COMPONENT}}.ply"
     deps:
       - task: download
         vars:
@@ -25,17 +24,18 @@ tasks:
           DATA_DIR: "{{.DATA_DIR}}"
     sources:
       - "{{.ROOT_DIR}}/cmd/template/{{.COMPONENT}}.py"
-      - "{{.DATA_DIR}}/template/00-{{.COMPONENT}}.ply"
+      - 00-{{.COMPONENT}}.ply
     generates:
-      - "{{.DATA_DIR}}/template/01-{{.COMPONENT}}.ply"
+      - 01-{{.COMPONENT}}.ply
     requires:
       vars:
         - COMPONENT
         - DATA_DIR
+    dir: "/{{.DATA_DIR}}/template"
 
   manual-edit:
     cmds:
-      - cmd: install -D --mode="u=rw,go=r" --no-target-directory --verbose "{{.DATA_DIR}}/template/01-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply"
+      - cmd: install -D --mode="u=rw,go=r" --no-target-directory "01-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
         silent: true
     deps:
       - task: preprocess
@@ -43,32 +43,34 @@ tasks:
           COMPONENT: "{{.COMPONENT}}"
           DATA_DIR: "{{.DATA_DIR}}"
     sources:
-      - "{{.DATA_DIR}}/template/01-{{.COMPONENT}}.ply"
+      - 01-{{.COMPONENT}}.ply
     generates:
-      - "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply"
-    preconditions:
-      - test -s "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply"
+      - 02-{{.COMPONENT}}.ply
+    # preconditions:
+    #   - test -s "02-{{.COMPONENT}}.ply"
     requires:
       vars:
         - COMPONENT
         - DATA_DIR
+    dir: "/{{.DATA_DIR}}/template"
 
   mesh-fix:
     cmds:
-      - MeshFix "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply"
+      - MeshFix "02-{{.COMPONENT}}.ply" "03-{{.COMPONENT}}.ply"
     deps:
       - task: manual-edit
         vars:
           COMPONENT: "{{.COMPONENT}}"
           DATA_DIR: "{{.DATA_DIR}}"
     sources:
-      - "{{.DATA_DIR}}/template/02-{{.COMPONENT}}.ply"
+      - 02-{{.COMPONENT}}.ply
     generates:
-      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply"
+      - 03-{{.COMPONENT}}.ply
     requires:
       vars:
         - COMPONENT
         - DATA_DIR
+    dir: "/{{.DATA_DIR}}/template"
 
   annotate-landmarks:
     deps:
@@ -77,14 +79,34 @@ tasks:
           COMPONENT: "{{.COMPONENT}}"
           DATA_DIR: "{{.DATA_DIR}}"
     sources:
-      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply"
+      - 03-{{.COMPONENT}}.ply
     generates:
-      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}-landmarks.txt"
+      - 03-{{.COMPONENT}}-landmarks.txt
     preconditions:
-      - test -s "{{.DATA_DIR}}/template/03-{{.COMPONENT}}-landmarks.txt"
+      - test -s "03-{{.COMPONENT}}-landmarks.txt"
     requires:
       vars:
         - COMPONENT
         - DATA_DIR
+    dir: "/{{.DATA_DIR}}/template"
+
+  view-landmarks:
+    cmds:
+      - python "{{.ROOT_DIR}}/cmd/view_landmarks.py" "03-{{.COMPONENT}}.ply"
+    deps:
+      - task: annotate-landmarks
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+    sources:
+      - "{{.ROOT_DIR}}/cmd/view_landmarks.py"
+      - 03-{{.COMPONENT}}.ply
+      - 03-{{.COMPONENT}}-landmarks.txt
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+    dir: "/{{.DATA_DIR}}/template"
+    interactive: true
 
 run: once

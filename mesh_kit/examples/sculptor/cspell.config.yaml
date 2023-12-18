@@ -1,0 +1,22 @@
+words:
+  - amberg
+  - arange
+  - dicom
+  - imsave
+  - ndimage
+  - nricp
+  - nrrd
+  - pyvista
+  - rclone
+  - setaf
+  - typer
+  - voxel
+  - vtkmodules
+ignorePaths:
+  - "*-lock.*"
+  - "*.lock"
+  - cspell.config.yaml
+dictionaries:
+  - cpp
+  - cpp-refined
+allowCompoundWords: true
