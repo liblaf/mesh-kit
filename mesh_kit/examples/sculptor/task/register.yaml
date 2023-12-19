@@ -167,8 +167,6 @@ tasks:
           DATA_DIR: "{{.DATA_DIR}}"
           STAGE: "{{.STAGE}}"
           TARGET: "{{.TARGET}}"
-    sources:
-      - 04-{{.COMPONENT}}.ply
     requires:
       vars:
         - COMPONENT

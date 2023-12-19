@@ -15,7 +15,7 @@ def main(
     output_path: Annotated[pathlib.Path, typer.Argument(dir_okay=False, writable=True)],
 ) -> None:
     mesh: trimesh.Trimesh = trimesh.load(input_path)
-    vertex_mask: npt.NDArray = mesh.vertices[:, 2] > -50
+    vertex_mask: npt.NDArray[bool] = mesh.vertices[:, 2] > -50
     vertex_mask &= ~bounds.contains(
         bounds=[[-25, -np.inf, 10], [30, 100, 15]], points=mesh.vertices
     )

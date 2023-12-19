@@ -120,6 +120,35 @@ def main(
             data = label != find_largest_object(label)
             save_img(data)
 
+            # 144, 240, 217 -- 185, 270, 235
+            # 370, 244, 216 -- 414, 276, 232
+            data_old: npt.NDArray = data.copy()
+            data = ndimage.binary_closing(
+                data_old,
+                structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
+                iterations=2,
+            )
+            data[100:200, 200:300, 180:260] = ndimage.binary_opening(
+                data_old[100:200, 200:300, 180:260],
+                structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
+                iterations=1,
+            )
+            data[350:450, 200:300, 180:260] = ndimage.binary_opening(
+                data_old[350:450, 200:300, 180:260],
+                structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
+                iterations=1,
+            )
+            save_img(data)
+
+            # remove background
+            label, num_features = ndimage.label(
+                ~data,
+                structure=ndimage.generate_binary_structure(rank=3, connectivity=3),
+            )
+            logging.info("Num Features: %d", num_features)
+            data = label != find_largest_object(label)
+            save_img(data)
+
             # find largest object
             label, num_features = ndimage.label(
                 data,

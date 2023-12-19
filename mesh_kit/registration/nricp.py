@@ -456,41 +456,49 @@ def _from_mesh(
     testing.assert_shape(input_normals, (num_vertices, 3))
     neighbors_count = min(neighbors_count, len(mesh.vertices))
 
-    assert not from_vertices_only
-    # Else if we consider faces, use proximity.closest_point
-    qres: dict[str, Any] = {}
-    kd_tree: spatial.KDTree = mesh.kdtree
-    distances: npt.NDArray
-    idx: npt.NDArray
-    distances, idx = kd_tree.query(input_points, neighbors_count)
-    testing.assert_shape(distances, (num_vertices, neighbors_count))
-    testing.assert_shape(idx, (num_vertices, neighbors_count))
-    target_normals: npt.NDArray = mesh.vertex_normals[idx]
-    testing.assert_shape(target_normals, (num_vertices, neighbors_count, 3))
-    distances += correspondence_weight_normal * (
-        1 - np.einsum("ijk,ijk->ij", input_normals[:, None, :], target_normals)
-    )
-    idx = idx[np.arange(num_vertices), np.argmin(distances, axis=-1)]
-    testing.assert_shape(idx, (num_vertices,))
-    qres["distances"] = np.min(distances, axis=-1)
-    qres["nearest"] = mesh.vertices[idx]
+    # assert not from_vertices_only
+    # # Else if we consider faces, use proximity.closest_point
+    # qres: dict[str, Any] = {}
+    # kd_tree: spatial.KDTree = mesh.kdtree
+    # distances: npt.NDArray
+    # idx: npt.NDArray
+    # distances, idx = kd_tree.query(input_points, neighbors_count)
+    # testing.assert_shape(distances, (num_vertices, neighbors_count))
+    # testing.assert_shape(idx, (num_vertices, neighbors_count))
+    # target_normals: npt.NDArray = mesh.vertex_normals[idx]
+    # testing.assert_shape(target_normals, (num_vertices, neighbors_count, 3))
+    # distances += correspondence_weight_normal * (
+    #     1 - np.einsum("ijk,ijk->ij", input_normals[:, None, :], target_normals)
+    # )
+    # idx = idx[np.arange(num_vertices), np.argmin(distances, axis=-1)]
+    # testing.assert_shape(idx, (num_vertices,))
+    # qres["distances"] = np.min(distances, axis=-1)
+    # qres["nearest"] = mesh.vertices[idx]
 
-    if return_normals:
-        qres["normals"] = mesh.vertex_normals[idx]
-        testing.assert_shape(qres["normals"], (num_vertices, 3))
-        qres["interpolated_normals"] = qres["normals"]
-    return qres
+    # if return_normals:
+    #     qres["normals"] = mesh.vertex_normals[idx]
+    #     testing.assert_shape(qres["normals"], (num_vertices, 3))
+    #     qres["interpolated_normals"] = qres["normals"]
+    # return qres
 
     assert not from_vertices_only
     # Else if we consider faces, use proximity.closest_point
     qres: dict[str, Any] = {
-        "nearest": np.nan * np.zeros(shape=(num_vertices, 3)),
-        "distances": np.nan * np.zeros(shape=(num_vertices,)),
+        "nearest": np.zeros(shape=(num_vertices, 3)),
+        "distances": np.inf * np.ones(shape=(num_vertices,)),
     }
-    results: Sequence[Sequence[int]] = spatial.cKDTree(input_points).query_ball_point(
+    import logging
+    import time
+
+    time_start: float = time.perf_counter()
+    results: Sequence[Sequence[int]] = spatial.KDTree(input_points).query_ball_tree(
         mesh.kdtree, r=distance_threshold
     )
+    time_end: float = time.perf_counter()
+    logging.debug(f"query_ball_tree() took {time_end - time_start} seconds")
     idx: npt.NDArray = np.zeros(shape=(num_vertices,), dtype=int)
+
+    time_start: float = time.perf_counter()
     for i, result in enumerate(results):
         if len(result) == 0:
             continue
@@ -504,11 +512,60 @@ def _from_mesh(
         qres["nearest"][i] = mesh.vertices[idx[i]]
         qres["distances"][i] = distances.min()
 
+    # def collect(
+    #     result: Sequence[int], input_point: npt.NDArray, input_normal: npt.NDArray
+    # ) -> tuple[int, float]:
+    #     if len(result) == 0:
+    #         return 0, np.inf
+    #     distances: npt.NDArray = np.linalg.norm(
+    #         input_point - mesh.vertices[result], axis=-1
+    #     ) + correspondence_weight_normal * (
+    #         1 - np.sum(input_normal * mesh.vertex_normals[result], axis=-1)
+    #     )
+    #     testing.assert_shape(distances, (len(result),))
+    #     return result[np.argmin(distances)], distances.min()
+
+    # with futures.ProcessPoolExecutor(max_workers=8) as executor:
+    #     tuples: Iterable[tuple[int, float]] = executor.map(
+    #         functools.partial(
+    #             collect,
+    #             mesh=mesh,
+    #             correspondence_weight_normal=correspondence_weight_normal,
+    #         ),
+    #         results,
+    #         input_points,
+    #         input_normals,
+    #     )
+    #     idx = np.array([x[0] for x in tuples])
+    #     qres["nearest"] = mesh.vertices[idx]
+    #     qres["distances"] = np.array([x[1] for x in tuples])
+    time_end: float = time.perf_counter()
+    logging.debug(f"for loop took {time_end - time_start} seconds")
+
     if return_normals:
         qres["normals"] = mesh.vertex_normals[idx]
         testing.assert_shape(qres["normals"], (num_vertices, 3))
         qres["interpolated_normals"] = qres["normals"]
     return qres
+
+
+def collect(
+    result: Sequence[int],
+    input_point: npt.NDArray,
+    input_normal: npt.NDArray,
+    *,
+    mesh: trimesh.Trimesh,
+    correspondence_weight_normal: float,
+) -> tuple[int, float]:
+    if len(result) == 0:
+        return 0, np.inf
+    distances: npt.NDArray = np.linalg.norm(
+        input_point - mesh.vertices[result], axis=-1
+    ) + correspondence_weight_normal * (
+        1 - np.sum(input_normal * mesh.vertex_normals[result], axis=-1)
+    )
+    testing.assert_shape(distances, (len(result),))
+    return result[np.argmin(distances)], distances.min()
 
 
 def _solve_system(

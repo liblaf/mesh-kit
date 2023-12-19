@@ -50,7 +50,7 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1.1,
+                    correspondence_scale=1.05,
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
@@ -60,7 +60,7 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1.1,
+                    correspondence_scale=1.05,
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
@@ -70,7 +70,7 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1.1,
+                    correspondence_scale=1.05,
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
@@ -80,7 +80,7 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1.1,
+                    correspondence_scale=1.05,
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
@@ -90,7 +90,7 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1.1,
+                    correspondence_scale=1.05,
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
@@ -100,7 +100,7 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1.1,
+                    correspondence_scale=1.05,
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
@@ -110,7 +110,7 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1.1,
+                    correspondence_scale=1.05,
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
@@ -120,19 +120,19 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1.1,
+                    correspondence_scale=1.05,
                     correspondence_weight_normal=0.5,
                 ),
-                # nricp.Params(
-                #     weight_smooth=0.043,
-                #     weight_landmark=2.5,
-                #     weight_normal=0.5,
-                #     max_iter=10,
-                #     eps=1e-4,
-                #     distance_threshold=0.05,
-                #     correspondence_scale=1.1,
-                #     correspondence_weight_normal=0.5,
-                # ),
+                nricp.Params(
+                    weight_smooth=0.042,
+                    weight_landmark=2.5,
+                    weight_normal=0.5,
+                    max_iter=10,
+                    eps=1e-4,
+                    distance_threshold=0.05,
+                    correspondence_scale=1.05,
+                    correspondence_weight_normal=0.5,
+                ),
             ]
         case Component.SKULL:
             steps: Sequence[nricp.Params] = [
@@ -143,8 +143,8 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1,
-                    correspondence_weight_normal=0.5,
+                    correspondence_scale=1.01,
+                    correspondence_weight_normal=0.1,
                 ),
                 nricp.Params(
                     weight_smooth=0.007,
@@ -153,8 +153,8 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1,
-                    correspondence_weight_normal=0.5,
+                    correspondence_scale=1.01,
+                    correspondence_weight_normal=0.1,
                 ),
                 nricp.Params(
                     weight_smooth=0.002,
@@ -163,15 +163,15 @@ def main(
                     max_iter=10,
                     eps=1e-4,
                     distance_threshold=0.05,
-                    correspondence_scale=1,
-                    correspondence_weight_normal=0.5,
+                    correspondence_scale=1.01,
+                    correspondence_weight_normal=0.1,
                 ),
             ]
 
         case _:
             assert False
 
-    result: Sequence[npt.NDArray] = nricp.nricp_amberg(
+    result: npt.NDArray = nricp.nricp_amberg(
         source_mesh=source,
         target_geometry=target,
         source_landmarks=source_landmarks,

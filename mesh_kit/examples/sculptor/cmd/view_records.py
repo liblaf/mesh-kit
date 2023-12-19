@@ -48,6 +48,17 @@ class UI:
             mesh=self.target, color="green", opacity=0.2, name="target"
         )
 
+    def plot_correspondence(self) -> None:
+        if self.source_landmarks[self.step].size == 0:
+            self.plotter.remove_actor("correspondence")
+        else:
+            self.plotter.add_arrows(
+                cent=self.source_landmarks[self.step],
+                direction=self.target_landmarks[self.step]
+                - self.source_landmarks[self.step],
+                name="correspondence",
+            )
+
     def plot_target_landmarks(self) -> None:
         if self.target_landmarks[self.step].size == 0:
             self.plotter.remove_actor("target-correspondence")
@@ -69,8 +80,7 @@ class UI:
         self.slider.GetSliderRepresentation().SetValue(round(value))
         self.plot_params()
         self.plot_source()
-        self.plot_source_landmarks()
-        self.plot_target_landmarks()
+        self.plot_correspondence()
 
     @property
     def slider(self) -> vtkInteractionWidgets.vtkSliderWidget:
