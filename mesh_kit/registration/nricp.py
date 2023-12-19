@@ -1,12 +1,41 @@
+import pathlib
 from typing import Any, Optional, Sequence
 
 import numpy as np
+import pydantic
+import tqdm
 import trimesh
 from numpy import typing as npt
-from scipy import sparse, spatial
-from trimesh import proximity, util
+from scipy import interpolate, sparse, spatial
+from trimesh import util
 
 from mesh_kit.common import testing
+
+
+class Params(pydantic.BaseModel):
+    weight_smooth: float
+    weight_landmark: float
+    weight_normal: float
+    max_iter: int = 10
+    eps: float = 1e-4
+    distance_threshold: float = 0.1
+    correspondence_scale: float = 1
+    correspondence_weight_normal: float = 0.5
+
+
+def params_interp(
+    x: Sequence[float], xp: Sequence[Params], fp: Sequence[float]
+) -> Sequence[Params]:
+    return [
+        Params(
+            **dict(zip(Params.model_fields, y)),
+        )
+        for y in interpolate.interp1d(
+            x=xp,
+            y=[[*step.model_dump().values()] for step in fp],
+            axis=0,
+        )(x)
+    ]
 
 
 def nricp_amberg(
@@ -14,15 +43,17 @@ def nricp_amberg(
     target_geometry: trimesh.Trimesh,
     source_landmarks: Optional[npt.NDArray] = None,
     target_positions: Optional[npt.NDArray] = None,
-    steps: Optional[npt.ArrayLike] = None,
-    eps: float = 1e-4,
+    steps: Optional[Sequence[Params]] = None,
+    # eps: float = 1e-4,
     gamma: float = 1,
-    distance_threshold: float = 0.1,
+    # distance_threshold: float = 0.1,
     return_records: bool = False,
     use_faces: bool = True,
     use_vertex_normals: bool = True,
     neighbors_count: int = 8,
-) -> None:
+    *,
+    record_dir: Optional[pathlib.Path] = None,
+) -> npt.NDArray | Sequence[npt.NDArray]:
     """Non Rigid Iterative Closest Points
 
     Implementation of "Amberg et al. 2007: Optimal Step
@@ -136,20 +167,25 @@ def nricp_amberg(
     # order : Alpha, Beta, normal weighting, and max iteration for step
     if steps is None:
         steps = [
-            [0.01, 10, 0.5, 10],
-            [0.02, 5, 0.5, 10],
-            [0.03, 2.5, 0.5, 10],
-            [0.01, 0, 0.0, 10],
+            Params(weight_smooth=0.01, weight_landmark=10, weight_normal=0.5),
+            Params(weight_smooth=0.02, weight_landmark=5, weight_normal=0.5),
+            Params(weight_smooth=0.03, weight_landmark=2.5, weight_normal=0.5),
+            Params(weight_smooth=0.01, weight_landmark=0, weight_normal=0),
         ]
     if return_records:
         records: Sequence[npt.NDArray] = [transformed_vertices]
 
     # Main loop
-    for weight_smooth, weight_landmark, weight_normal, max_iter in steps:
+    progress: tqdm.tqdm = tqdm.tqdm(
+        desc="Register", total=sum(step.max_iter for step in steps)
+    )
+    if record_dir is not None:
+        record_count: int = 0
+    for iter, params in enumerate(steps):
         # If normals are estimated from points and if there are less
         # than 3 points per query, avoid normal estimation
         if not use_faces and neighbors_count < 3:
-            weight_normal = 0
+            params.weight_normal = 0
 
         last_error: float = np.inf
         error: float = np.inf
@@ -158,8 +194,8 @@ def nricp_amberg(
         # Current step iterations loop
         while (
             np.isinf(error)
-            or last_error - error > eps
-            and (max_iter is None or cpt_iter < max_iter)
+            or last_error - error > params.eps
+            and (params.max_iter is None or cpt_iter < params.max_iter)
         ):
             qres: dict[str, npt.NDArray] = _from_mesh(
                 mesh=target_geometry,
@@ -167,17 +203,21 @@ def nricp_amberg(
                 DN=DN,
                 X=X,
                 from_vertices_only=not use_faces,
-                return_normals=weight_normal > 0,
-                return_interpolated_normals=weight_normal > 0 and use_vertex_normals,
+                return_normals=params.weight_normal > 0,
+                return_interpolated_normals=params.weight_normal > 0
+                and use_vertex_normals,
                 neighbors_count=neighbors_count,
+                distance_threshold=params.distance_threshold,
+                correspondence_scale=params.correspondence_scale,
+                correspondence_weight_normal=params.correspondence_weight_normal,
             )
 
             # Data weighting
             vertices_weight: npt.NDArray = np.ones(num_vertices)
             testing.assert_shape(vertices_weight, (num_vertices,))
-            vertices_weight[qres["distances"] > distance_threshold] = 0
+            vertices_weight[qres["distances"] > params.distance_threshold] = 0
 
-            if weight_normal > 0 and "normals" in qres:
+            if params.weight_normal > 0 and "normals" in qres:
                 target_normals = qres["normals"]
                 if use_vertex_normals and "interpolated_normals" in qres:
                     target_normals = qres["interpolated_normals"]
@@ -189,7 +229,31 @@ def nricp_amberg(
                 testing.assert_shape(dot, (num_vertices,))
                 # Normal orientation is only known for meshes as target
                 dot = np.clip(dot, 0, 1) if use_faces else np.abs(dot)
-                vertices_weight = vertices_weight * dot**weight_normal
+                vertices_weight = vertices_weight * dot**params.weight_normal
+
+            if record_dir is not None:
+                (record_dir / f"{record_count:03d}-params.json").write_text(
+                    params.model_dump_json(indent=2)
+                )
+                trimesh.Trimesh(
+                    vertices=scale * transformed_vertices + centroid[None, :],
+                    faces=source_mesh.faces,
+                ).export(record_dir / f"{record_count:03d}.ply")
+                np.savetxt(
+                    record_dir / f"{record_count:03d}-source-correspondence.txt",
+                    scale
+                    * transformed_vertices[
+                        qres["distances"] <= params.distance_threshold
+                    ]
+                    + centroid[None, :],
+                )
+                np.savetxt(
+                    record_dir / f"{record_count:03d}-target-correspondence.txt",
+                    scale
+                    * qres["nearest"][qres["distances"] <= params.distance_threshold]
+                    + centroid[None, :],
+                )
+                record_count += 1
 
             # Actual system solve
             X = _solve_system(
@@ -197,12 +261,12 @@ def nricp_amberg(
                 D,
                 vertices_weight,
                 qres["nearest"],
-                weight_smooth,
+                params.weight_smooth,
                 num_edges,
                 num_vertices,
                 Dl,
                 Ul,
-                weight_landmark,
+                params.weight_landmark,
             )
             transformed_vertices = D * X
             last_error = error
@@ -213,7 +277,10 @@ def nricp_amberg(
             error = (error_vec * vertices_weight).mean()
             if return_records:
                 records.append(transformed_vertices)
+
             cpt_iter += 1
+            progress.update(1)
+        progress.update(params.max_iter - cpt_iter)
 
     if return_records:
         result: Sequence[npt.NDArray] = records
@@ -323,6 +390,10 @@ def _from_mesh(
     return_normals: bool = False,
     return_interpolated_normals: bool = False,
     neighbors_count: int = 10,
+    *,
+    distance_threshold: float = 0.1,
+    correspondence_scale: float = 1,
+    correspondence_weight_normal: float = 0.5,
     **kwargs,
 ) -> dict[str, npt.NDArray]:
     """Find the the closest points and associated attributes from a Trimesh.
@@ -360,7 +431,7 @@ def _from_mesh(
     testing.assert_shape(D, (num_vertices, 4 * num_vertices))
     testing.assert_shape(DN, (num_vertices, 4 * num_vertices))
     testing.assert_shape(X, (4 * num_vertices, 3))
-    input_points: npt.NDArray = D * X
+    input_points: npt.NDArray = correspondence_scale * D * X
     testing.assert_shape(input_points, (num_vertices, 3))
     input_normals: npt.NDArray = DN * X
     input_normals = input_normals / np.linalg.norm(input_normals, axis=-1)[:, None]
@@ -370,22 +441,50 @@ def _from_mesh(
     assert not from_vertices_only
     # Else if we consider faces, use proximity.closest_point
     qres: dict[str, Any] = {}
-    qres["nearest"], qres["distances"], qres["tids"] = proximity.closest_point(
-        mesh, input_points
-    )
     kd_tree: spatial.KDTree = mesh.kdtree
     distances: npt.NDArray
     idx: npt.NDArray
-    distances, idx = kd_tree.query(input_points * 1.4, neighbors_count)
+    distances, idx = kd_tree.query(input_points, neighbors_count)
     testing.assert_shape(distances, (num_vertices, neighbors_count))
     testing.assert_shape(idx, (num_vertices, neighbors_count))
     target_normals: npt.NDArray = mesh.vertex_normals[idx]
     testing.assert_shape(target_normals, (num_vertices, neighbors_count, 3))
-    distances += 2 * (
+    distances += correspondence_weight_normal * (
         1 - np.einsum("ijk,ijk->ij", input_normals[:, None, :], target_normals)
     )
     idx = idx[np.arange(num_vertices), np.argmin(distances, axis=-1)]
     testing.assert_shape(idx, (num_vertices,))
+    qres["distances"] = np.min(distances, axis=-1)
+    qres["nearest"] = mesh.vertices[idx]
+
+    if return_normals:
+        qres["normals"] = mesh.vertex_normals[idx]
+        testing.assert_shape(qres["normals"], (num_vertices, 3))
+        qres["interpolated_normals"] = qres["normals"]
+    return qres
+
+    assert not from_vertices_only
+    # Else if we consider faces, use proximity.closest_point
+    qres: dict[str, Any] = {
+        "nearest": np.nan * np.zeros(shape=(num_vertices, 3)),
+        "distances": np.nan * np.zeros(shape=(num_vertices,)),
+    }
+    results: Sequence[Sequence[int]] = spatial.cKDTree(input_points).query_ball_point(
+        mesh.kdtree, r=distance_threshold
+    )
+    idx: npt.NDArray = np.zeros(shape=(num_vertices,), dtype=int)
+    for i, result in enumerate(results):
+        if len(result) == 0:
+            continue
+        distances: npt.NDArray = np.linalg.norm(
+            input_points[i] - mesh.vertices[result], axis=-1
+        ) + correspondence_weight_normal * (
+            1 - np.sum(input_normals[i, :] * mesh.vertex_normals[result], axis=-1)
+        )
+        testing.assert_shape(distances, (len(result),))
+        idx[i] = result[np.argmin(distances)]
+        qres["nearest"][i] = mesh.vertices[idx[i]]
+        qres["distances"][i] = distances.min()
 
     if return_normals:
         qres["normals"] = mesh.vertex_normals[idx]

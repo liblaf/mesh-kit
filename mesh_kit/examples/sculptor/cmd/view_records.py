@@ -15,6 +15,7 @@ from mesh_kit.common import cli
 
 @dataclasses.dataclass(kw_only=True)
 class UI:
+    params: Sequence[str]
     source: Sequence[pv.PolyData]
     target: pv.PolyData
     source_landmarks: Sequence[npt.NDArray]
@@ -22,19 +23,25 @@ class UI:
 
     plotter: Plotter
 
+    def plot_params(self) -> None:
+        self.plotter.add_text(text=self.params[self.step], name="params")
+
     def plot_source(self) -> None:
         self.plotter.add_mesh(
             mesh=self.source[self.step], color="red", opacity=0.2, name="source"
         )
 
     def plot_source_landmarks(self) -> None:
-        self.plotter.add_points(
-            points=self.source_landmarks[self.step],
-            color="red",
-            point_size=16,
-            name="source-landmarks",
-            render_points_as_spheres=True,
-        )
+        if self.source_landmarks[self.step].size == 0:
+            self.plotter.remove_actor("source-correspondence")
+        else:
+            self.plotter.add_points(
+                points=self.source_landmarks[self.step],
+                color="red",
+                point_size=8,
+                name="source-correspondence",
+                render_points_as_spheres=True,
+            )
 
     def plot_target(self) -> None:
         self.plotter.add_mesh(
@@ -42,13 +49,16 @@ class UI:
         )
 
     def plot_target_landmarks(self) -> None:
-        self.plotter.add_points(
-            points=self.target_landmarks[self.step],
-            color="green",
-            point_size=16,
-            name="target-landmarks",
-            render_points_as_spheres=True,
-        )
+        if self.target_landmarks[self.step].size == 0:
+            self.plotter.remove_actor("target-correspondence")
+        else:
+            self.plotter.add_points(
+                points=self.target_landmarks[self.step],
+                color="green",
+                point_size=8,
+                name="target-correspondence",
+                render_points_as_spheres=True,
+            )
 
     @property
     def step(self) -> int:
@@ -57,6 +67,7 @@ class UI:
     @step.setter
     def step(self, value: int) -> None:
         self.slider.GetSliderRepresentation().SetValue(round(value))
+        self.plot_params()
         self.plot_source()
         self.plot_source_landmarks()
         self.plot_target_landmarks()
@@ -103,21 +114,30 @@ def main(
     records: Sequence[pv.PolyData] = [
         pv.read(filepath) for filepath in records_filepath
     ]
+    params: Sequence[str] = [
+        filepath.with_stem(filepath.stem + "-params").with_suffix(".json").read_text()
+        for filepath in records_filepath
+    ]
     source_landmarks: Sequence[npt.NDArray] = [
         np.loadtxt(
-            filepath.with_stem(filepath.stem + "-source-landmarks").with_suffix(".txt")
+            filepath.with_stem(filepath.stem + "-source-correspondence").with_suffix(
+                ".txt"
+            )
         )
         for filepath in records_filepath
     ]
     target: pv.PolyData = pv.read(target_filepath)
     target_landmarks: Sequence[npt.NDArray] = [
         np.loadtxt(
-            filepath.with_stem(filepath.stem + "-target-landmarks").with_suffix(".txt")
+            filepath.with_stem(filepath.stem + "-target-correspondence").with_suffix(
+                ".txt"
+            )
         )
         for filepath in records_filepath
     ]
     plotter: Plotter = Plotter()
     ui: UI = UI(
+        params=params,
         source=records,
         target=target,
         source_landmarks=source_landmarks,

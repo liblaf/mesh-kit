@@ -129,6 +129,9 @@ def main(
             data = label == find_largest_object(label)
             save_img(data)
 
+        case _:
+            assert False
+
     export_voxel(data, output_path)
 
 

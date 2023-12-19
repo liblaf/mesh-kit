@@ -8,6 +8,7 @@ words:
   - dtype
   - envrc
   - gomod
+  - imsave
   - ipynb
   - kdtree
   - kron
@@ -20,6 +21,7 @@ words:
   - nrrd
   - pybuilder
   - pycache
+  - pydantic
   - pyflow
   - pynrrd
   - pypa

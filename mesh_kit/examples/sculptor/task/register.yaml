@@ -137,7 +137,7 @@ tasks:
         silent: true
       - cmd: mkdir --parents "register/{{.COMPONENT}}"
         silent: true
-      - python "{{.ROOT_DIR}}/cmd/register.py" --output="04-{{.COMPONENT}}.ply" --records="register/{{.COMPONENT}}" "03-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
+      - python "{{.ROOT_DIR}}/cmd/register.py" --component="{{.COMPONENT}}" --output="04-{{.COMPONENT}}.ply" --records="register/{{.COMPONENT}}" "03-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
     deps:
       - task: align
         vars:
@@ -191,11 +191,11 @@ tasks:
           DATA_DIR: "{{.DATA_DIR}}"
           STAGE: "{{.STAGE}}"
           TARGET: "{{.TARGET}}"
-    sources:
-      - "{{.ROOT_DIR}}/cmd/view_records.py"
-      - register/{{.COMPONENT}}/*.ply
-      - register/{{.COMPONENT}}/*-landmarks.txt
-      - 02-{{.COMPONENT}}.ply
+    # sources:
+    #   - "{{.ROOT_DIR}}/cmd/view_records.py"
+    #   - register/{{.COMPONENT}}/*.ply
+    #   - register/{{.COMPONENT}}/*-landmarks.txt
+    #   - 02-{{.COMPONENT}}.ply
     requires:
       vars:
         - COMPONENT
