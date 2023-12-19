@@ -211,6 +211,24 @@ def nricp_amberg(
                 correspondence_scale=params.correspondence_scale,
                 correspondence_weight_normal=params.correspondence_weight_normal,
             )
+            if params.correspondence_scale != 1.0:
+                qres_origin: dict[str, npt.NDArray] = _from_mesh(
+                    mesh=target_geometry,
+                    D=D,
+                    DN=DN,
+                    X=X,
+                    from_vertices_only=not use_faces,
+                    return_normals=params.weight_normal > 0,
+                    return_interpolated_normals=params.weight_normal > 0
+                    and use_vertex_normals,
+                    neighbors_count=neighbors_count,
+                    distance_threshold=params.distance_threshold,
+                    correspondence_scale=1.0,
+                    correspondence_weight_normal=params.correspondence_weight_normal,
+                )
+                idx = qres["distances"] > params.distance_threshold
+                for key in qres.keys():
+                    qres[key][idx] = qres_origin[key][idx]
 
             # Data weighting
             vertices_weight: npt.NDArray = np.ones(num_vertices)

@@ -5117,13 +5117,13 @@ reference = "mirrors"
 
 [[package]]
 name = "trimesh"
-version = "4.0.5"
+version = "4.0.6"
 description = "Import, export, process, analyze and view triangular meshes."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "trimesh-4.0.5-py3-none-any.whl", hash = "sha256:d139a9108fc7d68a9cd3f5788528eadc20f25a10ae915922b4a2768e0b23d943"},
-    {file = "trimesh-4.0.5.tar.gz", hash = "sha256:b9bfcfec03b70ab4d21f055df1ab73e8740dd0bc8fd5648273eef8fec76cddf9"},
+    {file = "trimesh-4.0.6-py3-none-any.whl", hash = "sha256:84cb8715d34d7f90e2e8c03c61cd251deaf1a8d24356e89a29cbee5f4f8860d9"},
+    {file = "trimesh-4.0.6.tar.gz", hash = "sha256:c1b70db4812b00e4b620728d6be11f4849b166e950d936ab05d3bc4a6b5e7d4d"},
 ]
 
 [package.dependencies]

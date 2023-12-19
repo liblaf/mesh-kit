@@ -88,10 +88,6 @@ tasks:
           DATA_DIR: "{{.DATA_DIR}}"
           STAGE: "{{.STAGE}}"
           TARGET: "{{.TARGET}}"
-    sources:
-      - "{{.ROOT_DIR}}/cmd/view_landmarks.py"
-      - 02-{{.COMPONENT}}.ply
-      - 02-{{.COMPONENT}}-landmarks.txt
     requires:
       vars:
         - COMPONENT
@@ -181,6 +177,25 @@ tasks:
         - TARGET
     dir: "/{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}"
 
+  compare:
+    cmds:
+      - meshlab "04-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
+    deps:
+      - task: register
+        vars:
+          COMPONENT: "{{.COMPONENT}}"
+          DATA_DIR: "{{.DATA_DIR}}"
+          STAGE: "{{.STAGE}}"
+          TARGET: "{{.TARGET}}"
+    requires:
+      vars:
+        - COMPONENT
+        - DATA_DIR
+        - STAGE
+        - TARGET
+    dir: "/{{.DATA_DIR}}/{{.TARGET}}/{{.STAGE}}"
+    interactive: true
+
   view-records:
     cmds:
       - python "{{.ROOT_DIR}}/cmd/view_records.py" "register/{{.COMPONENT}}" "02-{{.COMPONENT}}.ply"
@@ -191,11 +206,6 @@ tasks:
           DATA_DIR: "{{.DATA_DIR}}"
           STAGE: "{{.STAGE}}"
           TARGET: "{{.TARGET}}"
-    # sources:
-    #   - "{{.ROOT_DIR}}/cmd/view_records.py"
-    #   - register/{{.COMPONENT}}/*.ply
-    #   - register/{{.COMPONENT}}/*-landmarks.txt
-    #   - 02-{{.COMPONENT}}.ply
     requires:
       vars:
         - COMPONENT

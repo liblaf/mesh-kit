@@ -64,8 +64,8 @@ def main(
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
-                    weight_smooth=0.064,
-                    weight_landmark=6.4,
+                    weight_smooth=0.06,
+                    weight_landmark=6.0,
                     weight_normal=0.5,
                     max_iter=10,
                     eps=1e-4,
@@ -74,8 +74,8 @@ def main(
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
-                    weight_smooth=0.056,
-                    weight_landmark=5.6,
+                    weight_smooth=0.055,
+                    weight_landmark=5.5,
                     weight_normal=0.5,
                     max_iter=10,
                     eps=1e-4,
@@ -84,8 +84,8 @@ def main(
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
-                    weight_smooth=0.030,
-                    weight_landmark=3.0,
+                    weight_smooth=0.048,
+                    weight_landmark=4.8,
                     weight_normal=0.5,
                     max_iter=10,
                     eps=1e-4,
@@ -94,8 +94,8 @@ def main(
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
-                    weight_smooth=0.028,
-                    weight_landmark=2.8,
+                    weight_smooth=0.045,
+                    weight_landmark=4.5,
                     weight_normal=0.5,
                     max_iter=10,
                     eps=1e-4,
@@ -104,8 +104,8 @@ def main(
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
-                    weight_smooth=0.022,
-                    weight_landmark=2.2,
+                    weight_smooth=0.044,
+                    weight_landmark=4.4,
                     weight_normal=0.5,
                     max_iter=10,
                     eps=1e-4,
@@ -114,8 +114,8 @@ def main(
                     correspondence_weight_normal=0.5,
                 ),
                 nricp.Params(
-                    weight_smooth=0.016,
-                    weight_landmark=1.6,
+                    weight_smooth=0.043,
+                    weight_landmark=4.3,
                     weight_normal=0.5,
                     max_iter=10,
                     eps=1e-4,
@@ -123,16 +123,16 @@ def main(
                     correspondence_scale=1.1,
                     correspondence_weight_normal=0.5,
                 ),
-                nricp.Params(
-                    weight_smooth=0.012,
-                    weight_landmark=1.2,
-                    weight_normal=0.5,
-                    max_iter=10,
-                    eps=1e-4,
-                    distance_threshold=0.05,
-                    correspondence_scale=1.1,
-                    correspondence_weight_normal=0.5,
-                ),
+                # nricp.Params(
+                #     weight_smooth=0.043,
+                #     weight_landmark=2.5,
+                #     weight_normal=0.5,
+                #     max_iter=10,
+                #     eps=1e-4,
+                #     distance_threshold=0.05,
+                #     correspondence_scale=1.1,
+                #     correspondence_weight_normal=0.5,
+                # ),
             ]
         case Component.SKULL:
             steps: Sequence[nricp.Params] = [
