@@ -449,9 +449,10 @@ def _from_mesh(
     testing.assert_shape(D, (num_vertices, 4 * num_vertices))
     testing.assert_shape(DN, (num_vertices, 4 * num_vertices))
     testing.assert_shape(X, (4 * num_vertices, 3))
-    input_points: npt.NDArray = correspondence_scale * D * X
+    input_points: npt.NDArray = D * X
     testing.assert_shape(input_points, (num_vertices, 3))
     input_normals: npt.NDArray = DN * X
+    input_points += correspondence_scale * input_normals
     input_normals = input_normals / np.linalg.norm(input_normals, axis=-1)[:, None]
     testing.assert_shape(input_normals, (num_vertices, 3))
     neighbors_count = min(neighbors_count, len(mesh.vertices))
