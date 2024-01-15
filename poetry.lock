@@ -2216,32 +2216,32 @@ reference = "mirrors"
 
 [[package]]
 name = "manifold3d"
-version = "2.2.2"
+version = "2.3.1"
 description = "Library for geometric robustness"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "manifold3d-2.2.2-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:cc4d6c3380557031f46d8fa92071025965aeaba5f858bf935799937821a6d302"},
-    {file = "manifold3d-2.2.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:7d9a54cbe3a124676882ccfe240ee9fcf4ef20905df679613276c28ec044a7ed"},
-    {file = "manifold3d-2.2.2-cp310-cp310-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:f82707134c0321bad5b1587641e08b9e9912c56c1756cd1f49db28af0f91d6ee"},
-    {file = "manifold3d-2.2.2-cp310-cp310-win_amd64.whl", hash = "sha256:2e11194720f217faa73381f3dabb76065632ed3e6b5ca23ab9fb0823b5ec950c"},
-    {file = "manifold3d-2.2.2-cp311-cp311-macosx_10_14_x86_64.whl", hash = "sha256:785af42b3fef64b7b003da76a2289cfc83822044f3afbb503e61d217aaf941fe"},
-    {file = "manifold3d-2.2.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:2dd9f354c4ae88f3082eaf476610c5eda27e5054ec2a96b28a7eb47d20adee2a"},
-    {file = "manifold3d-2.2.2-cp311-cp311-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:1698d26c9883f6d5131aea6336fd8a663b85bad2282c54a251deeafeb5774274"},
-    {file = "manifold3d-2.2.2-cp311-cp311-win_amd64.whl", hash = "sha256:48bea6edb879c99112181faaffc7ea8b3a1e7dcfd9211d9d5f8e9bd75baa5893"},
-    {file = "manifold3d-2.2.2-cp312-cp312-macosx_10_14_x86_64.whl", hash = "sha256:2f1973659ef9b0037c2543bef9645ad5b00b2e41ac68db433dce49c77f146a23"},
-    {file = "manifold3d-2.2.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:a3a3eb56e1a3076956dac7544aada2f73cb9028d4c68ee4fc778f18e83c63d50"},
-    {file = "manifold3d-2.2.2-cp312-cp312-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:aa38f115c669f02c52c1ca759296e0153e2a2c2614d37f66e449ed2e4e144691"},
-    {file = "manifold3d-2.2.2-cp312-cp312-win_amd64.whl", hash = "sha256:a4e2ddc6f5351667400125ed33d73bc99ef6821e3fb5f33a25e946732158e524"},
-    {file = "manifold3d-2.2.2-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:2236991ab0391a065fbace6993df55834b8ec8922b4e098d93b13788d5288561"},
-    {file = "manifold3d-2.2.2-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:be36a12dfab79df1c5395cfbd2f88937ce2bf5ab9b722654d80ce13bb878f0fd"},
-    {file = "manifold3d-2.2.2-cp38-cp38-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:06aee9202484c5e9a89687d6fb140ece36544dbd48b1f6814343b9e4a3ccbbbf"},
-    {file = "manifold3d-2.2.2-cp38-cp38-win_amd64.whl", hash = "sha256:02db8d8f55286c0d54f0e6a62fb9e09c80a721bc8d653070c7be5185bd2bbd47"},
-    {file = "manifold3d-2.2.2-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:35ffd609bc7de718c276ab7b7da860d7cb18e3cbdaf3365c6a643b7acb036b12"},
-    {file = "manifold3d-2.2.2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:1fce01e06f9154c56527f19c56ab68b3a0c2f24de9ae4d2a65f49c89592cbdc7"},
-    {file = "manifold3d-2.2.2-cp39-cp39-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:59fddb53bf05f89da40d7434a7c9d4b3c028f10f08155d987b218d3ad5512613"},
-    {file = "manifold3d-2.2.2-cp39-cp39-win_amd64.whl", hash = "sha256:531e41340586c3218311b790b66694d1f488b03057fc66641e7d36bb7e3c9fae"},
-    {file = "manifold3d-2.2.2.tar.gz", hash = "sha256:13fbd00ed8944849a1509aa6f037bce4e68953203e9a2c805cfce780ccee938c"},
+    {file = "manifold3d-2.3.1-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:cdeb90df46c32f3eb7bf4c815a8fb3034e025743414f31ecba361a6c2917d3ea"},
+    {file = "manifold3d-2.3.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:4456fb5f0a9c876e28b1f93647ce1517a2755dc440e71afdcdbd95e6dee81851"},
+    {file = "manifold3d-2.3.1-cp310-cp310-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:fb6967fa3872a064d05ca8a0507ecf7078155ae73e371ea4e54af2ebe61b4d87"},
+    {file = "manifold3d-2.3.1-cp310-cp310-win_amd64.whl", hash = "sha256:b3398bb8d1f4b2519c25137d9fa531d1436da72f7e58f8763b61387a8196b4a1"},
+    {file = "manifold3d-2.3.1-cp311-cp311-macosx_10_14_x86_64.whl", hash = "sha256:349b7772aee1ca781147e1a1eb9042b1523954acab1e14f49a2126df33da9809"},
+    {file = "manifold3d-2.3.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:e63a44b84336a0e78211e2015d819c4ee1f07380bdb24db3a795e1459b666d47"},
+    {file = "manifold3d-2.3.1-cp311-cp311-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:d1c00964bb1f8adadbdd473f084687a7b557c65c41915fb618969df4db049576"},
+    {file = "manifold3d-2.3.1-cp311-cp311-win_amd64.whl", hash = "sha256:0c0e1348e2ba8946fc161aa1ad77247788a5c7e15567ce5a024cbfd896f89c5f"},
+    {file = "manifold3d-2.3.1-cp312-cp312-macosx_10_14_x86_64.whl", hash = "sha256:a314d1debe813131a17e4007eb2c26371a9dbb3ba05bd1c970396c702933eee2"},
+    {file = "manifold3d-2.3.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:52c99d84b4a7256f50a90044aedef61c9f3497ded8f652668348a7c849680351"},
+    {file = "manifold3d-2.3.1-cp312-cp312-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:c493955eaf61201b495cf29c83230e703c6b638733cd06ff53d6a5f96f8da170"},
+    {file = "manifold3d-2.3.1-cp312-cp312-win_amd64.whl", hash = "sha256:151d7d82319ce655336a7a11b2f55e5fc24e561f83352825dafa77218bbfcfe1"},
+    {file = "manifold3d-2.3.1-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:37bcfd4a7f7ecdf185c538b56a965bbc4fc38575f98e0fbd28596e02cda34a9c"},
+    {file = "manifold3d-2.3.1-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:b09c448770787db45c891615055cc17bf4c1c216ecae9b4d7aad60ff92319324"},
+    {file = "manifold3d-2.3.1-cp38-cp38-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:e91eaf06b5ccefd79d399a62506932db814e4ec3238482735f317b1b79c4e004"},
+    {file = "manifold3d-2.3.1-cp38-cp38-win_amd64.whl", hash = "sha256:702db83617cc41bab6f1aa4cbf2e09ab3cd0ff6f391fd689bc9e335b4af4b694"},
+    {file = "manifold3d-2.3.1-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:51a134e5dc77c1a45d9ab769a86662b612098ae88c611a964e91347d35f101f0"},
+    {file = "manifold3d-2.3.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:d4e42e25d933f6788c356bb0a049b41c2418cd03819b3ae6e8037ea22ba49319"},
+    {file = "manifold3d-2.3.1-cp39-cp39-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl", hash = "sha256:e2465dfe9ff54cc3833d2443904c61bcfa6a58dc3e04dcbf222dd6d17df82b7d"},
+    {file = "manifold3d-2.3.1-cp39-cp39-win_amd64.whl", hash = "sha256:3ced2790746b39bab83407fbd5febeba61cda736eca08082e157cd421e3c79d1"},
+    {file = "manifold3d-2.3.1.tar.gz", hash = "sha256:52650c5ce96121dc04d3730a9afdf4f3d8c210af150674199d76805d81f98d4f"},
 ]
 
 [package.dependencies]
@@ -3894,13 +3894,13 @@ reference = "mirrors"
 
 [[package]]
 name = "pyvista"
-version = "0.43.1"
+version = "0.43.2"
 description = "Easier Pythonic interface to VTK"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pyvista-0.43.1-py3-none-any.whl", hash = "sha256:e7e7597c3938ad7e695a1de724ba4d5fcb05cdfa4ac81bb9bee7e75659c25f8a"},
-    {file = "pyvista-0.43.1.tar.gz", hash = "sha256:dd2c484d85da2c677a4fd01e801cd8f49a311be602088b0e43cfe9746db0c552"},
+    {file = "pyvista-0.43.2-py3-none-any.whl", hash = "sha256:798a62eddb307e09d18e86ee75141fd8bc90d497bb5da9695fdc52f69ebac204"},
+    {file = "pyvista-0.43.2.tar.gz", hash = "sha256:8e39040c356669fcd814ca10df775d0dbf17910c116cc6ec5f43431274201f77"},
 ]
 
 [package.dependencies]
@@ -5059,13 +5059,13 @@ reference = "mirrors"
 
 [[package]]
 name = "trimesh"
-version = "4.0.8"
+version = "4.0.9"
 description = "Import, export, process, analyze and view triangular meshes."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "trimesh-4.0.8-py3-none-any.whl", hash = "sha256:20635143b657240e446d88952c979ee493a9602d882a55c217fcee907ac38f6c"},
-    {file = "trimesh-4.0.8.tar.gz", hash = "sha256:16f3050b587782eeb58d93d23e6c581d09b19f160a9ad60079c73fd084fd13c2"},
+    {file = "trimesh-4.0.9-py3-none-any.whl", hash = "sha256:56e2a40d3c28474764b79ef92ab9408628b3571ca39d433deb1d31a83db3cfd9"},
+    {file = "trimesh-4.0.9.tar.gz", hash = "sha256:96750ebab25edd208d61b0dda449403f622764ba0ab5e2a59895951b31c10162"},
 ]
 
 [package.dependencies]
@@ -5078,7 +5078,7 @@ glooey = {version = "*", optional = true, markers = "extra == \"recommend\""}
 httpx = {version = "*", optional = true, markers = "extra == \"easy\""}
 jsonschema = {version = "*", optional = true, markers = "extra == \"easy\""}
 lxml = {version = "*", optional = true, markers = "extra == \"easy\""}
-manifold3d = {version = "*", optional = true, markers = "extra == \"recommend\""}
+manifold3d = {version = ">=2.3.0", optional = true, markers = "extra == \"recommend\""}
 mapbox-earcut = {version = "*", optional = true, markers = "extra == \"easy\""}
 matplotlib = {version = "*", optional = true, markers = "extra == \"test\""}
 meshio = {version = "*", optional = true, markers = "extra == \"recommend\""}
@@ -5102,14 +5102,14 @@ setuptools = {version = "*", optional = true, markers = "extra == \"easy\""}
 shapely = {version = "*", optional = true, markers = "extra == \"easy\""}
 "svg.path" = {version = "*", optional = true, markers = "extra == \"easy\""}
 sympy = {version = "*", optional = true, markers = "extra == \"recommend\""}
-vhacdx = {version = "*", optional = true, markers = "extra == \"recommend\""}
+vhacdx = {version = "*", optional = true, markers = "extra == \"easy\""}
 xatlas = {version = "*", optional = true, markers = "extra == \"recommend\""}
 xxhash = {version = "*", optional = true, markers = "extra == \"easy\""}
 
 [package.extras]
 all = ["trimesh[easy,recommend,test]"]
-easy = ["chardet", "colorlog", "embreex", "httpx", "jsonschema", "lxml", "mapbox-earcut", "networkx", "pillow", "pycollada", "rtree", "scipy", "setuptools", "shapely", "svg.path", "xxhash"]
-recommend = ["glooey", "manifold3d", "meshio", "psutil", "pyglet (<2)", "python-fcl", "scikit-image", "sympy", "vhacdx", "xatlas"]
+easy = ["chardet", "colorlog", "embreex", "httpx", "jsonschema", "lxml", "mapbox-earcut", "networkx", "pillow", "pycollada", "rtree", "scipy", "setuptools", "shapely", "svg.path", "vhacdx", "xxhash"]
+recommend = ["glooey", "manifold3d (>=2.3.0)", "meshio", "psutil", "pyglet (<2)", "python-fcl", "scikit-image", "sympy", "xatlas"]
 test = ["coveralls", "ezdxf", "matplotlib", "mypy", "pyinstrument", "pymeshlab", "pytest", "pytest-cov", "ruff"]
 
 [package.source]
