@@ -8,4 +8,23 @@ channels:
   - pytorch3d
 
 dependencies:
-  - python=3.10
+  - python=3.11
+  - pytorch::pytorch
+  - pytorch::pytorch-cuda=12.1
+  - pytorch3d::pytorch3d
+  - pip:
+      - icecream
+      - loguru
+      - matplotlib
+      - numpy
+      - opencv-python
+      - pydantic
+      - pymeshfix
+      - pyvista[all]
+      - rich
+      - scipy
+      - taichi
+      - tetgen
+      - tqdm
+      - trimesh[all]
+      - typer

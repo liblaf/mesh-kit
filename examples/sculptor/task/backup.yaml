@@ -1,0 +1,25 @@
+version: "3"
+
+vars:
+  REMOTE: "business:/data/CT"
+
+tasks:
+  backup:
+    cmds:
+      - bash "{{.ROOT_DIR}}/scripts/rclone-push.sh" "{{.DATA_DIR}}" "{{.REMOTE}}"
+    sources:
+      - "{{.ROOT_DIR}}/scripts/rclone-push.sh"
+    requires:
+      vars:
+        - DATA_DIR
+        - REMOTE
+
+  recover:
+    cmds:
+      - bash "{{.ROOT_DIR}}/scripts/rclone-pull.sh" "{{.REMOTE}}" "{{.DATA_DIR}}"
+    sources:
+      - "{{.ROOT_DIR}}/scripts/rclone-pull.sh"
+    requires:
+      vars:
+        - DATA_DIR
+        - REMOTE

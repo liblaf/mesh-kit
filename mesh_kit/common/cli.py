@@ -3,9 +3,7 @@ from typing import Optional
 
 import typer
 
-from mesh_kit.common import logging as mk_logging
-
-__all__ = ["add_command", "run"]
+from mesh_kit.common import logging as my_logging
 
 
 def add_command(
@@ -18,7 +16,7 @@ def add_command(
 
 
 def run(command: Callable) -> None:
-    mk_logging.init()
+    my_logging.init()
     if isinstance(command, typer.Typer):
         command()
     else:

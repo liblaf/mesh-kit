@@ -10,7 +10,7 @@ from pyvista.plotting import plotter
 
 from mesh_kit.common import cli, path
 
-COLORS: Sequence[str] = ["green", "red"]
+COLORS: Sequence[str] = ["cyan", "magenta"]
 
 
 def main(
@@ -23,10 +23,10 @@ def main(
         mesh: trimesh.Trimesh = trimesh.load(filepath)
         landmarks: npt.NDArray = np.loadtxt(path.landmarks(filepath))
         color: str = COLORS[i % len(COLORS)]
-        plot.add_mesh(mesh=mesh, color=color, opacity=0.2)
+        plot.add_mesh(mesh=mesh, color=color, opacity=0.5)
         plot.add_point_labels(
             points=landmarks,
-            labels=range(landmarks.shape[0]),
+            labels=range(1, landmarks.shape[0] + 1),
             point_color=color,
             point_size=16,
             render_points_as_spheres=True,
@@ -36,5 +36,4 @@ def main(
 
 
 if __name__ == "__main__":
-    cli.run(main)
     cli.run(main)

@@ -36,11 +36,6 @@ tasks:
       - python "{{.ROOT_DIR}}/cmd/simplify.py" --face-count="{{.FACE_COUNT}}" "01-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
     deps:
       - task: CT-to-mesh
-        vars:
-          COMPONENT: "{{.COMPONENT}}"
-          DATA_DIR: "{{.DATA_DIR}}"
-          STAGE: "{{.STAGE}}"
-          TARGET: "{{.TARGET}}"
     sources:
       - "{{.ROOT_DIR}}/cmd/simplify.py"
       - 01-{{.COMPONENT}}.ply
@@ -59,11 +54,6 @@ tasks:
   annotate-landmarks:
     deps:
       - task: simplify
-        vars:
-          COMPONENT: "{{.COMPONENT}}"
-          DATA_DIR: "{{.DATA_DIR}}"
-          STAGE: "{{.STAGE}}"
-          TARGET: "{{.TARGET}}"
     sources:
       - 02-{{.COMPONENT}}.ply
     generates:
@@ -83,11 +73,6 @@ tasks:
       - python "{{.ROOT_DIR}}/cmd/view_landmarks.py" "02-{{.COMPONENT}}.ply"
     deps:
       - task: annotate-landmarks
-        vars:
-          COMPONENT: "{{.COMPONENT}}"
-          DATA_DIR: "{{.DATA_DIR}}"
-          STAGE: "{{.STAGE}}"
-          TARGET: "{{.TARGET}}"
     requires:
       vars:
         - COMPONENT
@@ -99,21 +84,14 @@ tasks:
 
   align:
     cmds:
-      - python "{{.ROOT_DIR}}/cmd/align.py" --output="03-{{.COMPONENT}}.ply" "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
+      - python "{{.ROOT_DIR}}/cmd/align.py" --output="03-{{.COMPONENT}}.ply" "/{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
     deps:
       - task: template:{{.COMPONENT}}:annotate-landmarks
-        vars:
-          DATA_DIR: "{{.DATA_DIR}}"
       - task: annotate-landmarks
-        vars:
-          COMPONENT: "{{.COMPONENT}}"
-          DATA_DIR: "{{.DATA_DIR}}"
-          STAGE: "{{.STAGE}}"
-          TARGET: "{{.TARGET}}"
     sources:
       - "{{.ROOT_DIR}}/cmd/align.py"
-      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply"
-      - "{{.DATA_DIR}}/template/03-{{.COMPONENT}}-landmarks.txt"
+      - "/{{.DATA_DIR}}/template/03-{{.COMPONENT}}.ply"
+      - "/{{.DATA_DIR}}/template/03-{{.COMPONENT}}-landmarks.txt"
       - 02-{{.COMPONENT}}.ply
       - 02-{{.COMPONENT}}-landmarks.txt
     generates:
@@ -136,11 +114,6 @@ tasks:
       - python "{{.ROOT_DIR}}/cmd/register.py" --component="{{.COMPONENT}}" --output="04-{{.COMPONENT}}.ply" --records="register/{{.COMPONENT}}" "03-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
     deps:
       - task: align
-        vars:
-          COMPONENT: "{{.COMPONENT}}"
-          DATA_DIR: "{{.DATA_DIR}}"
-          STAGE: "{{.STAGE}}"
-          TARGET: "{{.TARGET}}"
     sources:
       - "{{.ROOT_DIR}}/cmd/register.py"
       - 03-{{.COMPONENT}}.ply
@@ -162,11 +135,6 @@ tasks:
       - tetgen -p -Y -q -A -O -z -V -d -N -E -F "04-{{.COMPONENT}}.ply"
     deps:
       - task: register
-        vars:
-          COMPONENT: "{{.COMPONENT}}"
-          DATA_DIR: "{{.DATA_DIR}}"
-          STAGE: "{{.STAGE}}"
-          TARGET: "{{.TARGET}}"
     requires:
       vars:
         - COMPONENT
@@ -180,11 +148,6 @@ tasks:
       - meshlab "04-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
     deps:
       - task: register
-        vars:
-          COMPONENT: "{{.COMPONENT}}"
-          DATA_DIR: "{{.DATA_DIR}}"
-          STAGE: "{{.STAGE}}"
-          TARGET: "{{.TARGET}}"
     requires:
       vars:
         - COMPONENT
@@ -199,11 +162,6 @@ tasks:
       - python "{{.ROOT_DIR}}/cmd/view_records.py" "register/{{.COMPONENT}}" "02-{{.COMPONENT}}.ply"
     deps:
       - task: register
-        vars:
-          COMPONENT: "{{.COMPONENT}}"
-          DATA_DIR: "{{.DATA_DIR}}"
-          STAGE: "{{.STAGE}}"
-          TARGET: "{{.TARGET}}"
     requires:
       vars:
         - COMPONENT

@@ -3,7 +3,7 @@ version: "3"
 tasks:
   download:
     cmds:
-      - wget --output-document="00-{{.COMPONENT}}.ply" "https://github.com/liblaf/sculptor/raw/main/model/template/{{.COMPONENT}}.ply"
+      - wget --output-document="00-{{.COMPONENT}}.ply" "https://raw.githubusercontent.com/liblaf/sculptor/main/model/template/{{.COMPONENT}}.ply"
     generates:
       - 00-{{.COMPONENT}}.ply
     status:
