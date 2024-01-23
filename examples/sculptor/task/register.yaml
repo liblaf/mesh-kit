@@ -111,7 +111,7 @@ tasks:
         silent: true
       - cmd: mkdir --parents "register/{{.COMPONENT}}"
         silent: true
-      - python "{{.ROOT_DIR}}/cmd/register.py" --component="{{.COMPONENT}}" --output="04-{{.COMPONENT}}.ply" --records="register/{{.COMPONENT}}" "03-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
+      - python "{{.ROOT_DIR}}/cmd/register.py" --output="04-{{.COMPONENT}}.ply" --record="register/{{.COMPONENT}}" "03-{{.COMPONENT}}.ply" "02-{{.COMPONENT}}.ply"
     deps:
       - task: align
     sources:

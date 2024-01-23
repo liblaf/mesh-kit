@@ -10,6 +10,10 @@ includes:
     taskfile: task/template.yaml
     vars:
       COMPONENT: face
+  template:skull:
+    taskfile: task/template.yaml
+    vars:
+      COMPONENT: skull
   register:pre:face:
     taskfile: task/register.yaml
     vars:

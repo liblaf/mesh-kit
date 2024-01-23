@@ -129,20 +129,12 @@ def main(
         for filepath in records_filepath
     ]
     source_landmarks: Sequence[npt.NDArray] = [
-        np.loadtxt(
-            filepath.with_stem(filepath.stem + "-source-correspondence").with_suffix(
-                ".txt"
-            )
-        )
+        np.loadtxt(filepath.with_stem(filepath.stem + "-source").with_suffix(".txt"))
         for filepath in records_filepath
     ]
     target: pv.PolyData = pv.read(target_filepath)
     target_landmarks: Sequence[npt.NDArray] = [
-        np.loadtxt(
-            filepath.with_stem(filepath.stem + "-target-correspondence").with_suffix(
-                ".txt"
-            )
-        )
+        np.loadtxt(filepath.with_stem(filepath.stem + "-target").with_suffix(".txt"))
         for filepath in records_filepath
     ]
     plotter: Plotter = Plotter()

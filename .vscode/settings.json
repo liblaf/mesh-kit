@@ -1,1 +1,6 @@
-{ "yaml.schemas": { "https://taskfile.dev/schema.json": "task/*.yaml" } }
+{
+  "yaml.schemas": {
+    "https://taskfile.dev/schema.json": "task/*.yaml"
+  },
+  "python.analysis.typeCheckingMode": "basic"
+}
