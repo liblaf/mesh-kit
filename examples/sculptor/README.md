@@ -1,27 +1,37 @@
 # SCULPTOR
 
-## Pre-Processing
+## Registration
 
 ```mermaid
-flowchart TD
+flowchart
   subgraph Template
-    S0[00]
-    S1[01]
-    S2[02]
-    S3[03]
-    S3S[03 + landmarks]
-    S0 -->|preprocessing| S1 -->|manual refine| S2 -->|MeshFix| S3
-    S3 -->|manual selection| S3S
+    S00[00.Mesh]
+    S01[01.Mesh]
+    S02[02.Mesh]
+    S03[[03.Mesh]]
+    S03L[[03.Mesh + Landmarks]]
   end
   subgraph Target
-    T0[00-CT]
-    T1[01]
-    T2[02]
-    T2S[02 + landmarks]
-    T3S[03 + landmarks]
-    T4[04]
-    T0 -->|CT to mesh| T1 -->|simplify| T2 -->|manual selection| T2S
-    S3S & T2S -->|align| T3S
-    T3S & T2S -->|register| T4
+    T00[00.CT]
+    T01[01.Mesh]
+    T02([02.Mesh])
+    T02L([02.Mesh + Landmarks])
+    A{{Align}}
+    T03L[[03.Mesh + Landmarks]]
+    R{{Register}}
+    T04[[04.Mesh]]
   end
+  S00 --> |Preprocess| S01
+  S01 --> |Edit| S02
+  S02 --> |MeshFix| S03
+  S03 --> |Annotate| S03L
+  T00 --> |CT2Mesh| T01
+  T01 --> |Simplify| T02
+  T02 --> |Annotate| T02L
+  S03L --> |Source| A
+  T02L --> |Target| A
+  A --> T03L
+  T03L --> |Source| R
+  T02L --> |Target| R
+  R --> T04
 ```

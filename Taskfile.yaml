@@ -1,9 +1,10 @@
 version: "3"
 
 tasks:
-  clean:
-    - git clean -d --force --exclude="!.envrc.private" -X
-
   setup:
-    - micromamba --yes create --file="environment.yaml"
-    - micromamba --name="mesh-kit" run poetry install
+    cmds:
+      - micromamba --yes --name "mesh-kit" create --file environment.yaml
+      - micromamba --name "mesh-kit" run poetry install
+    sources:
+      - environment.yaml
+      - poetry.lock

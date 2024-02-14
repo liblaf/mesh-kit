@@ -1,0 +1,1 @@
+POINT_SIZE: int = 32

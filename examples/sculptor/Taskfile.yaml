@@ -1,43 +1,41 @@
 version: "3"
 
 vars:
-  DATA_DIR: '{{joinPath .HOME "Documents" "CT"}}'
+  CMD_DIR: "{{.ROOT_DIR}}/cmd"
+  DATA_DIR: "{{.HOME}}/Documents/CT"
+  TARGET: 赵颖
 
 includes:
-  backup:
-    taskfile: task/backup.yaml
   template:face:
-    taskfile: task/template.yaml
+    taskfile: taskfiles/template.yaml
     vars:
       COMPONENT: face
   template:skull:
-    taskfile: task/template.yaml
+    taskfile: taskfiles/template.yaml
     vars:
       COMPONENT: skull
   register:pre:face:
-    taskfile: task/register.yaml
+    taskfile: taskfiles/register.yaml
     vars:
-      COMPONENT: face
       STAGE: pre
+      COMPONENT: face
   register:pre:skull:
-    taskfile: task/register.yaml
+    taskfile: taskfiles/register.yaml
     vars:
-      COMPONENT: skull
       STAGE: pre
-  register:post:face:
-    taskfile: task/register.yaml
-    vars:
-      COMPONENT: face
-      STAGE: post
-  register:post:skull:
-    taskfile: task/register.yaml
-    vars:
       COMPONENT: skull
+  register:post:face:
+    taskfile: taskfiles/register.yaml
+    vars:
       STAGE: post
+      COMPONENT: face
+  register:post:skull:
+    taskfile: taskfiles/register.yaml
+    vars:
+      STAGE: post
+      COMPONENT: skull
 
 tasks:
   default:
     deps:
-      - register:pre:face:register
-
-run: once
+      - register:pre:face:CT2mesh

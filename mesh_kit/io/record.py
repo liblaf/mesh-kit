@@ -1,3 +1,4 @@
+import functools
 import inspect
 import pathlib
 from collections import defaultdict
@@ -8,9 +9,6 @@ import numpy as np
 import pydantic
 import pyvista as pv
 import trimesh
-from numpy import typing as npt
-
-from mesh_kit.common import testing
 
 counters: MutableMapping = defaultdict(int)
 
@@ -19,36 +17,46 @@ def save(
     data: trimesh.Trimesh | pv.PolyData | pv.ImageData,
     dir: Optional[pathlib.Path],
     *,
-    landmarks: Optional[npt.NDArray] = None,
+    id: Optional[str] = None,
     params: Optional[pydantic.BaseModel] = None,
-    source_positions: Optional[npt.NDArray] = None,
-    target_positions: Optional[npt.NDArray] = None,
 ) -> None:
     if dir is None:
         return
-    frames: Sequence[inspect.FrameInfo] = inspect.stack()
-    frame: inspect.FrameInfo = frames[1]
-    filename: pathlib.Path = pathlib.Path(frame.filename)
-    id: str = f"{filename.stem}-{frame.function}-{frame.lineno}"
+    if id is None:
+        frames: Sequence[inspect.FrameInfo] = inspect.stack()
+        frame: inspect.FrameInfo = frames[1]
+        filename: pathlib.Path = pathlib.Path(frame.filename)
+        id = f"{filename.stem}-{frame.function}-{frame.lineno}"
+    _path = functools.partial(path, dir=dir, index=counters[dir], id=id)
     match data:
-        case trimesh.Trimesh():
-            data.export(dir / f"{counters[dir]:02d}-{id}.ply")
-        case pv.PolyData():
-            data.save(dir / f"{counters[dir]:02d}-{id}.ply")
+        case np.ndarray():
+            np.savetxt(_path(suffix=".txt"))
         case pv.ImageData():
-            data.save(dir / f"{counters[dir]:02d}-{id}.vtk")
+            data.save(_path(suffix=".vtk"))
+        case pv.PolyData():
+            data.save(_path(suffix=".ply"))
+        case trimesh.Trimesh():
+            data.export(_path(suffix=".ply"))
         case _:
             raise NotImplementedError()
-    if landmarks is not None:
-        testing.assert_shape(landmarks.shape, (-1, 3))
-        np.savetxt(dir / f"{counters[dir]:02d}-{id}-landmarks.txt", landmarks)
     if params is not None:
-        params_file: pathlib.Path = dir / f"{counters[dir]:02d}-{id}-params.json"
+        params_file: pathlib.Path = _path(name="params", suffix=".json")
         params_file.write_text(params.model_dump_json())
-    if source_positions is not None:
-        testing.assert_shape(source_positions.shape, (-1, 3))
-        np.savetxt(dir / f"{counters[dir]:02d}-{id}-source.txt", source_positions)
-    if target_positions is not None:
-        testing.assert_shape(target_positions.shape, (-1, 3))
-        np.savetxt(dir / f"{counters[dir]:02d}-{id}-target.txt", target_positions)
     counters[dir] += 1
+
+
+def path(
+    dir: pathlib.Path,
+    index: int,
+    id: Optional[str] = None,
+    name: Optional[str] = None,
+    suffix: Optional[str] = None,
+) -> pathlib.Path:
+    result: pathlib.Path = dir / f"{index:02d}"
+    if id:
+        result = result.with_stem(f"{result.stem}-{id}")
+    if name:
+        result = result.with_stem(f"{result.stem}-{name}")
+    if suffix:
+        result = result.with_suffix(suffix)
+    return result

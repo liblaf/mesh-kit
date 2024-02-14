@@ -8,23 +8,8 @@ channels:
   - pytorch3d
 
 dependencies:
+  - poetry
   - python=3.11
-  - pytorch::pytorch
   - pytorch::pytorch-cuda=12.1
+  - pytorch::pytorch=2.1.0
   - pytorch3d::pytorch3d
-  - pip:
-      - icecream
-      - loguru
-      - matplotlib
-      - numpy
-      - opencv-python
-      - pydantic
-      - pymeshfix
-      - pyvista[all]
-      - rich
-      - scipy
-      - taichi
-      - tetgen
-      - tqdm
-      - trimesh[all]
-      - typer

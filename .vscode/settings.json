@@ -1,6 +1,12 @@
 {
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.typeCheckingMode": "off",
   "yaml.schemas": {
-    "https://taskfile.dev/schema.json": "task/*.yaml"
+    "https://raw.githubusercontent.com/microsoft/vscode-python/main/schemas/conda-environment.json": "environment.yaml",
+    "https://taskfile.dev/schema.json": ["Taskfile.yaml", "taskfiles/*.yaml"]
   },
-  "python.analysis.typeCheckingMode": "basic"
+  "files.associations": {
+    ".envrc.private": "shellscript",
+    "gnumake.h": "c"
+  }
 }
