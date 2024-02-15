@@ -1,8 +1,8 @@
 CMD_DIR  ?= cmd
-DATA_DIR ?= $(HOME)/Documents/CT
+DATA_DIR ?= $(HOME)/Documents/data
 TARGET   ?= $(error TARGET is not set)
 
-TARGET_DIR   := $(DATA_DIR)/$(TARGET)
+TARGET_DIR   := $(DATA_DIR)/targets/$(TARGET)
 TEMPLATE_DIR := $(DATA_DIR)/template
 
 MESH_FIX := MeshFix
@@ -15,4 +15,5 @@ REGISTER := $(PYTHON) $(CMD_DIR)/register.py --watertight
 default: $(TARGET_DIR)/pre/04-face.ply
 default: $(TARGET_DIR)/pre/04-skull.ply
 
-include makefiles/*.mk
+include makefiles/template.mk
+include makefiles/register.mk

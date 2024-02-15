@@ -1,4 +1,4 @@
-TARGET_DIR   := $(DATA_DIR)/$(TARGET)
+TARGET_DIR   := $(DATA_DIR)/targets/$(TARGET)
 TEMPLATE_DIR := $(DATA_DIR)/template
 
 $(TARGET_DIR)/pre/00-CT:
