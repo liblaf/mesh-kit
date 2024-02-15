@@ -1,0 +1,30 @@
+{
+  "steps": [
+    {
+      "weight": { "stiff": 0.03, "landmark": 10.0, "normal": 0.5 },
+      "correspondence": { "threshold": 0.1 },
+      "max_iter": 10,
+      "eps": 1e-4
+    },
+    {
+      "weight": { "stiff": 0.02, "landmark": 5.0, "normal": 0.5 },
+      "correspondence": { "threshold": 0.1 },
+      "max_iter": 10,
+      "eps": 1e-4
+    },
+    {
+      "weight": { "stiff": 0.01, "landmark": 2.5, "normal": 0.5 },
+      "correspondence": { "threshold": 0.1 },
+      "max_iter": 10,
+      "eps": 1e-4
+    },
+    {
+      "weight": { "stiff": 0.001, "landmark": 0.0, "normal": 0.5 },
+      "correspondence": { "threshold": 0.1 },
+      "max_iter": 10,
+      "eps": 1e-4
+    }
+  ],
+  "gamma": 1.0,
+  "watertight": true
+}

@@ -19,8 +19,9 @@ from mesh_kit import convert
 from mesh_kit.common import cli as _cli
 from mesh_kit.pyvista import plotting as _plotting
 from mesh_kit.pyvista.plotting import text as _text
+from mesh_kit.registration import config as _config
 from mesh_kit.registration import correspondence as _correspondence
-from mesh_kit.registration import nricp, utils
+from mesh_kit.registration import utils
 
 SOURCE_COLOR: plotting.ColorLike
 TARGET_COLOR: plotting.ColorLike
@@ -139,7 +140,7 @@ class UI:
         )
 
     def plot_params(self) -> None:
-        params: Optional[nricp.Params] = self.params(self.index)
+        params: Optional[_config.Params] = self.params(self.index)
         text: str = yaml.dump(params.model_dump() if params else None)
         self.plotter.add_text(text, name="params", font_file=_text.monospace())
 
@@ -185,11 +186,11 @@ class UI:
     def target_positions(self) -> npt.NDArray:
         return np.loadtxt(self.dir / "target-positions.txt")
 
-    def params(self, index: int) -> Optional[nricp.Params]:
+    def params(self, index: int) -> Optional[_config.Params]:
         data: Any = read_params(self.dir, index)
         if data is None:
             return None
-        return nricp.Params(**data)
+        return _config.Params(**data)
 
     def correspondence(self, index: int) -> npt.NDArray:
         if index not in self._cache_correspondence:
@@ -210,7 +211,7 @@ class UI:
             )
             source_positions: npt.NDArray = source_mesh.vertices
             if params := self.params(index):
-                valid: npt.NDArray = distances < params.distance_threshold
+                valid: npt.NDArray = distances < params.correspondence.threshold
                 source_positions = source_positions[valid]
                 target_positions = target_positions[valid]
             source_positions = denormalize(source_positions)

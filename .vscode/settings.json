@@ -2,9 +2,17 @@
   "python.analysis.diagnosticMode": "workspace",
   "python.analysis.typeCheckingMode": "off",
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/microsoft/vscode-python/main/schemas/conda-environment.json": "environment.yaml",
+    "https://raw.githubusercontent.com/microsoft/vscode-python/main/schemas/conda-environment.json": [
+      "environment.yaml"
+    ],
     "https://taskfile.dev/schema.json": ["Taskfile.yaml", "taskfiles/*.yaml"]
   },
+  "json.schemas": [
+    {
+      "fileMatch": ["examples/sculptor/data/config.json"],
+      "url": "./schemas/registration.json"
+    }
+  ],
   "files.associations": {
     ".envrc.private": "shellscript",
     "gnumake.h": "c"

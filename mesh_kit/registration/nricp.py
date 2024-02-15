@@ -1,10 +1,9 @@
 import functools
 import pathlib
-from collections.abc import Generator, Sequence
+from collections.abc import Generator
 from typing import Optional
 
 import numpy as np
-import pydantic
 import trimesh
 from loguru import logger
 from numpy import typing as npt
@@ -15,48 +14,10 @@ from trimesh import util
 from mesh_kit import tetgen
 from mesh_kit.common import testing
 from mesh_kit.io import record as _record
+from mesh_kit.registration import config as _config
 from mesh_kit.registration import correspondence
 from mesh_kit.registration import utils as _utils
 from mesh_kit.std import time as _time
-
-
-class Params(pydantic.BaseModel):
-    class Weight(pydantic.BaseModel):
-        stiff: float = 0.01
-        landmark: float = 10
-        normal: float = 0.5
-
-    weight: Weight = pydantic.Field(default_factory=Weight)
-    max_iter: int = 10
-    distance_threshold: float = 0.1
-    eps: float = 1e-4
-
-    def __add__(self, other: "Params") -> "Params":
-        return Params(
-            weight=Params.Weight(
-                stiff=self.weight.stiff + other.weight.stiff,
-                landmark=self.weight.landmark + other.weight.landmark,
-                normal=self.weight.normal + other.weight.normal,
-            ),
-            max_iter=self.max_iter + other.max_iter,
-            distance_threshold=self.distance_threshold + other.distance_threshold,
-            eps=self.eps + other.eps,
-        )
-
-    def __rmul__(self, other: int | float) -> "Params":
-        return Params(
-            weight=Params.Weight(
-                stiff=self.weight.stiff * other,
-                landmark=self.weight.landmark * other,
-                normal=self.weight.normal * other,
-            ),
-            max_iter=int(self.max_iter * other),
-            distance_threshold=self.distance_threshold * other,
-            eps=self.eps * other,
-        )
-
-    def __truediv__(self, other: int | float) -> "Params":
-        return (1.0 / other) * self
 
 
 def nricp_amberg(
@@ -64,12 +25,12 @@ def nricp_amberg(
     target_mesh: trimesh.Trimesh,
     source_landmarks: npt.NDArray,
     target_positions: npt.NDArray,
-    steps: Optional[Sequence[Params]] = None,
-    *,
-    gamma: float = 1.0,
-    watertight: bool = False,
+    config: Optional[_config.Config] = None,
     record_dir: Optional[pathlib.Path] = None,
 ) -> None:
+    if not config:
+        config = _config.Config()
+
     centroid: npt.NDArray = source_mesh.centroid
     scale: float = source_mesh.scale
     _normalize = functools.partial(_utils.normalize, centroid=centroid, scale=scale)
@@ -97,7 +58,7 @@ def nricp_amberg(
     M: sparse.coo_matrix = _node_arc_incidence(source_mesh)
     testing.assert_shape(M.shape, (num_edges, num_vertices))
     # G (Eq. 10)
-    G: npt.NDArray = np.diag([1.0, 1.0, 1.0, gamma])
+    G: npt.NDArray = np.diag([1.0, 1.0, 1.0, config.gamma])
     testing.assert_shape(G.shape, (4, 4))
     # M kronecker G (Eq. 10)
     M_kron_G: sparse.coo_matrix = sparse.kron(M, G)
@@ -108,21 +69,10 @@ def nricp_amberg(
     testing.assert_shape(Dl.shape, (source_landmarks.shape[0], num_vertices * 4))
     testing.assert_shape(Ul.shape, (source_landmarks.shape[0], 3))
 
-    if not steps:
-        steps = [
-            # [0.01, 10, 0.5, 10],
-            # [0.02, 5, 0.5, 10],
-            # [0.03, 2.5, 0.5, 10],
-            # [0.01, 0, 0.0, 10],
-            Params(weight=Params.Weight(stiff=0.01, landmark=10.0, normal=0.5)),
-            Params(weight=Params.Weight(stiff=0.02, landmark=5.0, normal=0.5)),
-            Params(weight=Params.Weight(stiff=0.03, landmark=2.5, normal=0.5)),
-            Params(weight=Params.Weight(stiff=0.01, landmark=0.0, normal=0.0)),
-        ]
-    last_params: Optional[Params] = None
-    for params in steps:
-        if watertight:
-            current_params: Params = params.model_copy(deep=True)
+    last_params: Optional[_config.Params] = None
+    for params in config.steps:
+        if config.watertight:
+            current_params: _config.Params = params.model_copy(deep=True)
             while True:
                 Xs: list[npt.NDArray] = list(
                     _nricp_amber(
@@ -186,7 +136,7 @@ def _nricp_amber(
     Dl: sparse.csr_matrix,
     DN: sparse.csr_matrix,
     M_kron_G: sparse.coo_matrix,
-    params: Params,
+    params: _config.Params,
     Ul: npt.NDArray,
     X: npt.NDArray,
     record_dir: Optional[pathlib.Path] = None,
@@ -215,7 +165,7 @@ def _nricp_amber(
 
         # Data weighting
         vertices_weight: npt.NDArray = np.ones(num_vertices)
-        vertices_weight[distance > params.distance_threshold] = 0.0
+        vertices_weight[distance > params.correspondence.threshold] = 0.0
         # Normal weighting = multiplying weights by cosines^wn
         source_normals: npt.NDArray = DN * X
         testing.assert_shape(source_normals.shape, (num_vertices, 3))

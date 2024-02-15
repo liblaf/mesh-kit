@@ -1,0 +1,41 @@
+{
+  "$defs": {
+    "Correspondence": {
+      "properties": {
+        "threshold": { "default": 0.1, "title": "Threshold", "type": "number" }
+      },
+      "title": "Correspondence",
+      "type": "object"
+    },
+    "Params": {
+      "properties": {
+        "weight": { "$ref": "#/$defs/Weight" },
+        "correspondence": { "$ref": "#/$defs/Correspondence" },
+        "max_iter": { "default": 10, "title": "Max Iter", "type": "integer" },
+        "eps": { "default": 0.0001, "title": "Eps", "type": "number" }
+      },
+      "title": "Params",
+      "type": "object"
+    },
+    "Weight": {
+      "properties": {
+        "stiff": { "default": 0.01, "title": "Stiff", "type": "number" },
+        "landmark": { "default": 10, "title": "Landmark", "type": "number" },
+        "normal": { "default": 0.5, "title": "Normal", "type": "number" }
+      },
+      "title": "Weight",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "steps": {
+      "items": { "$ref": "#/$defs/Params" },
+      "title": "Steps",
+      "type": "array"
+    },
+    "gamma": { "default": 1.0, "title": "Gamma", "type": "number" },
+    "watertight": { "default": false, "title": "Watertight", "type": "boolean" }
+  },
+  "title": "Config",
+  "type": "object"
+}
