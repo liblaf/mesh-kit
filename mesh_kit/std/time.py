@@ -1,7 +1,7 @@
 import functools
 import time
 from collections.abc import Callable
-from typing import Any, Optional
+from typing import Optional, ParamSpec, TypeVar
 
 from loguru import logger
 
@@ -29,9 +29,13 @@ class PerfCounter:
             )
 
 
-def timeit(func: Callable) -> Callable:
+P = ParamSpec("P")
+T = TypeVar("T")
+
+
+def timeit(func: Callable[P, T]) -> Callable[P, T]:
     @functools.wraps(func)
-    def wrapper(*args, **kwargs) -> Any:
+    def wrapper(*args, **kwargs):
         with PerfCounter(name=func.__name__ + "()", depth=2):
             return func(*args, **kwargs)
 

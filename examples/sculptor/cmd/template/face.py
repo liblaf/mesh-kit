@@ -2,11 +2,14 @@ import pathlib
 from typing import Annotated
 
 import numpy as np
+import pymeshfix
+import pyvista as pv
 import trimesh
 import typer
 from numpy import typing as npt
-from trimesh import bounds
+from trimesh import bounds, smoothing
 
+from mesh_kit import convert
 from mesh_kit.common import cli, testing
 
 
@@ -23,6 +26,10 @@ def main(
     face_mask: npt.NDArray = vertex_mask[mesh.faces].all(axis=1)
     testing.assert_shape(face_mask.shape, (mesh.faces.shape[0],))
     mesh.update_faces(face_mask)
+    fix = pymeshfix.MeshFix(pv.wrap(mesh))
+    fix.repair()
+    mesh = convert.polydata2trimesh(fix.mesh)
+    mesh = smoothing.filter_laplacian(mesh)
     mesh.export(output_file)
 
 

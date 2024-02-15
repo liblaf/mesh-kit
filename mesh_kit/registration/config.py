@@ -4,12 +4,14 @@ from collections.abc import Sequence
 
 import pydantic
 
+from mesh_kit.registration import correspondence as _correspondence
+
 
 class Params(pydantic.BaseModel):
     class Weight(pydantic.BaseModel):
-        stiff: float = 0.01
-        landmark: float = 10
-        normal: float = 0.5
+        stiff: float = pydantic.Field(ge=0.0)
+        landmark: float = pydantic.Field(ge=0.0)
+        normal: float = pydantic.Field(ge=0.0, le=1.0)
 
         def __add__(self, other: "Params.Weight") -> "Params.Weight":
             return Params.Weight(
@@ -37,24 +39,12 @@ class Params(pydantic.BaseModel):
 
     weight: Weight = pydantic.Field(default_factory=Weight)
 
-    class Correspondence(pydantic.BaseModel):
-        threshold: float = 0.1
-
-        def __add__(self, other: "Params.Correspondence") -> "Params.Correspondence":
-            return Params.Correspondence(threshold=self.threshold + other.threshold)
-
-        def __sub__(self, other: "Params.Correspondence") -> "Params.Correspondence":
-            return Params.Correspondence(threshold=self.threshold - other.threshold)
-
-        def __rmul__(self, other: int | float) -> "Params.Correspondence":
-            return Params.Correspondence(threshold=other * self.threshold)
-
-        def __truediv__(self, other: int | float) -> "Params.Correspondence":
-            return (1.0 / other) * self
-
-    correspondence: Correspondence = pydantic.Field(default_factory=Correspondence)
-    max_iter: int = 10
-    eps: float = 1e-4
+    correspondence: _correspondence.Config = pydantic.Field(
+        default_factory=_correspondence.Config
+    )
+    max_iter: int = pydantic.Field(default=10, ge=0)
+    eps: float = pydantic.Field(default=1e-4, ge=0.0)
+    rebase: bool = False
 
     def __add__(self, other: "Params") -> "Params":
         return Params(

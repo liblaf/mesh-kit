@@ -1,6 +1,6 @@
 import functools
 from collections.abc import Callable
-from typing import Any
+from typing import Any, ParamSpec, TypeVar
 
 import numpy as np
 from loguru import logger
@@ -8,12 +8,15 @@ from scipy import sparse
 
 from mesh_kit.std import time as _time
 
+P = ParamSpec("P")
+T = TypeVar("T")
 
-def cache(func: Callable) -> None:
+
+def cache(func: Callable[P, T]) -> Callable[P, T]:
     cache: dict[int, Any] = {}
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs) -> Any:
+    def wrapper(*args, **kwargs):
         with _time.PerfCounter():
             key: int = 0
             for arg in args:

@@ -45,32 +45,35 @@ def nricp_amberg(
         np.savetxt(record_dir / "source-landmarks.txt", source_landmarks)
         np.savetxt(record_dir / "target-positions.txt", target_positions)
 
-    # Unknowns 4x3 transformations X (Eq. 1)
-    X: npt.NDArray = _create_X(num_vertices)
-    testing.assert_shape(X.shape, (num_vertices * 4, 3))
-    # D (Eq. 8)
-    D: sparse.csr_matrix = _create_D(source_mesh.vertices)
-    testing.assert_shape(D.shape, (num_vertices, num_vertices * 4))
-    # D but for normal computation from the transformations X
-    DN: sparse.csr_matrix = _create_D(source_mesh.vertex_normals)
-    testing.assert_shape(DN.shape, (num_vertices, num_vertices * 4))
-    # Node-arc incidence (M in Eq. 10)
-    M: sparse.coo_matrix = _node_arc_incidence(source_mesh)
-    testing.assert_shape(M.shape, (num_edges, num_vertices))
-    # G (Eq. 10)
-    G: npt.NDArray = np.diag([1.0, 1.0, 1.0, config.gamma])
-    testing.assert_shape(G.shape, (4, 4))
-    # M kronecker G (Eq. 10)
-    M_kron_G: sparse.coo_matrix = sparse.kron(M, G)
-    testing.assert_shape(M_kron_G.shape, (num_edges * 4, num_vertices * 4))
-    Dl: sparse.csr_matrix
-    Ul: npt.NDArray
-    Dl, Ul = _create_Dl_Ul(D, source_mesh, source_landmarks, target_positions)
-    testing.assert_shape(Dl.shape, (source_landmarks.shape[0], num_vertices * 4))
-    testing.assert_shape(Ul.shape, (source_landmarks.shape[0], 3))
-
     last_params: Optional[_config.Params] = None
-    for params in config.steps:
+    for i, params in enumerate(config.steps):
+        if i == 0 or params.rebase:
+            # Unknowns 4x3 transformations X (Eq. 1)
+            X: npt.NDArray = _create_X(num_vertices)
+            testing.assert_shape(X.shape, (num_vertices * 4, 3))
+            # D (Eq. 8)
+            D: sparse.csr_matrix = _create_D(source_mesh.vertices)
+            testing.assert_shape(D.shape, (num_vertices, num_vertices * 4))
+            # D but for normal computation from the transformations X
+            DN: sparse.csr_matrix = _create_D(source_mesh.vertex_normals)
+            testing.assert_shape(DN.shape, (num_vertices, num_vertices * 4))
+            # Node-arc incidence (M in Eq. 10)
+            M: sparse.coo_matrix = _node_arc_incidence(source_mesh)
+            testing.assert_shape(M.shape, (num_edges, num_vertices))
+            # G (Eq. 10)
+            G: npt.NDArray = np.diag([1.0, 1.0, 1.0, config.gamma])
+            testing.assert_shape(G.shape, (4, 4))
+            # M kronecker G (Eq. 10)
+            M_kron_G: sparse.coo_matrix = sparse.kron(M, G)
+            testing.assert_shape(M_kron_G.shape, (num_edges * 4, num_vertices * 4))
+            Dl: sparse.csr_matrix
+            Ul: npt.NDArray
+            Dl, Ul = _create_Dl_Ul(D, source_mesh, source_landmarks, target_positions)
+            testing.assert_shape(
+                Dl.shape, (source_landmarks.shape[0], num_vertices * 4)
+            )
+            testing.assert_shape(Ul.shape, (source_landmarks.shape[0], 3))
+
         if config.watertight:
             current_params: _config.Params = params.model_copy(deep=True)
             while True:
@@ -124,7 +127,6 @@ def nricp_amberg(
                 )
             )[-1]
             source_mesh.vertices = D * X
-    _record.save(source_mesh, record_dir, id="")
     return _denormalize(source_mesh)
 
 
@@ -151,13 +153,13 @@ def _nricp_amber(
     while not (
         np.isfinite(last_error - error) and (last_error - error) < params.eps
     ) and (params.max_iter is None or iter < params.max_iter):
-        yield X
         _record.save(source_mesh, record_dir, id="", params=params)
+        yield X
         distance: npt.NDArray
         nearest: npt.NDArray
         target_normals: npt.NDArray
         distance, nearest, target_normals = correspondence.correspondence(
-            source_mesh, target_mesh
+            source_mesh, target_mesh, config=params.correspondence
         )
         testing.assert_shape(distance.shape, (num_vertices,))
         testing.assert_shape(nearest.shape, (num_vertices, 3))
@@ -173,7 +175,7 @@ def _nricp_amber(
         testing.assert_shape(dot.shape, (num_vertices,))
         # Normal orientation is only known for meshes as target_mesh
         dot = np.clip(dot, 0.0, 1.0)
-        vertices_weight = vertices_weight * dot**params.weight.normal
+        vertices_weight *= dot**params.weight.normal
 
         # Actual system solve
         X = _solve_system(
@@ -193,6 +195,7 @@ def _nricp_amber(
         error = (error_vec * vertices_weight).mean()
         logger.info("Error: {}", error)
         iter += 1
+    _record.save(source_mesh, record_dir, id="", params=params)
     yield X
 
 

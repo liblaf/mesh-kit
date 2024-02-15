@@ -23,7 +23,7 @@ $(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt: $(TARGET_DIR)/$(1)/02-$(2).ply
 $(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/03-$(2)-landmarks.txt &: $$(TEMPLATE_DIR)/03-$(2).ply $$(TEMPLATE_DIR)/03-$(2)-landmarks.txt $(TARGET_DIR)/$(1)/02-$(2).ply $(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt
 	$(ALIGN) --output "$(TARGET_DIR)/$(1)/03-$(2).ply" "$$(TEMPLATE_DIR)/03-$(2).ply" "$(TARGET_DIR)/$(1)/02-$(2).ply"
 
-$(TARGET_DIR)/$(1)/04-$(2).ply: $(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/03-$(2)-landmarks.txt $(TARGET_DIR)/$(1)/02-$(2).ply $(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt
+$(TARGET_DIR)/$(1)/04-$(2).ply: $(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/03-$(2)-landmarks.txt $(TARGET_DIR)/$(1)/02-$(2).ply $(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt $(REGISTER_DEPS)
 	@ rm --force --recursive --verbose "$$(dir $$@)/register"
 	@ mkdir --parents --verbose "$$(dir $$@)/register"
 	$(REGISTER) --output "$$@" --record-dir "$$(dir $$@)/register" "$(TARGET_DIR)/$(1)/03-$(2).ply" "$(TARGET_DIR)/$(1)/02-$(2).ply"

@@ -206,14 +206,19 @@ class UI:
             target_mesh: trimesh.Trimesh = self.target_mesh_normalized
             distances: npt.NDArray
             target_positions: npt.NDArray
+            if index + 1 < self.num_records:
+                params: _config.Params = self.params(index)
+            else:
+                params: _config.Params = self.params(index - 1)
             distances, target_positions, _ = _correspondence.correspondence(
-                source_mesh=source_mesh, target_mesh=target_mesh
+                source_mesh=source_mesh,
+                target_mesh=target_mesh,
+                config=params.correspondence,
             )
             source_positions: npt.NDArray = source_mesh.vertices
-            if params := self.params(index):
-                valid: npt.NDArray = distances < params.correspondence.threshold
-                source_positions = source_positions[valid]
-                target_positions = target_positions[valid]
+            valid: npt.NDArray = distances < params.correspondence.threshold
+            source_positions = source_positions[valid]
+            target_positions = target_positions[valid]
             source_positions = denormalize(source_positions)
             target_positions = denormalize(target_positions)
             self._cache_correspondence[index] = source_positions, target_positions
