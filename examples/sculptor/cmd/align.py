@@ -1,15 +1,17 @@
 import pathlib
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 import trimesh
 import typer
 from loguru import logger
-from numpy import typing as npt
 from trimesh import registration
 
 from mesh_kit.common import cli as _cli
 from mesh_kit.common import testing
 from mesh_kit.io import landmark as _landmark
+
+if TYPE_CHECKING:
+    from numpy import typing as npt
 
 
 def main(

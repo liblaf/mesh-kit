@@ -24,9 +24,9 @@ $(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/03-$(2)-landmarks.txt &: $$(TE
 	$(ALIGN) --output "$(TARGET_DIR)/$(1)/03-$(2).ply" "$$(TEMPLATE_DIR)/03-$(2).ply" "$(TARGET_DIR)/$(1)/02-$(2).ply"
 
 $(TARGET_DIR)/$(1)/04-$(2).ply: $(TARGET_DIR)/$(1)/03-$(2).ply $(TARGET_DIR)/$(1)/03-$(2)-landmarks.txt $(TARGET_DIR)/$(1)/02-$(2).ply $(TARGET_DIR)/$(1)/02-$(2)-landmarks.txt $(REGISTER_DEPS)
-	@ rm --force --recursive --verbose "$$(dir $$@)/register"
-	@ mkdir --parents --verbose "$$(dir $$@)/register"
-	$(REGISTER) --output "$$@" --record-dir "$$(dir $$@)/register" "$(TARGET_DIR)/$(1)/03-$(2).ply" "$(TARGET_DIR)/$(1)/02-$(2).ply"
+	@ rm --force --recursive --verbose "$$(dir $$@)/register-$(2)"
+	@ mkdir --parents --verbose "$$(dir $$@)/register-$(2)"
+	$(REGISTER) --output "$$@" --record-dir "$$(dir $$@)/register-$(2)" "$(TARGET_DIR)/$(1)/03-$(2).ply" "$(TARGET_DIR)/$(1)/02-$(2).ply"
 endef
 
 $(eval $(call register,pre,face))

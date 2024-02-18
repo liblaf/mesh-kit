@@ -20,7 +20,7 @@ from mesh_kit.registration import utils as _utils
 from mesh_kit.std import time as _time
 
 
-def nricp_amberg(
+def nricp_amberg(  # noqa: PLR0912, PLR0913, PLR0915
     source_mesh: trimesh.Trimesh,
     target_mesh: trimesh.Trimesh,
     source_landmarks: npt.NDArray,
@@ -95,7 +95,7 @@ def nricp_amberg(
                     for X in Xs:
                         source_mesh.vertices = D * X
                         _record.save(
-                            source_mesh, dir=record_dir, id="", params=current_params
+                            source_mesh, record_dir, span="", params=current_params
                         )
                     last_params = current_params.model_copy(deep=True)
                     if current_params == params:
@@ -130,7 +130,7 @@ def nricp_amberg(
     return _denormalize(source_mesh)
 
 
-def _nricp_amber(
+def _nricp_amber(  # noqa: PLR0913
     source_mesh: trimesh.Trimesh,
     target_mesh: trimesh.Trimesh,
     *,
@@ -149,11 +149,11 @@ def _nricp_amber(
 
     last_error: float = np.inf
     error: float = np.inf
-    iter: int = 0
+    cur_iter: int = 0
     while not (
         np.isfinite(last_error - error) and (last_error - error) < params.eps
-    ) and (params.max_iter is None or iter < params.max_iter):
-        _record.save(source_mesh, record_dir, id="", params=params)
+    ) and (params.max_iter is None or cur_iter < params.max_iter):
+        _record.save(source_mesh, record_dir, span="", params=params)
         yield X
         distance: npt.NDArray
         nearest: npt.NDArray
@@ -194,8 +194,8 @@ def _nricp_amber(
         testing.assert_shape(error_vec.shape, (num_vertices,))
         error = (error_vec * vertices_weight).mean()
         logger.info("Error: {}", error)
-        iter += 1
-    _record.save(source_mesh, record_dir, id="", params=params)
+        cur_iter += 1
+    _record.save(source_mesh, record_dir, span="", params=params)
     yield X
 
 
@@ -254,7 +254,7 @@ def _create_Dl_Ul(
 
 
 @_time.timeit
-def _solve_system(
+def _solve_system(  # noqa: PLR0913
     M_kron_G: sparse.coo_matrix,
     D: sparse.csr_matrix,
     vertices_weight: npt.NDArray,

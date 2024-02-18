@@ -1,15 +1,17 @@
 import enum
 import pathlib
 from collections.abc import Mapping
-from typing import Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional
 
-import pyvista as pv
 import typer
 
 from mesh_kit.common import cli as _cli
 from mesh_kit.io import ct as _ct
 from mesh_kit.io import record as _record
 from mesh_kit.pyvista.core import grid as _grid
+
+if TYPE_CHECKING:
+    import pyvista as pv
 
 
 class Component(enum.Enum):

@@ -18,7 +18,7 @@ def main(
     output_file: Annotated[pathlib.Path, typer.Argument(dir_okay=False, writable=True)],
 ) -> None:
     mesh: trimesh.Trimesh = trimesh.load(input_file)
-    vertex_mask: npt.NDArray = mesh.vertices[:, 2] > -50
+    vertex_mask: npt.NDArray = mesh.vertices[:, 2] > -50  # noqa: PLR2004
     testing.assert_shape(vertex_mask.shape, (mesh.vertices.shape[0],))
     vertex_mask &= ~bounds.contains(
         bounds=[[-25, -np.inf, 10], [30, 100, 15]], points=mesh.vertices

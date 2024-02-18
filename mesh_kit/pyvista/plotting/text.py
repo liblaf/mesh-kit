@@ -13,8 +13,9 @@ def find_font(font_family: str) -> str:
     for font in fonts:
         try:
             return font_manager.findfont(font, fallback_to_default=False)
-        except ValueError as e:
-            logger.error(e)
+        except ValueError:  # noqa: PERF203
+            logger.exception()
+    return None
 
 
 monospace = functools.partial(

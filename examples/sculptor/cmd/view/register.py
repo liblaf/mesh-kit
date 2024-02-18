@@ -23,20 +23,19 @@ from mesh_kit.registration import config as _config
 from mesh_kit.registration import correspondence as _correspondence
 from mesh_kit.registration import utils
 
-SOURCE_COLOR: plotting.ColorLike
-TARGET_COLOR: plotting.ColorLike
+
+@functools.cache
+def read_source_mesh(directory: pathlib.Path, index: int) -> pv.PolyData:
+    return pv.read(directory / f"{index:02d}.ply")
 
 
 @functools.cache
-def read_source_mesh(dir: pathlib.Path, index: int) -> pv.PolyData:
-    return pv.read(dir / f"{index:02d}.ply")
-
-
-@functools.cache
-def source_mesh_normalized(dir: pathlib.Path, index: int) -> trimesh.Trimesh:
-    init_mesh: trimesh.Trimesh = convert.polydata2trimesh(read_source_mesh(dir, 0))
+def source_mesh_normalized(directory: pathlib.Path, index: int) -> trimesh.Trimesh:
+    init_mesh: trimesh.Trimesh = convert.polydata2trimesh(
+        read_source_mesh(directory, 0)
+    )
     source_mesh: trimesh.Trimesh = convert.polydata2trimesh(
-        read_source_mesh(dir, index)
+        read_source_mesh(directory, index)
     )
     return utils.normalize(
         source_mesh, centroid=init_mesh.centroid, scale=init_mesh.scale
@@ -44,17 +43,16 @@ def source_mesh_normalized(dir: pathlib.Path, index: int) -> trimesh.Trimesh:
 
 
 @functools.cache
-def read_params(dir: pathlib.Path, index: int) -> Any:
-    file: pathlib.Path = dir / f"{index:02d}-params.json"
+def read_params(directory: pathlib.Path, index: int) -> Any | None:
+    file: pathlib.Path = directory / f"{index:02d}-params.json"
     if file.exists():
         return json.loads(file.read_text())
-    else:
-        return None
+    return None
 
 
 @dataclasses.dataclass(kw_only=True)
 class UI:
-    dir: pathlib.Path
+    directory: pathlib.Path
     plotter: plotting.Plotter = dataclasses.field(default_factory=plotting.Plotter)
     _cache_correspondence: dict[
         int, tuple[npt.NDArray, npt.NDArray]
@@ -63,8 +61,14 @@ class UI:
     _opacity_cycle: itertools.cycle = dataclasses.field(
         default_factory=lambda: itertools.cycle([0.2, 0.5, 1.0])
     )
+    source_color: plotting.ColorLike = dataclasses.field(init=False)
+    target_color: plotting.ColorLike = dataclasses.field(init=False)
 
     def __post_init__(self) -> None:
+        render: plotting.renderer.Renderer = self.plotter.renderer
+        self.source_color = render.next_color
+        self.target_color = render.next_color
+
         def callback(x: float) -> None:
             self.index = x
 
@@ -97,7 +101,7 @@ class UI:
     def plot_source_mesh(self) -> None:
         self.plotter.add_mesh(
             self.source_mesh(index=self.index),
-            color=SOURCE_COLOR,
+            color=self.source_color,
             opacity=self.opacity,
             name="source-mesh",
         )
@@ -105,7 +109,7 @@ class UI:
     def plot_target_mesh(self) -> None:
         self.plotter.add_mesh(
             self.target_mesh,
-            color=TARGET_COLOR,
+            color=self.target_color,
             opacity=self.opacity,
             name="target-mesh",
         )
@@ -119,7 +123,7 @@ class UI:
             points=source_positions,
             labels=[str(i) for i in range(1, num_landmarks + 1)],
             font_size=_plotting.POINT_SIZE,
-            point_color=SOURCE_COLOR,
+            point_color=self.source_color,
             point_size=_plotting.POINT_SIZE,
             name="source-landmarks",
             render_points_as_spheres=True,
@@ -132,7 +136,7 @@ class UI:
             points=self.target_positions,
             labels=[str(i) for i in range(1, num_landmarks + 1)],
             font_size=_plotting.POINT_SIZE,
-            point_color=TARGET_COLOR,
+            point_color=self.target_color,
             point_size=_plotting.POINT_SIZE,
             name="target-landmarks",
             render_points_as_spheres=True,
@@ -157,18 +161,19 @@ class UI:
     @functools.cached_property
     def num_records(self) -> pv.PolyData:
         for i in itertools.count(0):
-            if not (self.dir / f"{i:02d}.ply").is_file():
+            if not (self.directory / f"{i:02d}.ply").is_file():
                 return i
+        return None
 
     def source_mesh(self, index: int) -> pv.PolyData:
-        return read_source_mesh(self.dir, index)
+        return read_source_mesh(self.directory, index)
 
     def source_mesh_normalized(self, index: int) -> trimesh.Trimesh:
-        return source_mesh_normalized(self.dir, index)
+        return source_mesh_normalized(self.directory, index)
 
     @functools.cached_property
     def target_mesh(self) -> pv.PolyData:
-        return pv.read(self.dir / "target.ply")
+        return pv.read(self.directory / "target.ply")
 
     @functools.cached_property
     def target_mesh_normalized(self) -> trimesh.Trimesh:
@@ -180,14 +185,14 @@ class UI:
 
     @functools.cached_property
     def source_landmarks(self) -> npt.NDArray:
-        return np.loadtxt(self.dir / "source-landmarks.txt", dtype=int)
+        return np.loadtxt(self.directory / "source-landmarks.txt", dtype=int)
 
     @functools.cached_property
     def target_positions(self) -> npt.NDArray:
-        return np.loadtxt(self.dir / "target-positions.txt")
+        return np.loadtxt(self.directory / "target-positions.txt")
 
     def params(self, index: int) -> Optional[_config.Params]:
-        data: Any = read_params(self.dir, index)
+        data: Any = read_params(self.directory, index)
         if data is None:
             return None
         return _config.Params(**data)
@@ -254,14 +259,10 @@ class UI:
 
 
 def main(
-    dir: Annotated[pathlib.Path, typer.Argument(exists=True, file_okay=False)],
+    directory: Annotated[pathlib.Path, typer.Argument(exists=True, file_okay=False)],
 ) -> None:
-    global SOURCE_COLOR, TARGET_COLOR
     plotting.set_plot_theme("document_pro")
-    colors: itertools.cycle[dict[str, str]] = plotting.global_theme.color_cycler()
-    SOURCE_COLOR = next(colors)["color"]
-    TARGET_COLOR = next(colors)["color"]
-    ui = UI(dir=dir)
+    ui = UI(directory=directory)
     ui.show()
 
 

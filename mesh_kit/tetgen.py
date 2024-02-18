@@ -1,4 +1,3 @@
-import os
 import pathlib
 import subprocess
 import sys
@@ -27,12 +26,13 @@ def _check_internal(mesh: pv.PolyData | trimesh.Trimesh) -> bool:
     gen = tetgen.TetGen(mesh)
     try:
         gen.tetrahedralize(docheck=1)
-        return True
-    except RuntimeError as e:
-        logger.trace(e)
-        os.remove("_skipped.face")
-        os.remove("_skipped.node")
+    except RuntimeError:
+        logger.exception()
+        pathlib.Path("_skipped.face").unlink(missing_ok=True)
+        pathlib.Path("_skipped.node").unlink(missing_ok=True)
         return False
+    else:
+        return True
 
 
 def _check_external(mesh: pv.PolyData | trimesh.Trimesh) -> bool:
@@ -46,7 +46,7 @@ def _check_external(mesh: pv.PolyData | trimesh.Trimesh) -> bool:
                 filename: pathlib.Path = tmpdir / "mesh.ply"
                 mesh.export(filename, encoding="ascii")
             case _:
-                raise NotImplementedError()
+                raise NotImplementedError
         popen = subprocess.Popen(
             args=["tetgen", "-N", "-E", "-F", "-C", filename],
             stdin=subprocess.DEVNULL,
@@ -55,7 +55,7 @@ def _check_external(mesh: pv.PolyData | trimesh.Trimesh) -> bool:
             text=True,
         )
         for line in popen.stdout:
-            line: str = line.rstrip()
+            line: str = line.rstrip()  # noqa: PLW2901
             if "Warning" in line:
                 logger.warning(line.removeprefix("Warning:").strip())
                 logger.warning(next(popen.stdout).rstrip())

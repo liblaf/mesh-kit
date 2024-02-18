@@ -2,8 +2,19 @@
   "$defs": {
     "Config": {
       "properties": {
-        "threshold": { "default": 0.1, "title": "Threshold", "type": "number" },
-        "normal": { "default": 0.0, "title": "Normal", "type": "number" }
+        "threshold": {
+          "default": 0.1,
+          "minimum": 0.0,
+          "title": "Threshold",
+          "type": "number"
+        },
+        "normal": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Normal",
+          "type": "number"
+        }
       },
       "title": "Config",
       "type": "object"
@@ -12,8 +23,18 @@
       "properties": {
         "weight": { "$ref": "#/$defs/Weight" },
         "correspondence": { "$ref": "#/$defs/Config" },
-        "max_iter": { "default": 10, "title": "Max Iter", "type": "integer" },
-        "eps": { "default": 0.0001, "title": "Eps", "type": "number" },
+        "max_iter": {
+          "default": 10,
+          "minimum": 0,
+          "title": "Max Iter",
+          "type": "integer"
+        },
+        "eps": {
+          "default": 0.0001,
+          "minimum": 0.0,
+          "title": "Eps",
+          "type": "number"
+        },
         "rebase": { "default": false, "title": "Rebase", "type": "boolean" }
       },
       "title": "Params",
@@ -21,10 +42,16 @@
     },
     "Weight": {
       "properties": {
-        "stiff": { "default": 0.01, "title": "Stiff", "type": "number" },
-        "landmark": { "default": 10, "title": "Landmark", "type": "number" },
-        "normal": { "default": 0.5, "title": "Normal", "type": "number" }
+        "stiff": { "minimum": 0.0, "title": "Stiff", "type": "number" },
+        "landmark": { "minimum": 0.0, "title": "Landmark", "type": "number" },
+        "normal": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Normal",
+          "type": "number"
+        }
       },
+      "required": ["stiff", "landmark", "normal"],
       "title": "Weight",
       "type": "object"
     }

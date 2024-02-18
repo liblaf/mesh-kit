@@ -1,16 +1,18 @@
 import json
 import pathlib
-from typing import Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional
 
 import trimesh
 import typer
-from numpy import typing as npt
 
 from mesh_kit.common import cli as _cli
 from mesh_kit.io import landmark as _io_landmark
 from mesh_kit.registration import config as _config
 from mesh_kit.registration import landmark as _landmark
 from mesh_kit.registration import nricp as _nricp
+
+if TYPE_CHECKING:
+    from numpy import typing as npt
 
 
 def main(

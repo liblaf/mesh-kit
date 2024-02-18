@@ -15,7 +15,7 @@ def normalize(
             mesh.apply_scale(1.0 / scale)
             return mesh
         case _:
-            raise NotImplementedError()
+            raise NotImplementedError
 
 
 def denormalize(
@@ -30,4 +30,4 @@ def denormalize(
             mesh.apply_translation(centroid)
             return mesh
         case _:
-            raise NotImplementedError()
+            raise NotImplementedError

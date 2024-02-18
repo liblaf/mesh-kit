@@ -1,15 +1,17 @@
 import pathlib
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 import pyvista as pv
 import typer
-from numpy import typing as npt
 from pyvista.plotting import plotter as _plotter
 from pyvista.plotting import renderer as _renderer
 from pyvista.plotting import themes as _themes
 
 from mesh_kit.common import cli as _cli
 from mesh_kit.io import landmark as _landmark
+
+if TYPE_CHECKING:
+    from numpy import typing as npt
 
 
 def main(

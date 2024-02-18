@@ -1,8 +1,10 @@
-default: ruff schemas
+default: fmt ruff schemas
+
+fmt: fmt/pyproject.toml
 
 ruff:
-	ruff check --fix
 	ruff format
+	ruff check --fix --unsafe-fixes
 
 .PHONY: schemas
 schemas: schemas/registration.json
@@ -14,6 +16,10 @@ setup: environment.yaml poetry.lock
 ###############
 # Auxiliaries #
 ###############
+
+fmt/pyproject.toml: pyproject.toml
+	toml-sort --in-place --all "$<"
+	taplo format --option "reorder_keys=true" --option "reorder_arrays=true" "$<"
 
 schemas/registration.json: mesh_kit/registration/config.py
 	@ mkdir --parents --verbose "$(@D)"
