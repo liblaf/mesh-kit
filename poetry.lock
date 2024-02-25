@@ -3553,31 +3553,31 @@ types = ["typing-extensions"]
 
 [[package]]
 name = "pymeshfix"
-version = "0.16.2"
-description = "Repairs triangular meshes"
+version = "0.16.3"
+description = "Repair triangular meshes using MeshFix"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pymeshfix-0.16.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:2c8ec36e1de69139cb805489787feb6e5e83f7c54ae0c9cd0a6260fb5724d4db"},
-    {file = "pymeshfix-0.16.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:62403ec6fe95cffbcf332f6a24c3ef70918234e9ea725e1f4ac3d92da59f7d7f"},
-    {file = "pymeshfix-0.16.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:803b213eaf1a513da485160e5b78d6ad89e0d4db82debf6b2227bdf272c811ad"},
-    {file = "pymeshfix-0.16.2-cp310-cp310-win_amd64.whl", hash = "sha256:6edd26e899f94544238cd82d50468e67432eb8c3102cc1a4db6fc938f9143da3"},
-    {file = "pymeshfix-0.16.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:54e101ac5a3025c72da70336a078f272096a0b60dc698a0c7321754fd6e10f0c"},
-    {file = "pymeshfix-0.16.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:c41406bf50712014ae1f404ddb3b5e2e8fb93a884da8bd5f63b2617c2f60ccb7"},
-    {file = "pymeshfix-0.16.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:41300b3a9936a580ba0fd0b324d43c6d7842623bec68818474b0d32427119350"},
-    {file = "pymeshfix-0.16.2-cp311-cp311-win_amd64.whl", hash = "sha256:35216f55ec971e5502cd9e3ded6e67b2a29198420f0b0f40821a61947859e30f"},
-    {file = "pymeshfix-0.16.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:16e28f5f508cfa7b2629af6a88db1ddedb36fd3d37b917877a51cc7a313d9807"},
-    {file = "pymeshfix-0.16.2-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:83d54ba97d9fcfa7d0f3ba37af09fc320601824d590cd35454b9164db6c37282"},
-    {file = "pymeshfix-0.16.2-cp37-cp37m-win_amd64.whl", hash = "sha256:e21faec3d3902d8f5f8e4ebaa387324050c85692d4088dcdc8908a8896628280"},
-    {file = "pymeshfix-0.16.2-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:45bf20eb779609647681d39827e1e2b176d2b46a6299bbe4bd5ef5317cf6e2b5"},
-    {file = "pymeshfix-0.16.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:e511d45889d561fdbe8f7df66d0cb56290d4e7ca2af982ddb6982cb5261e3763"},
-    {file = "pymeshfix-0.16.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2d94ac59337e7ac7dd7fbfbbff542b478ecdf50ad61578c80f4d55480e3b3345"},
-    {file = "pymeshfix-0.16.2-cp38-cp38-win_amd64.whl", hash = "sha256:b7ea6a251d7d78ed4dfc2f82d1a76030984be5a6a9d8c10f016d59dcc7f33480"},
-    {file = "pymeshfix-0.16.2-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:5b1d0e08d633192c50e5ff02046c21f552045e66dcaf4d0dd037a17ffa634fae"},
-    {file = "pymeshfix-0.16.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:461866d0a4ed276732807763de211a3264a4e42b29200c8111c9f5f350f4683f"},
-    {file = "pymeshfix-0.16.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:30acfd624caaefa4f33dffe0ad6c7eccf0d4201c82fc1e645d93e6ed56dc3bd2"},
-    {file = "pymeshfix-0.16.2-cp39-cp39-win_amd64.whl", hash = "sha256:c0c02cc3be745da24402782b7face96b5bd6058afcaa23e648fef51f2426d7c1"},
-    {file = "pymeshfix-0.16.2.tar.gz", hash = "sha256:774721f332b42ee1fb45a2c301c4440307674513efa0b03ea45feb2efc9daac6"},
+    {file = "pymeshfix-0.16.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:5a84a1e7c15ddf9dd909ba4b154f1a63ed2aab85f3724fb1b780b96eece0909e"},
+    {file = "pymeshfix-0.16.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:2f281b0a8edd83bb5afef8c4503fb52023b836cebf1f35f5fe67dbc8b1de2c79"},
+    {file = "pymeshfix-0.16.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e156db36a34acf1ed43f10c56e189fb4c672174cd448f64c9eb98d79fff292cf"},
+    {file = "pymeshfix-0.16.3-cp310-cp310-win_amd64.whl", hash = "sha256:9a6f9bc52a40d8c75e1cfbe6e82509573b71546cacfe4907cfbecc40abf9cefe"},
+    {file = "pymeshfix-0.16.3-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:f6b3c7803c7282afc7604a03b7b8ee4a4b90e29ebe7f8c4927e1c69a0e4f09ef"},
+    {file = "pymeshfix-0.16.3-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:ebeff7c8d77c1adc1f8e7e0c6f3700f9d3a5683e6f9942e979acee37585ee5e1"},
+    {file = "pymeshfix-0.16.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ef127df85168fbba6b598284bb42bf198229ccc56fe2bcd8e837806446ca4fd6"},
+    {file = "pymeshfix-0.16.3-cp311-cp311-win_amd64.whl", hash = "sha256:4f035320bf9eaea00cb3284594415e19f86cbe5dfcceda504eeeaa68624f44f9"},
+    {file = "pymeshfix-0.16.3-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:5bc775f7086e6fd8fad35a9fe43638d2dfa0473a9c02cac578df080ffce03760"},
+    {file = "pymeshfix-0.16.3-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:f0fe192fcf277b17276e2b766dff1118cec00d7cb403311fefa9e04d726ebfd8"},
+    {file = "pymeshfix-0.16.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2b84e14eb7093a6e8576a24a6c1b6debaf8126972039b2576987d7c2f61e8ab5"},
+    {file = "pymeshfix-0.16.3-cp312-cp312-win_amd64.whl", hash = "sha256:0ce284912c2b184aeff24bd4dd83fc687c505cd5a3f35dfa2261aeadc2ec9537"},
+    {file = "pymeshfix-0.16.3-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:ad6934e7943ca13f8aac6ed6f5ba28de128e537fe6f2ea03001beb2b6ed87712"},
+    {file = "pymeshfix-0.16.3-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:d2ae6798da0c81cda26dce8ad969967029b4e4bc06ea8bddac6aa2f9f34d4840"},
+    {file = "pymeshfix-0.16.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:58d1747ecf0cba57307eafebda665aaa4569b2cb22b4ba7d777c0cbb9abe7748"},
+    {file = "pymeshfix-0.16.3-cp38-cp38-win_amd64.whl", hash = "sha256:1ae4285ec2f265f5a707600e7be80d901de715c7233ab47c49dc7eea7f13e213"},
+    {file = "pymeshfix-0.16.3-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:88de0c8dce381ccca9d34f79483792c96df4457576e4ba4747e5ec84584b82d3"},
+    {file = "pymeshfix-0.16.3-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:fe5a3d5d2ff094449a31cff33dd67b821ee73e0e3fff1c74c656f92f150315f4"},
+    {file = "pymeshfix-0.16.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9c834bc444f1aeb6db36c2a16d346d934152251caa13b611c1789128edfcc48d"},
+    {file = "pymeshfix-0.16.3-cp39-cp39-win_amd64.whl", hash = "sha256:2efe17da3ee9842ec713041e2ddebb01af40a806d47761c836f3d579ee131cb9"},
 ]
 
 [package.dependencies]
