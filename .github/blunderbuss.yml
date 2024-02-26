@@ -7,4 +7,5 @@ assign_prs:
   - liblaf
 
 ignore_authors:
-  - dependabot
+  - dependabot[bot]
+  - renovate[bot]
