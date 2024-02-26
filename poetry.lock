@@ -1108,8 +1108,8 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.26.0b1", markers = "python_version >= \"3.12\""},
     {version = "*", markers = "python_version < \"3.12\""},
+    {version = ">=1.26.0b1", markers = "python_version >= \"3.12\""},
 ]
 
 [[package]]
@@ -2229,8 +2229,8 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.26.0b1", markers = "python_version >= \"3.12\""},
     {version = "*", markers = "python_version < \"3.12\""},
+    {version = ">=1.26.0b1", markers = "python_version >= \"3.12\""},
 ]
 
 [[package]]
@@ -3740,8 +3740,8 @@ files = [
 [package.dependencies]
 Cython = "*"
 numpy = [
-    {version = ">=1.26.0b1", markers = "python_version >= \"3.12\""},
     {version = "*", markers = "python_version < \"3.12\""},
+    {version = ">=1.26.0b1", markers = "python_version >= \"3.12\""},
 ]
 
 [[package]]
@@ -4722,31 +4722,26 @@ typing = ["mypy (>=1.6,<2.0)", "traitlets (>=5.11.1)"]
 
 [[package]]
 name = "tetgen"
-version = "0.6.3"
+version = "0.6.4"
 description = "Python interface to tetgen"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "tetgen-0.6.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:8aaa7d1e7e8ead62ebb5e3b319e0464cbd3253726762e6ebaa249b19dde24b3b"},
-    {file = "tetgen-0.6.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:521a3c37a7fbeedb64a4b1ac8110dd0535fbfbc7f8cdf28a795430bf902ba802"},
-    {file = "tetgen-0.6.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e7109ad4fc6b883aac5352383cef0a3e80bb72af03c2da46b0d1ed46eea71e86"},
-    {file = "tetgen-0.6.3-cp310-cp310-win_amd64.whl", hash = "sha256:6403a4f89279e5e27f34ccc9aefa1f912a35f3fac7961f8b02e4da8c28b41838"},
-    {file = "tetgen-0.6.3-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:cf8856654df0db2de9c580f5e19e60bf21fadbec8d516c8b32632173c3e22ca3"},
-    {file = "tetgen-0.6.3-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:33569f8f85c0178158337f813e47ef346e1fc66c056142a17b0cab5395ac7ff1"},
-    {file = "tetgen-0.6.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e01f1462539516cf0a347c7122f4d821f9ef9019e3828978a2f046ffcac5f62b"},
-    {file = "tetgen-0.6.3-cp311-cp311-win_amd64.whl", hash = "sha256:bbdf0b9cb7fa94a4b1b76c14883d9a2377f3f28d154e45218deb26bfeaede837"},
-    {file = "tetgen-0.6.3-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:470de47949071c572679d5890f8f9deaa1ac3392607402975153ba9d9a186653"},
-    {file = "tetgen-0.6.3-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:36efbdbd6e3d82530ee2fff6091b54f87bfadcec13983ae577ff4a250f71d8fe"},
-    {file = "tetgen-0.6.3-cp37-cp37m-win_amd64.whl", hash = "sha256:2189d44770abed4a167f32f9d272d724cf746695a106cf366b43646aa7ad168b"},
-    {file = "tetgen-0.6.3-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:73c1e6825a3828f32b8507b70f9575507730f6583fd4811ac65eb1b5f5a9b1f4"},
-    {file = "tetgen-0.6.3-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:a621cb4fceee86f3e754075e80433f8124c8ab1db4dd4567a5e624526c250e0e"},
-    {file = "tetgen-0.6.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:867e220047b6cb8f8ffa2468f69c88a06c170a02634e93cdde6ce75a249e3f48"},
-    {file = "tetgen-0.6.3-cp38-cp38-win_amd64.whl", hash = "sha256:d2aed209652f2bcd5a438092885edc5a5ac643e217aef3573962802dfbaa8041"},
-    {file = "tetgen-0.6.3-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:c01b792361d497592c0f2595ab2bfb18e8a1bc6a2cef7bf9461cddf5ed81daa1"},
-    {file = "tetgen-0.6.3-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:ca98f44f436278e250a3a96fa347f9c81c54d5794632c587b194c6335f2d7bfc"},
-    {file = "tetgen-0.6.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4432348b1ffe8a1c1927e7fe13d2e178e97c25eb3881cdc9c59760cb169cf133"},
-    {file = "tetgen-0.6.3-cp39-cp39-win_amd64.whl", hash = "sha256:5a21e744d2a2021396e577122a0b6ba72f4322e903005d10470b9facf31167b0"},
-    {file = "tetgen-0.6.3.tar.gz", hash = "sha256:9be6ac805a3250c1ccf4c02fec24da2def9de5a214c33cb3aa977689c08a26e5"},
+    {file = "tetgen-0.6.4-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:696abda7472f5ed58148bc37c774546ee418346eeb3fb994778ccefa1a9c6596"},
+    {file = "tetgen-0.6.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4d16523a8a3981c77de19890a2331951c4fa78574ae74a1d5905d3ab79d01982"},
+    {file = "tetgen-0.6.4-cp310-cp310-win_amd64.whl", hash = "sha256:b7c9522b9c18b9778b7aec72b47db9ba9a60792b427a77a69dc9f0b2e62820ca"},
+    {file = "tetgen-0.6.4-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:d75a35219184a7a99ff1eea753212d1db5b5331f33a64e00eb6b26d7c683a7bc"},
+    {file = "tetgen-0.6.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:37c7a10c7365dbbf5e9bebe79f096ab44be3bd3f65e285dc28e757429ad40a02"},
+    {file = "tetgen-0.6.4-cp311-cp311-win_amd64.whl", hash = "sha256:f2fad7dedca0b4af62711f4906901e665d82d36b3240a88a2a7d2d40b57a9253"},
+    {file = "tetgen-0.6.4-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:cf4bc060c6a9330acd36fb053d08e47c76488b0ac5a5e7296636b9137f83395a"},
+    {file = "tetgen-0.6.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6ee7c61430e121d489ee4c2997cd3b4ff8ab4dd812baf5e3997091ffb2178920"},
+    {file = "tetgen-0.6.4-cp312-cp312-win_amd64.whl", hash = "sha256:e0bec4fc7ce5620b805f3be7bea43321d1c76dcae53b57a1097e523825699f7e"},
+    {file = "tetgen-0.6.4-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:d56954947417b6b2de3bca291151decdb4a8ab579775d4c362c21afae17e65f3"},
+    {file = "tetgen-0.6.4-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:90cd7a9e3d4d08283c36d6bc9d85ffcdfcec3e0cba385e73f72255cf27e1a4e8"},
+    {file = "tetgen-0.6.4-cp38-cp38-win_amd64.whl", hash = "sha256:404a05135b3fd331048deaec5ee8a5cd8d8a7365c442961a080c5a6c1c8e586a"},
+    {file = "tetgen-0.6.4-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:a5fc93db4f910129953d93150fc824ecf08c76c3d4638ffce3af0a10d6001ee5"},
+    {file = "tetgen-0.6.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:77fae8b30296e761a75ce52ab6eba649ffd9e45f7fbddc4f3cfd4f1dce7178a1"},
+    {file = "tetgen-0.6.4-cp39-cp39-win_amd64.whl", hash = "sha256:401f4ec0c832365ec471670c781907845d64255b03a662934a88a0b9e81d62d2"},
 ]
 
 [package.dependencies]
