@@ -8,26 +8,27 @@ import tetgen
 import trimesh
 from loguru import logger
 
-from mesh_kit.std import time as _time
+from mesh_kit import log as _log
+from mesh_kit import polydata as _poly
 
 
-@_time.timeit
+@_log.timeit
 def check(mesh: pv.PolyData | trimesh.Trimesh) -> bool:
     try:
         return _check_external(mesh)
-    except Exception as e:
+    except FileNotFoundError as e:
         logger.trace(e)
         return _check_internal(mesh)
 
 
 def _check_internal(mesh: pv.PolyData | trimesh.Trimesh) -> bool:
     if not isinstance(mesh, pv.PolyData):
-        mesh = pv.wrap(mesh)
+        mesh = _poly.as_polydata(mesh)
     gen = tetgen.TetGen(mesh)
     try:
         gen.tetrahedralize(docheck=1)
     except RuntimeError:
-        logger.exception()
+        logger.exception("")
         pathlib.Path("_skipped.face").unlink(missing_ok=True)
         pathlib.Path("_skipped.node").unlink(missing_ok=True)
         return False
@@ -40,10 +41,10 @@ def _check_external(mesh: pv.PolyData | trimesh.Trimesh) -> bool:
         tmpdir = pathlib.Path(_tmpdir)
         match mesh:
             case pv.PolyData():
-                filename: pathlib.Path = tmpdir / "mesh.ply"
+                filename = tmpdir / "mesh.ply"
                 mesh.save(filename, binary=False)
             case trimesh.Trimesh():
-                filename: pathlib.Path = tmpdir / "mesh.ply"
+                filename = tmpdir / "mesh.ply"
                 mesh.export(filename, encoding="ascii")
             case _:
                 raise NotImplementedError
@@ -54,8 +55,9 @@ def _check_external(mesh: pv.PolyData | trimesh.Trimesh) -> bool:
             stderr=sys.stderr,
             text=True,
         )
+        assert popen.stdout
         for line in popen.stdout:
-            line: str = line.rstrip()  # noqa: PLW2901
+            line = line.rstrip()  # noqa: PLW2901
             if "Warning" in line:
                 logger.warning(line.removeprefix("Warning:").strip())
                 logger.warning(next(popen.stdout).rstrip())

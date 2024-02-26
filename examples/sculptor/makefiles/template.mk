@@ -6,7 +6,7 @@ $(TEMPLATE_DIR)/00-$(1).ply:
 	wget --output-document="$$@" "https://raw.githubusercontent.com/liblaf/sculptor/main/model/template/$(1).ply"
 
 $(TEMPLATE_DIR)/01-$(1).ply: $(TEMPLATE_DIR)/00-$(1).ply $$(CMD_DIR)/template/$(1).py
-	$$(PYTHON) "$$(CMD_DIR)/template/$(1).py" "$$<" "$$@"
+	$$(PYTHON) "$$(CMD_DIR)/template/$(1).py" $$(PREPROCESS_FLAGS) "$$<" "$$@"
 
 $(TEMPLATE_DIR)/02-$(1).ply: $(TEMPLATE_DIR)/01-$(1).ply
 	$$(info Manual Edit: "$$<" -> "$$@")
@@ -21,6 +21,9 @@ $(TEMPLATE_DIR)/03-$(1)-landmarks.txt: $(TEMPLATE_DIR)/03-$(1).ply
 	test -s "$$@"
 	touch "$$@"
 	test "$$@" -nt "$$<"
+
+$(TEMPLATE_DIR)/04-$(1).ply $(TEMPLATE_DIR)/04-$(1).npz &: $(TEMPLATE_DIR)/03-$(1).ply $(TEMPLATE_DIR)/03-$(1)-landmarks.txt
+	$$(PACK) "$$<" "$$@"
 endef
 
 $(eval $(call template,face))

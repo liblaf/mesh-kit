@@ -1,17 +1,15 @@
 import enum
 import pathlib
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import Annotated, Optional
 
+import pyvista as pv
 import typer
 
-from mesh_kit.common import cli as _cli
-from mesh_kit.io import ct as _ct
+from mesh_kit import cli as _cli
+from mesh_kit import imagedata as _img
+from mesh_kit.io import imagedata as _io
 from mesh_kit.io import record as _record
-from mesh_kit.pyvista.core import grid as _grid
-
-if TYPE_CHECKING:
-    import pyvista as pv
 
 
 class Component(enum.Enum):
@@ -34,23 +32,22 @@ def main(
     output_file: Annotated[pathlib.Path, typer.Argument(dir_okay=False, writable=True)],
     *,
     component: Annotated[Component, typer.Option()],
+    progress: Annotated[bool, typer.Option()] = True,
     record_dir: Annotated[
         Optional[pathlib.Path],
         typer.Option(exists=True, file_okay=False, writable=True),
     ] = None,
 ) -> None:
-    data: pv.ImageData = _ct.read(ct_path)
-    data = _grid.pad(data)
-    _record.save(data, record_dir)
-    data = data.gaussian_smooth(progress_bar=True)
-    _record.save(data, record_dir)
+    data: pv.ImageData = _io.read(ct_path)
+    data = _img.pad(data)
+    _record.write(data, record_dir)
+    data = data.gaussian_smooth(progress_bar=progress)
+    _record.write(data, record_dir)
     contour: pv.PolyData = data.contour(
-        isosurfaces=[component.threshold], progress_bar=True
+        isosurfaces=[component.threshold], progress_bar=progress
     )
-    _record.save(contour, record_dir)
-    contour: pv.PolyData = contour.connectivity(
-        extraction_mode="largest", progress_bar=True
-    )
+    _record.write(contour, record_dir)
+    contour = contour.connectivity(extraction_mode="largest", progress_bar=progress)
     contour.save(output_file)
 
 

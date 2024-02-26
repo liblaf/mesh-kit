@@ -2,59 +2,25 @@ import functools
 import inspect
 import pathlib
 from collections import defaultdict
-from collections.abc import MutableMapping, Sequence
-from typing import Optional
 
 import numpy as np
 import pydantic
 import pyvista as pv
 import trimesh
 
-counters: MutableMapping = defaultdict(int)
+from mesh_kit.io import trimesh as _io_tri
+
+_counters: defaultdict = defaultdict(int)
 
 
-def save(
-    data: trimesh.Trimesh | pv.PolyData | pv.ImageData,
-    directory: Optional[pathlib.Path],
-    *,
-    span: Optional[str] = None,
-    params: Optional[pydantic.BaseModel] = None,
-) -> None:
-    if directory is None:
-        return
-    if span is None:
-        frames: Sequence[inspect.FrameInfo] = inspect.stack()
-        frame: inspect.FrameInfo = frames[1]
-        filename: pathlib.Path = pathlib.Path(frame.filename)
-        span = f"{filename.stem}-{frame.function}-{frame.lineno}"
-    _path = functools.partial(
-        path, directory=directory, index=counters[directory], span=span
-    )
-    match data:
-        case np.ndarray():
-            np.savetxt(_path(suffix=".txt"))
-        case pv.ImageData():
-            data.save(_path(suffix=".vtk"))
-        case pv.PolyData():
-            data.save(_path(suffix=".ply"))
-        case trimesh.Trimesh():
-            data.export(_path(suffix=".ply"))
-        case _:
-            raise NotImplementedError
-    if params is not None:
-        params_file: pathlib.Path = _path(name="params", suffix=".json")
-        params_file.write_text(params.model_dump_json())
-    counters[directory] += 1
-
-
-def path(
+def _path(
     directory: pathlib.Path,
-    index: int,
-    span: Optional[str] = None,
-    name: Optional[str] = None,
-    suffix: Optional[str] = None,
+    idx: int,
+    span: str | None = None,
+    name: str | None = None,
+    suffix: str | None = None,
 ) -> pathlib.Path:
-    result: pathlib.Path = directory / f"{index:02d}"
+    result: pathlib.Path = directory / f"{idx:02d}"
     if span:
         result = result.with_stem(f"{result.stem}-{span}")
     if name:
@@ -62,3 +28,45 @@ def path(
     if suffix:
         result = result.with_suffix(suffix)
     return result
+
+
+def _write(
+    data,
+    directory: pathlib.Path,
+    idx: int,
+    span: str | None = None,
+    name: str | None = None,
+) -> None:
+    path = functools.partial(_path, directory=directory, idx=idx, span=span, name=name)
+    match data:
+        case np.ndarray():
+            np.save(path(suffix=".npy"), data)
+        case pv.ImageData():
+            data.save(path(suffix=".vtk"))
+        case pv.PolyData():
+            data.save(path(suffix=".ply"))
+        case pydantic.BaseModel():
+            path(suffix=".json").write_text(data.model_dump_json(indent=2))
+        case trimesh.Trimesh():
+            _io_tri.write(path(suffix=".ply"), data)
+        case _:
+            raise NotImplementedError
+
+
+def write(
+    data, directory: pathlib.Path | None, *, span: str | None = None, **kwargs
+) -> None:
+    if directory is None:
+        return
+    if span is None:
+        frames: list[inspect.FrameInfo] = inspect.stack()
+        frame: inspect.FrameInfo = frames[1]
+        filename: pathlib.Path = pathlib.Path(frame.filename)
+        span = f"{filename.stem}-{frame.function}-{frame.lineno}"
+    write = functools.partial(
+        _write, directory=directory, idx=_counters[directory], span=span
+    )
+    write(data)
+    for k, v in kwargs.items():
+        write(v, name=k)
+    _counters[directory] += 1
