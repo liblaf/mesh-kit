@@ -1,5 +1,6 @@
 {
   "words": [
+    "acvd",
     "amberg",
     "arange",
     "bcolor",
@@ -17,7 +18,6 @@
     "envrc",
     "fira",
     "furb",
-    "gomod",
     "hstack",
     "icosphere",
     "idna",
@@ -38,6 +38,7 @@
     "numpy",
     "pipenv",
     "platformdirs",
+    "pyacvd",
     "pybuilder",
     "pycache",
     "pydantic",

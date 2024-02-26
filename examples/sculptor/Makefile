@@ -8,17 +8,16 @@ TEMPLATE_DIR := $(DATA_DIR)/template
 MESH_FIX := MeshFix
 PYTHON   := python
 
-PREPROCESS_FLAGS := --smooth
-PACK             := $(PYTHON) "$(CMD_DIR)/pack.py" --mask-value 0.0
+PREPROCESS_FLAGS :=
+PACK             := $(PYTHON) "$(CMD_DIR)/pack.py" --mask-value 0.1
 CT2MESH          := $(PYTHON) "$(CMD_DIR)/CT2mesh.py"
 ALIGN            := $(PYTHON) "$(CMD_DIR)/align.py"
 REGISTER         := $(PYTHON) "$(CMD_DIR)/register.py"
 
-# default: $(TEMPLATE_DIR)/04-face.ply
-# default: $(TEMPLATE_DIR)/04-skull.ply
 default: $(TARGET_DIR)/pre/05-face.ply
+default: $(TARGET_DIR)/pre/05-skull.ply
 default: $(TARGET_DIR)/post/05-face.ply
-# default: $(TARGET_DIR)/post/05-skull.ply
+default: $(TARGET_DIR)/post/05-skull.ply
 
 include makefiles/template.mk
 include makefiles/register.mk

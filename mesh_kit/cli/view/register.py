@@ -69,9 +69,11 @@ def nearest(directory: pathlib.Path, index: int) -> tuple[npt.NDArray, npt.NDArr
     distance, target_positions, target_normals = _nearest.nearest(
         source_mesh=source_mesh, target_mesh=target_mesh, config=params.nearest
     )
-    threshold: float | npt.NDArray = source_attrs.get(
-        "vert:distance-threshold", params.nearest.threshold
-    )
+    threshold: float | npt.NDArray
+    if "vert:distance-threshold" in source_attrs:
+        threshold = params.nearest.threshold * source_attrs["vert:distance-threshold"]
+    else:
+        threshold = params.nearest.threshold
     mask: npt.NDArray = distance < threshold
     return source_mesh.vertices[mask], target_positions[mask]
 

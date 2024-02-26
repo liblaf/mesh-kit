@@ -15,7 +15,7 @@ def main(
     input_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
     output_file: Annotated[pathlib.Path, typer.Argument(dir_okay=False, writable=True)],
     *,
-    mask_value: Annotated[float, typer.Option()] = 0.0,
+    mask_value: Annotated[float, typer.Option()] = 0.1,
 ) -> None:
     mesh: trimesh.Trimesh
     attrs: dict[str, npt.NDArray]

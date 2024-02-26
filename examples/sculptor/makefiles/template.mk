@@ -28,3 +28,7 @@ endef
 
 $(eval $(call template,face))
 $(eval $(call template,skull))
+
+$(TEMPLATE_DIR)/04-skull.ply: $(TEMPLATE_DIR)/03-skull-mask.ply
+$(TEMPLATE_DIR)/03-skull-mask.ply: $(TEMPLATE_DIR)/00-skull.ply
+	$(PYTHON) "$(CMD_DIR)/template/skull_mask.py" "$<" "$@"
