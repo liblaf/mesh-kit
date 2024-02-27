@@ -4958,13 +4958,13 @@ trame-client = "*"
 
 [[package]]
 name = "trimesh"
-version = "4.1.5"
+version = "4.1.6"
 description = "Import, export, process, analyze and view triangular meshes."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "trimesh-4.1.5-py3-none-any.whl", hash = "sha256:612da95d848c54b2fdae6ef4a102cec17ce5f5d71c8ed1fb386b820af6755d03"},
-    {file = "trimesh-4.1.5.tar.gz", hash = "sha256:9bb421c7cbdd400b6f06d252fb89d0412874aa7a7f4d15e8721fd626093fec42"},
+    {file = "trimesh-4.1.6-py3-none-any.whl", hash = "sha256:a60930ce6da72b5697bdc954a54f8903e16f78a0d8c08ecead79ab5214cb15e4"},
+    {file = "trimesh-4.1.6.tar.gz", hash = "sha256:a6cf7dfb7243c8ab81db91b5861a3a302943169e3c37f7416ab1d95297192b7d"},
 ]
 
 [package.dependencies]
@@ -5001,6 +5001,7 @@ setuptools = {version = "*", optional = true, markers = "extra == \"easy\""}
 shapely = {version = "*", optional = true, markers = "extra == \"easy\""}
 "svg.path" = {version = "*", optional = true, markers = "extra == \"easy\""}
 sympy = {version = "*", optional = true, markers = "extra == \"recommend\""}
+typeguard = {version = ">=4.1.2", optional = true, markers = "extra == \"test\""}
 vhacdx = {version = "*", optional = true, markers = "extra == \"easy\""}
 xatlas = {version = "*", optional = true, markers = "extra == \"easy\""}
 xxhash = {version = "*", optional = true, markers = "extra == \"easy\""}
@@ -5009,7 +5010,7 @@ xxhash = {version = "*", optional = true, markers = "extra == \"easy\""}
 all = ["trimesh[easy,recommend,test]"]
 easy = ["chardet", "colorlog", "embreex", "httpx", "jsonschema", "lxml", "mapbox-earcut", "networkx", "pillow", "pycollada", "rtree", "scipy", "setuptools", "shapely", "svg.path", "vhacdx", "xatlas", "xxhash"]
 recommend = ["glooey", "manifold3d (>=2.3.0)", "meshio", "psutil", "pyglet (<2)", "python-fcl", "scikit-image", "sympy"]
-test = ["coveralls", "ezdxf", "matplotlib", "mypy", "pyinstrument", "pymeshlab", "pytest", "pytest-cov", "ruff"]
+test = ["coveralls", "ezdxf", "matplotlib", "mypy", "pyinstrument", "pymeshlab", "pytest", "pytest-cov", "ruff", "typeguard (>=4.1.2)"]
 
 [[package]]
 name = "trove-classifiers"
