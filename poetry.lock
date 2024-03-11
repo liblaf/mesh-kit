@@ -354,6 +354,66 @@ filecache = ["filelock (>=3.8.0)"]
 redis = ["redis (>=2.10.5)"]
 
 [[package]]
+name = "cascadio"
+version = "0.0.10"
+description = "Convert STEP files to GLB using OpenCASCADE"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "cascadio-0.0.10-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:7bbc8f43baf4f57e074d8cd78b02e7778b9f454f0c5a565074fd730be8fbd43f"},
+    {file = "cascadio-0.0.10-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:77dc1c431966aba0570c838fcdc6a3507a6e2f71e3c369d45b7ccca836e64fc3"},
+    {file = "cascadio-0.0.10-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:50bf8c76c4915c22dbfe60b000091e9b96eeddf34b219224e16e766165b9b6c2"},
+    {file = "cascadio-0.0.10-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7bf091388195ea7607199d329944dc7b23ed89411eaeff84e804b13b8e8c039d"},
+    {file = "cascadio-0.0.10-cp310-cp310-win_amd64.whl", hash = "sha256:7e1f1a89e2e5a30476ef33d20d93c4bdf78e3f57ff2f53a01c2c386c6965e65e"},
+    {file = "cascadio-0.0.10-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:7e779969a999b533070933983196f3049d81f2a47e1b34d456085e757fc3b581"},
+    {file = "cascadio-0.0.10-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:043af0aa82224d20ea2950c43200bd0fa0664952576787b67e980c56d3c183fa"},
+    {file = "cascadio-0.0.10-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1cdb39cbf1c3e95e247d4b1b82433649200202c38686092c585682c635966fbb"},
+    {file = "cascadio-0.0.10-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:192165639ef205588f51d009f85d8b962b36eb6dd952fced462707eb8cb570a7"},
+    {file = "cascadio-0.0.10-cp311-cp311-win_amd64.whl", hash = "sha256:b28ca431566d7b6c03c64ddbb3a24e990a1e957025c92a01a5d89766bb6448d2"},
+    {file = "cascadio-0.0.10-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:9278fae8efdf7529b945432a054e86e686b6d710bfc1a140144be8e1ac21df91"},
+    {file = "cascadio-0.0.10-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ed37d29e5af6579c143264ee64b7bad58a3c40e3fc76ea9d36df5257db71d191"},
+    {file = "cascadio-0.0.10-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:cd4944af637764a313fe4e4b2a6cecb21b70ddf5ad88b070b0458c3437e4e296"},
+    {file = "cascadio-0.0.10-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cfc026c332440e5fe20de5288729192fdff2e68167001f93f1fe04eea401d4b7"},
+    {file = "cascadio-0.0.10-cp312-cp312-win_amd64.whl", hash = "sha256:4cde8980dc64ef14f97365a9d0fb8c7493cbb0017f0e9aff6f1300bf44a9a8d2"},
+    {file = "cascadio-0.0.10-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:ac64cc0e6609ca3cd43bf805235ce568274b637825179092c890bf8cd9146868"},
+    {file = "cascadio-0.0.10-cp37-cp37m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:064b63e6e2c1215a8f239005df9790c5abde9e259b941cb55546be5ad005320e"},
+    {file = "cascadio-0.0.10-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:758753e9f15be994e0056c95720c52595a824aee9ad7f861589751fa8dde8803"},
+    {file = "cascadio-0.0.10-cp37-cp37m-win_amd64.whl", hash = "sha256:fa5139663483a54644a35654ee432c8bf62792216f474d78011641052f0f2cdd"},
+    {file = "cascadio-0.0.10-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:77f2d0d3545bba09901ed6065b58436be4f391de49e77d915fb5f55a8edd0a12"},
+    {file = "cascadio-0.0.10-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:7a809af9a31c05ba3e4702b14df4c58bc83e188b070cd102696857c35e6a53c2"},
+    {file = "cascadio-0.0.10-cp38-cp38-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a2e5217be3e64826c3e81d1956d3463ed2ea3f7f1187b887ed0da5f719e36572"},
+    {file = "cascadio-0.0.10-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9cda85c04216a2b6ad872b72240db98ba997335f1c83f29fe6e3c6408fe7a84b"},
+    {file = "cascadio-0.0.10-cp38-cp38-win_amd64.whl", hash = "sha256:7377a0826d5db0e775551253aec1c28093f2fa0b9d7e61397a25c473829dddde"},
+    {file = "cascadio-0.0.10-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:8ae5e4fed3a8827c42c84c2e44317e79237421eb6dd59b69367b121b4fa6b3b1"},
+    {file = "cascadio-0.0.10-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:99b42a15ce70c49c201535043aeaefe2f0d4daa1cbe289073555a5378e25182d"},
+    {file = "cascadio-0.0.10-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:82d73daf4ad7e5d29f8f2ea7477d707b0573ac609916c1dfa73c3f44b90a084d"},
+    {file = "cascadio-0.0.10-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7cf6927558106278e81ec3186cdc37ccf21a27c8503face9942b08748dbe2a58"},
+    {file = "cascadio-0.0.10-cp39-cp39-win_amd64.whl", hash = "sha256:58cf301ec70d85d0f84edf4358e73064d4bba311bb9cbe6d398aed93078a6e04"},
+    {file = "cascadio-0.0.10-pp310-pypy310_pp73-macosx_10_9_x86_64.whl", hash = "sha256:5b40cb0eeeef57e0c1dd571f6b866eb393a6d96fe8f9efe819356c5ef32fde51"},
+    {file = "cascadio-0.0.10-pp310-pypy310_pp73-macosx_11_0_arm64.whl", hash = "sha256:a055efcafda8bdf16274892c4ee3ee9bdc3f56b25755da4f7f028bfeeae9fa58"},
+    {file = "cascadio-0.0.10-pp310-pypy310_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0cdba705fa4056789590157f27a3e1c444eb6ad22f44acce6801677c387ba7b8"},
+    {file = "cascadio-0.0.10-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:702d24add3dc847a9e6229875b624f63506f464e0e87ab0cf526ab99791c2442"},
+    {file = "cascadio-0.0.10-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:09dceaa83e7dee8fdc2c620d5d2512f1b44281ea9aa4f1946c4224288bfb0cfc"},
+    {file = "cascadio-0.0.10-pp37-pypy37_pp73-macosx_10_9_x86_64.whl", hash = "sha256:56b482eb3b5d39a637bbf4c944f7d4d676a8e902a32bc91dd8f6390910b10ef3"},
+    {file = "cascadio-0.0.10-pp37-pypy37_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5cc634825e7ebf79b60df9f773e413a1d96e8955d949393a45efbc9da4cb1c8d"},
+    {file = "cascadio-0.0.10-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:40536bc856a019b0bbb807fb4b0cd87ab53feab67d8c01e5fdf51c4ac866c8bb"},
+    {file = "cascadio-0.0.10-pp37-pypy37_pp73-win_amd64.whl", hash = "sha256:277c7e8f89c4f022dbf191e151469f518bb9480b42320953f6d4cad377019ed8"},
+    {file = "cascadio-0.0.10-pp38-pypy38_pp73-macosx_10_9_x86_64.whl", hash = "sha256:bed20426d841fa9d69577c58f70e2f7c3956eba87f12238161621a59780c0529"},
+    {file = "cascadio-0.0.10-pp38-pypy38_pp73-macosx_11_0_arm64.whl", hash = "sha256:a4e794715ac1732bb1ab5aae8f218ee08c8537b6aa1dea099d1bf5b81f9623dc"},
+    {file = "cascadio-0.0.10-pp38-pypy38_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4cb31059363fb4b7fa410930245682f1e0e701b8cd046cd9e6b5c7fd759fe652"},
+    {file = "cascadio-0.0.10-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0a2bd17453e5f7f12ff2b2534c6de5f288ff84386911acd5c5e9e50132ab174e"},
+    {file = "cascadio-0.0.10-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:0b3ed9e8365f1512ecfcd47603931d0fe3b3b3f1a0a72395332aa517944d6153"},
+    {file = "cascadio-0.0.10-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:7bdd9d6deed79c9fe54c39ff85e29695ad0c55f9e7702051912b51bb3abb2a80"},
+    {file = "cascadio-0.0.10-pp39-pypy39_pp73-macosx_11_0_arm64.whl", hash = "sha256:8ff0d3a57067fee7acfc61c76c6bcfaeb1e42a348198bad77d4f62175503a68e"},
+    {file = "cascadio-0.0.10-pp39-pypy39_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:6c3e45d8aab7ab1409cedb054a8517f5916e012bcebb1f805211cfa48993615a"},
+    {file = "cascadio-0.0.10-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b124df06e73ec8a36b4ab7661d2317603924e1e4cae24947db4db18b245ca24b"},
+    {file = "cascadio-0.0.10-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:57a96830bbfafb306066fb2f2d2ccf3800dcebade5ab762c948219857ccb0e10"},
+]
+
+[package.extras]
+tests = ["pytest", "trimesh"]
+
+[[package]]
 name = "certifi"
 version = "2024.2.2"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -2914,6 +2974,22 @@ files = [
 ]
 
 [[package]]
+name = "openctm"
+version = "0.0.4"
+description = "Provide a loader for OpenCTM files"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "openctm-0.0.4-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:307191bcdf855b1e3c076c69d1f6f85ecf582303668bd662b07a0b49a6fb1276"},
+    {file = "openctm-0.0.4-py3-none-manylinux2014_i686.whl", hash = "sha256:19fa224084d8f7a032cb5a2cca138891e695dfc62ddbb289de0e478f600bee03"},
+    {file = "openctm-0.0.4-py3-none-manylinux2014_x86_64.whl", hash = "sha256:d07fc870f6489fee8ebb92d572e35e61f882680f916420330a90c82e1c9e79b1"},
+    {file = "openctm-0.0.4-py3-none-win_amd64.whl", hash = "sha256:e10e84033025e30f09a317191980c18a56386ebb940a5b3c6948e63343f8bca5"},
+]
+
+[package.extras]
+tests = ["pytest", "trimesh"]
+
+[[package]]
 name = "overrides"
 version = "7.7.0"
 description = "A decorator to automatically detect mismatch when overriding a method."
@@ -4958,16 +5034,17 @@ trame-client = "*"
 
 [[package]]
 name = "trimesh"
-version = "4.1.8"
+version = "4.2.0"
 description = "Import, export, process, analyze and view triangular meshes."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "trimesh-4.1.8-py3-none-any.whl", hash = "sha256:58fc9c724cb803d487b325bf2138473bdc76772310559edb18cd21d13d3990f0"},
-    {file = "trimesh-4.1.8.tar.gz", hash = "sha256:a06d147a3a947bef0e72049917f2e7fd00bbd0689f8871e4908e447a53c5fb40"},
+    {file = "trimesh-4.2.0-py3-none-any.whl", hash = "sha256:119673cb17749c078cc821b30651b71e6c66610ed1e34c79b73332951543152e"},
+    {file = "trimesh-4.2.0.tar.gz", hash = "sha256:b92ea854d4be24137ad521150f02d00e809feb44b0a9757bf37d44d89fa16fb2"},
 ]
 
 [package.dependencies]
+cascadio = {version = "*", optional = true, markers = "extra == \"recommend\""}
 chardet = {version = "*", optional = true, markers = "extra == \"easy\""}
 colorlog = {version = "*", optional = true, markers = "extra == \"easy\""}
 coveralls = {version = "*", optional = true, markers = "extra == \"test\""}
@@ -4984,6 +5061,7 @@ meshio = {version = "*", optional = true, markers = "extra == \"recommend\""}
 mypy = {version = "*", optional = true, markers = "extra == \"test\""}
 networkx = {version = "*", optional = true, markers = "extra == \"easy\""}
 numpy = "*"
+openctm = {version = "*", optional = true, markers = "extra == \"recommend\""}
 pillow = {version = "*", optional = true, markers = "extra == \"easy\""}
 psutil = {version = "*", optional = true, markers = "extra == \"recommend\""}
 pycollada = {version = "*", optional = true, markers = "extra == \"easy\""}
@@ -5009,7 +5087,7 @@ xxhash = {version = "*", optional = true, markers = "extra == \"easy\""}
 [package.extras]
 all = ["trimesh[easy,recommend,test]"]
 easy = ["chardet", "colorlog", "embreex", "httpx", "jsonschema", "lxml", "mapbox-earcut", "networkx", "pillow", "pycollada", "rtree", "scipy", "setuptools", "shapely", "svg.path", "vhacdx", "xatlas", "xxhash"]
-recommend = ["glooey", "manifold3d (>=2.3.0)", "meshio", "psutil", "pyglet (<2)", "python-fcl", "scikit-image", "sympy"]
+recommend = ["cascadio", "glooey", "manifold3d (>=2.3.0)", "meshio", "openctm", "psutil", "pyglet (<2)", "python-fcl", "scikit-image", "sympy"]
 test = ["coveralls", "ezdxf", "matplotlib", "mypy", "pyinstrument", "pymeshlab", "pytest", "pytest-cov", "ruff", "typeguard (>=4.1.2)"]
 
 [[package]]
