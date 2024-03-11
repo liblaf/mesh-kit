@@ -5,9 +5,12 @@ pip = ">=24.0,<25"
 [dependencies]
 loguru = ">=0.7.2,<0.8"
 numpy = ">=1.26.4,<1.27"
+pytest = ">=8.1.1,<8.2"
 python = "3.11.*"
 pyvista = ">=0.43.3,<0.44"
 scipy = ">=1.12.0,<1.13"
+trimesh = ">=4.1.8,<4.2"
+typeguard = ">=4.1.5,<4.2"
 typer = ">=0.9.0,<0.10"
 
 [project]
@@ -21,8 +24,6 @@ version = "0.0.0"
 [pypi-dependencies]
 meshtaichi-patcher = "*"
 taichi = "*"
-trimesh = { extras = ["all"], version = "*" }
-typeguard = "*"
 
 [tasks]
 post-install = "pip install --no-deps --editable . --no-build-isolation --disable-pip-version-check"

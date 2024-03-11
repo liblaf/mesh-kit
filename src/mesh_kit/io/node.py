@@ -5,8 +5,7 @@ from typing import NamedTuple
 
 import numpy as np
 from numpy import typing as npt
-
-from mesh_kit.io import utils as _utils
+from trimesh import util
 
 
 class Node(NamedTuple):
@@ -16,7 +15,7 @@ class Node(NamedTuple):
 
 
 def from_str(text: str, *, zero: bool = True) -> Node:
-    lines: list[str] = _utils.splitlines(text)
+    lines: list[str] = util.comment_strip(text).splitlines()
     # <# of points> <dimension (3)> <# of attributes> <boundary markers (0 or 1)>
     num_points: int
     dimension: int

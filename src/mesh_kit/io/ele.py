@@ -3,8 +3,7 @@ from typing import NamedTuple
 
 import numpy as np
 from numpy import typing as npt
-
-from mesh_kit.io import utils as _utils
+from trimesh import util
 
 
 class Ele(NamedTuple):
@@ -13,7 +12,7 @@ class Ele(NamedTuple):
 
 
 def from_str(text: str, *, zero: bool = True) -> Ele:
-    lines: list[str] = _utils.splitlines(text)
+    lines: list[str] = util.comment_strip(text).splitlines()
     # <# of tetrahedra> <nodes per tet. (4 or 10)> <region attribute (0 or 1)>
     num_tetrahedra: int
     nodes_per_tet: int
