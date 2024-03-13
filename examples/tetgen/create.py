@@ -16,7 +16,7 @@ def main(
     face.export(output_dir / "pre-face.ply")
     skull: trimesh.Trimesh = creation.icosphere(radius=1)
     skull.export(output_dir / "pre-skull.ply")
-    skull.vertices[skull.vertices[:, 1] < 0] += [0.1, 0, 0]
+    skull.vertices[skull.vertices[:, 1] < 0] += [0.5, 0, 0]
     skull.export(output_dir / "post-skull.ply")
 
 

@@ -22,6 +22,8 @@ def _calc_stiffness_kernel(mesh: ti.template()):
         for i in ti.static(range(4)):
             p = [c.verts[(i + j) % 4].pos for j in range(1, 4)]
             Mi = p[0].cross(p[1]) + p[1].cross(p[2]) + p[2].cross(p[0])
+            if Mi.dot(c.verts[i].pos - p[0]) > 0:
+                Mi = -Mi
             M[i, :] = Mi
             c.verts[i].K += (
                 1

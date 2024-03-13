@@ -8,11 +8,11 @@ import taichi as ti
 import trimesh
 from trimesh import creation
 
+from mesh_kit.linalg import cg
 from mesh_kit.physics import elastic, mtm
 
 E: float = 3000
 nu: float = 0.47
-ti.init()
 
 
 def test_force(tmp_path: pathlib.Path) -> None:
@@ -34,6 +34,7 @@ def test_force(tmp_path: pathlib.Path) -> None:
             "K": ti.math.mat3,
             "x": ti.math.vec3,
             "f": ti.math.vec3,
+            "b": ti.math.vec3,
         }
     )
     pos: ti.MatrixField = mesh.verts.get_member_field("pos")
@@ -44,27 +45,27 @@ def test_force(tmp_path: pathlib.Path) -> None:
     @ti.kernel
     def _x(mesh: ti.template(), x: ti.template()):
         for v in mesh.verts:
-            for i in ti.static(range(3)):
-                v.x[i] = x[v.id * 3 + i]
+            v.x = x[v.id]
+            # for i in ti.static(range(3)):
+            #     v.x[i] = x[v.id * 3 + i]
 
     @no_type_check
     @ti.kernel
     def _Ax(mesh: ti.template(), Ax: ti.template()):
         for v in mesh.verts:
-            for i in ti.static(range(3)):
-                Ax[v.id * 3 + i] = v.f[i]
+            Ax[v.id] = v.f
+            # for i in ti.static(range(3)):
+            #     Ax[v.id * 3 + i] = v.f[i]
 
-    def calc_force(x: ti.ScalarField, Ax: ti.ScalarField) -> None:
+    def calc_force(x: ti.MatrixField, Ax: ti.MatrixField) -> None:
         _x(mesh, x)
         mtm.calc_force(mesh)
         _Ax(mesh, Ax)
 
-    b: ti.ScalarField = ti.field(float, shape=(len(mesh.verts) * 3,))
+    b: ti.MatrixField = mesh.verts.get_member_field("b")
     b.fill(0)
-    x: ti.ScalarField = ti.field(float, shape=(len(mesh.verts) * 3,))
+    x: ti.MatrixField = mesh.verts.get_member_field("x")
     rng: np.random.Generator = np.random.default_rng()
-    x.from_numpy(rng.random(size=x.shape))
-    ti.linalg.MatrixFreeCG(
-        ti.linalg.LinearOperator(calc_force), b, x, tol=1e-6, quiet=False
-    )
-    np.testing.assert_allclose(x.to_numpy(), np.zeros(shape=x.shape), atol=1e-5)
+    x.from_numpy(rng.random(size=(*x.shape, 3)))
+    cg.MatrixFreeCG(ti.linalg.LinearOperator(calc_force), b, x, tol=1e-8, quiet=False)
+    np.testing.assert_allclose(x.to_numpy(), np.zeros(shape=(*x.shape, 3)), atol=1e-6)

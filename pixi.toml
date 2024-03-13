@@ -9,9 +9,19 @@ pytest = ">=8.1.1,<8.2"
 python = "3.11.*"
 pyvista = ">=0.43.3,<0.44"
 scipy = ">=1.12.0,<1.13"
-trimesh = ">=4.1.8,<4.2"
 typeguard = ">=4.1.5,<4.2"
 typer = ">=0.9.0,<0.10"
+
+[environments]
+test = ["test"]
+
+[feature.test.dependencies]
+ruff = ">=0.3.2,<0.4"
+
+[feature.test.tasks]
+fmt = "ruff format"
+lint = "ruff check --fix"
+style = { depends_on = ["fmt", "lint"] }
 
 [project]
 authors = ["liblaf <30631553+liblaf@users.noreply.github.com>"]
@@ -19,11 +29,11 @@ channels = ["conda-forge", "nvidia", "pytorch", "pytorch3d"]
 description = "Add a short description here"
 name = "mesh-kit"
 platforms = ["linux-64"]
-version = "0.0.0"
+version = "0.0.1"
 
 [pypi-dependencies]
 meshtaichi-patcher = "*"
 taichi = "*"
 
 [tasks]
-post-install = "pip install --no-deps --editable . --no-build-isolation --disable-pip-version-check"
+post-install = 'pip install "trimesh[all]"; pip install --no-deps --editable . --no-build-isolation --disable-pip-version-check'

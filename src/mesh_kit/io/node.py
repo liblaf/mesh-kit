@@ -21,9 +21,9 @@ def from_str(text: str, *, zero: bool = True) -> Node:
     dimension: int
     num_attrs: int
     boundary_markers: int
-    num_points, dimension, num_attrs, boundary_markers = [
+    num_points, dimension, num_attrs, boundary_markers = (
         int(s) for s in lines[0].split()
-    ]
+    )
     assert dimension == 3
     points: npt.NDArray = np.full((num_points, dimension), np.nan)
     attrs: npt.NDArray | None = (
@@ -62,6 +62,7 @@ def to_str(
     attrs: npt.NDArray | None = None,
     boundary_marker: npt.NDArray | None = None,
     zero: bool = True,
+    comment: bool = True,
 ) -> str:
     num_points: int
     dimension: int
@@ -71,11 +72,13 @@ def to_str(
     boundary_markers = 1 if boundary_marker is not None else 0
     fp = io.StringIO()
     fprint = functools.partial(print, file=fp)
-    fprint(
-        "# <# of points> <dimension (3)> <# of attributes> <boundary markers (0 or 1)>"
-    )
+    if comment:
+        fprint(
+            "# <# of points> <dimension (3)> <# of attributes> <boundary markers (0 or 1)>"  # noqa: E501
+        )
     fprint(num_points, dimension, num_attrs, boundary_markers)
-    fprint("# <point #> <x> <y> <z> [attributes] [boundary marker]")
+    if comment:
+        fprint("# <point #> <x> <y> <z> [attributes] [boundary marker]")
     for i, point in enumerate(points):
         if not zero:
             i += 1
@@ -95,7 +98,14 @@ def save(
     attrs: npt.NDArray | None = None,
     boundary_marker: npt.NDArray | None = None,
     zero: bool = True,
+    comment: bool = True,
 ) -> None:
     file.write_text(
-        to_str(points, attrs=attrs, boundary_marker=boundary_marker, zero=zero)
+        to_str(
+            points,
+            attrs=attrs,
+            boundary_marker=boundary_marker,
+            zero=zero,
+            comment=comment,
+        )
     )

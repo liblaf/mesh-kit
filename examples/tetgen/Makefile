@@ -1,7 +1,7 @@
 PYTHON := python
 TETGEN := tetgen -p -Y -q -A -O -z -C -V
 
-default: data/post.1.node
+default: data/post.ply
 
 #####################
 # Auxiliary Targets #
@@ -22,3 +22,9 @@ data/pre.ply: data/pre.1.node data/pre.1.ele export.py
 
 data/post.1.node: data/pre.1.node data/pre-skull.ply data/post-skull.ply solve.py
 	$(PYTHON) "solve.py" --pre "data/pre-skull.ply" --post "data/post-skull.ply" "$<"
+
+data/post.1.ele: data/pre.1.ele
+	@ cp --verbose "$<" "$@"
+
+data/post.ply: data/post.1.node data/post.1.ele export.py
+	$(PYTHON) "export.py" --output "$@" "$<"

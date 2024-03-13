@@ -17,7 +17,7 @@ def from_str(text: str, *, zero: bool = True) -> Ele:
     num_tetrahedra: int
     nodes_per_tet: int
     region_attribute: int
-    num_tetrahedra, nodes_per_tet, region_attribute = [int(s) for s in lines[0].split()]
+    num_tetrahedra, nodes_per_tet, region_attribute = (int(s) for s in lines[0].split())
     tetrahedra: npt.NDArray = np.full((num_tetrahedra, nodes_per_tet), -1, int)
     attr: npt.NDArray | None = (
         np.full((num_tetrahedra,), -1, int) if region_attribute else None

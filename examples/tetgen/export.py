@@ -14,7 +14,7 @@ from numpy import typing as npt
 @ti.kernel
 def get_faces_all(mesh: ti.template(), faces: ti.template()):
     for f in mesh.faces:
-        faces[f.id] = [f.verts[i].id for i in range(3)]
+        faces[f.id] = [f.verts[i].id for i in ti.static(range(3))]
 
 
 @no_type_check
@@ -22,7 +22,7 @@ def get_faces_all(mesh: ti.template(), faces: ti.template()):
 def get_faces(mesh: ti.template(), faces: ti.template()):
     for f in mesh.faces:
         if f.cells.size == 1:
-            faces[f.id] = [f.verts[i].id for i in range(3)]
+            faces[f.id] = [f.verts[i].id for i in ti.static(range(3))]
 
 
 def main(
@@ -33,7 +33,7 @@ def main(
     ],
     interior: Annotated[bool, typer.Option()] = True,
 ) -> None:
-    ti.init()
+    ti.init(debug=True)
     mesh: ti.MeshInstance = meshtaichi_patcher.load_mesh(str(file), ["FC", "FV"])
     faces: ti.MatrixField = ti.Vector.field(3, int, shape=(len(mesh.faces),))
     faces.fill(-1)
