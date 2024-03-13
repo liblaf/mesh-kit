@@ -45,7 +45,7 @@ def main(
     output = trimesh.Trimesh(
         mesh.get_position_as_numpy(), faces_numpy[np.all(faces_numpy >= 0, axis=1)]
     )
-    output.export(output_file)
+    output.export(output_file, encoding="ascii")
 
 
 if __name__ == "__main__":
