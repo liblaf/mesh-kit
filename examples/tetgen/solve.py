@@ -6,6 +6,7 @@ import numpy as np
 import scipy.sparse.linalg
 import taichi as ti
 import trimesh
+import trimesh.registration
 import typer
 from icecream import ic
 from mesh_kit import cli, points
@@ -150,14 +151,15 @@ def main(
     x: ti.MatrixField = mtm.mesh.verts.get_member_field("x")
     x.fill(0)
     x_free_np: npt.NDArray
+    pos_np: npt.NDArray = mtm.mesh.get_position_as_numpy()
     fixed: ti.MatrixField = mtm.mesh.verts.get_member_field("fixed")
     fixed_np: npt.NDArray = fixed.to_numpy()
-    translation = np.mean(
-        fixed_np[mtm.fixed_mask] - mtm.mesh.get_position_as_numpy()[mtm.fixed_mask],
-        axis=0,
+    matrix, _, cost = trimesh.registration.procrustes(
+        pos_np[mtm.fixed_mask], fixed_np[mtm.fixed_mask]
     )
-    print(translation)
-    x0: npt.NDArray = np.tile(translation, reps=np.count_nonzero(mtm.free_mask))
+    ic(cost)
+    transformed = trimesh.transform_points(pos_np, matrix)
+    x0: npt.NDArray = (transformed[mtm.free_mask] - pos_np[mtm.free_mask]).flatten()
     print(x0)
     x_free_np, info = scipy.sparse.linalg.minres(
         Operator(float, mtm=mtm),

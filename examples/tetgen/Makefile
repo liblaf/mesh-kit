@@ -8,7 +8,7 @@ default: data/pre.ply data/post.ply data/post-surface.ply
 #####################
 
 DATA_DIR := $(HOME)/Documents/data
-TARGET_DIR := $(DATA_DIR)/targets/赵颖
+TARGET_DIR := $(DATA_DIR)/targets/*
 
 # data/pre-face.ply data/pre-skull.ply data/post-skull.ply &: create.py
 # 	mkdir --parents --verbose "$(@D)"
