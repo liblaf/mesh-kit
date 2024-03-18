@@ -13,11 +13,14 @@ def main(
         pathlib.Path, typer.Argument(exists=True, file_okay=False, writable=True)
     ],
 ) -> None:
-    face: trimesh.Trimesh = creation.box(extents=np.full(shape=(3,), fill_value=2))
+    # face: trimesh.Trimesh = creation.box(extents=np.full(shape=(3,), fill_value=0.2))
+    face: trimesh.Trimesh = creation.icosphere(radius=0.2)
     face.export(output_dir / "pre-face.ply")
-    skull: trimesh.Trimesh = creation.box(radius=np.full(shape=(3,), fill_value=1))
+    # skull: trimesh.Trimesh = creation.box(extents=np.full(shape=(3,), fill_value=0.1))
+    skull: trimesh.Trimesh = creation.icosphere(radius=0.1)
     skull.export(output_dir / "pre-skull.ply")
-    skull.vertices[skull.vertices[:, 1] < 0] += [0.2, 0, 0]
+    skull.vertices[skull.vertices[:, 1] < 0] += [0.03, 0, 0]
+    # skull.vertices *= 0.5
     skull.export(output_dir / "post-skull.ply")
 
 

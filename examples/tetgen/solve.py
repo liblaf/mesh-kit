@@ -3,13 +3,13 @@ from typing import Annotated, no_type_check
 
 import meshtaichi_patcher
 import numpy as np
+import scipy.sparse.linalg
 import taichi as ti
 import trimesh
 import typer
 from icecream import ic
 from mesh_kit import cli, points
 from mesh_kit.io import node
-from mesh_kit.linalg import cg
 from mesh_kit.physics import mtm as _mtm
 from mesh_kit.typing import check_type as _t
 from numpy import typing as npt
@@ -46,13 +46,14 @@ class MTM(_mtm.MTM):
         fixed: ti.MatrixField = self.mesh.verts.get_member_field("fixed")
         pre_skull: trimesh.Trimesh = _t(trimesh.Trimesh, trimesh.load(pre_skull_file))
         post_skull: trimesh.Trimesh = _t(trimesh.Trimesh, trimesh.load(post_skull_file))
+        # post_skull.apply_translation(pre_skull.centroid - post_skull.centroid)
         fixed_np: npt.NDArray = np.full((len(self.mesh.verts), 3), np.nan)
         fixed_idx: npt.NDArray = points.position2idx(
             self.mesh.get_position_as_numpy(), pre_skull.vertices
         )
         self.fixed_mask = np.full(len(self.mesh.verts), False)
         self.fixed_mask[fixed_idx] = True
-        fixed_np[self.fixed_mask] = post_skull.vertices
+        fixed_np[fixed_idx] = post_skull.vertices
         fixed.from_numpy(fixed_np)
 
     def calc_b(self) -> None:
@@ -66,6 +67,10 @@ class MTM(_mtm.MTM):
         self._calc_Ax_kernel()
         Ax_mesh: ti.MatrixField = self.mesh.verts.get_member_field("Ax")
         Ax.copy_from(Ax_mesh)
+
+    @property
+    def free_mask(self) -> npt.NDArray:
+        return ~self.fixed_mask
 
     @no_type_check
     @ti.kernel
@@ -95,6 +100,27 @@ class MTM(_mtm.MTM):
                         v.Ax += e.K.transpose() @ e.verts[0].x
 
 
+class Operator(scipy.sparse.linalg.LinearOperator):
+    mtm: MTM
+
+    def __init__(self, dtype, mtm: MTM) -> None:
+        num_free: int = np.count_nonzero(mtm.free_mask)
+        super().__init__(dtype, shape=(num_free * 3, num_free * 3))
+        self.mtm = mtm
+
+    def _matvec(self, x: npt.NDArray) -> npt.NDArray:
+        x_field: ti.MatrixField = self.mtm.mesh.verts.get_member_field("x")
+        Ax: ti.MatrixField = self.mtm.mesh.verts.get_member_field("Ax")
+        x_np: npt.NDArray = np.zeros((len(self.mtm.mesh.verts), 3))
+        x_np[self.mtm.free_mask] = x.reshape((-1, 3))
+        x_field.from_numpy(x_np)
+        self.mtm.calc_Ax(x_field, Ax)
+        return Ax.to_numpy()[self.mtm.free_mask].flatten()
+
+    def _rmatvec(self, x: npt.NDArray) -> npt.NDArray:
+        return self._matvec(x)
+
+
 def main(
     tet_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
     *,
@@ -119,23 +145,34 @@ def main(
         poisson_ratio=poisson_ratio,
     )
     mtm.calc_stiffness()
-    K: npt.NDArray = mtm.export_stiffness()
-    ic(np.linalg.cond(K))
-    K11_mask: npt.NDArray = np.repeat(~mtm.fixed_mask, 3)
-    K11: npt.NDArray = K[np.ix_(K11_mask, K11_mask)]
-    ic(K11.shape)
-    ic(np.linalg.cond(K11))
     mtm.calc_b()
     b: ti.MatrixField = mtm.mesh.verts.get_member_field("b")
     x: ti.MatrixField = mtm.mesh.verts.get_member_field("x")
     x.fill(0)
-    converge: bool = cg.cg(ti.linalg.LinearOperator(mtm.calc_Ax), b, x)
-    assert converge
-    node.save(
-        pathlib.Path("data") / "post.1.node",
-        mtm.mesh.get_position_as_numpy() + x.to_numpy(),
-        comment=False,
+    x_free_np: npt.NDArray
+    fixed: ti.MatrixField = mtm.mesh.verts.get_member_field("fixed")
+    fixed_np: npt.NDArray = fixed.to_numpy()
+    translation = np.mean(
+        fixed_np[mtm.fixed_mask] - mtm.mesh.get_position_as_numpy()[mtm.fixed_mask],
+        axis=0,
     )
+    print(translation)
+    x0: npt.NDArray = np.tile(translation, reps=np.count_nonzero(mtm.free_mask))
+    print(x0)
+    x_free_np, info = scipy.sparse.linalg.minres(
+        Operator(float, mtm=mtm),
+        b.to_numpy()[mtm.free_mask].flatten(),
+        x0=x0,
+        show=True,
+    )
+    ic(np.abs(x_free_np).max())
+    ic(x_free_np, info)
+    pos_np: npt.NDArray = mtm.mesh.get_position_as_numpy()
+    pos_np[mtm.free_mask] += x_free_np.reshape((-1, 3))
+    pos_np[mtm.fixed_mask] = mtm.mesh.verts.get_member_field("fixed").to_numpy()[
+        mtm.fixed_mask
+    ]
+    node.save(pathlib.Path("data") / "post.1.node", pos_np, comment=False)
 
 
 if __name__ == "__main__":
