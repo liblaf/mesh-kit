@@ -2,6 +2,11 @@
 
 ## Code Style
 
+### Abbreviations
+
+- disp: displacement
+- tet / tetra: tetrahedron
+
 ### Naming Convention
 
 Different types of mesh are distinguished by suffixes:

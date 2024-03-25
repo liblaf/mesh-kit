@@ -37,10 +37,11 @@ def main(
     tetra_te: tet.MeshInfo = tet.build(mesh_te, tet.Options("pYqOzCV"))
     points: npt.NDArray = np.asarray(tetra_te.points)
     elements: npt.NDArray = np.asarray(tetra_te.elements)
-    fixed: npt.NDArray = np.full(shape=points.shape, fill_value=np.nan)
-    fixed[_points.pos2idx(points, pre_skull.vertices)] = post_skull.vertices
+    disp: npt.NDArray = np.full(shape=points.shape, fill_value=np.nan)
+    fixed_mask: npt.NDArray = _points.pos2idx(points, pre_skull.vertices)
+    disp[fixed_mask] = post_skull.vertices - pre_skull.vertices
     tetra_io: meshio.Mesh = meshio.Mesh(
-        points=points, cells={"tetra": elements}, point_data={"fixed": fixed}
+        points=points, cells={"tetra": elements}, point_data={"disp": disp}
     )
     tetra_io.write(output_file)
 

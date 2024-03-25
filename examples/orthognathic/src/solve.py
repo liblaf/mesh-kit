@@ -11,12 +11,13 @@ from mkit.fem import mtm as _mtm
 from mkit.io.taichi import mesh as io_ti_mesh
 from mkit.taichi.mesh import field as _field
 from numpy import typing as npt
+from trimesh import util as tri_util
 
 
 @no_type_check
 @ti.func
 def is_free(v: ti.template()) -> bool:
-    return ti.math.isnan(v.fixed).any()
+    return ti.math.isnan(v.disp).any()
 
 
 @no_type_check
@@ -29,15 +30,14 @@ def is_fixed(v: ti.template()) -> bool:
 class MTM(_mtm.MTM):
     fixed_mask: npt.NDArray
 
-    def init_fixed(self, fixed: npt.NDArray, *, E: float, nu: float) -> None:
-        super().init(E=E, nu=nu)
+    def set_disp(self, disp: npt.NDArray) -> None:
         _field.place_safe(
             self.mesh.verts,
-            {"Ax": ti.math.vec3, "b": ti.math.vec3, "fixed": ti.math.vec3},
+            {"Ax": ti.math.vec3, "b": ti.math.vec3, "disp": ti.math.vec3},
         )
-        fixed_ti: ti.MatrixField = self.mesh.verts.get_member_field("fixed")
-        fixed_ti.from_numpy(fixed)
-        self.fixed_mask = ~np.isnan(fixed).any(axis=1)
+        disp_ti: ti.MatrixField = self.mesh.verts.get_member_field("disp")
+        disp_ti.from_numpy(disp)
+        self.fixed_mask = ~np.isnan(disp).any(axis=1)
 
     def calc_b(self) -> None:
         b: ti.MatrixField = self.mesh.verts.get_member_field("b")
@@ -64,9 +64,9 @@ class MTM(_mtm.MTM):
                 for e_idx in range(v.edges.size):
                     e = v.edges[e_idx]
                     if e.verts[0].id == v.id and is_fixed(e.verts[1]):
-                        v.b -= e.K @ (e.verts[1].fixed - e.verts[1].pos)
+                        v.b -= e.K @ e.verts[1].disp
                     elif e.verts[1].id == v.id and is_fixed(e.verts[0]):
-                        v.b -= e.K.transpose() @ (e.verts[0].fixed - e.verts[0].pos)
+                        v.b -= e.K.transpose() @ e.verts[0].disp
 
     @no_type_check
     @ti.kernel
@@ -109,39 +109,61 @@ def main(
     tet_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
     *,
     output_dir: Annotated[
-        pathlib.Path,
-        typer.Option("-o", "--output", exists=True, file_okay=False, writable=True),
+        pathlib.Path, typer.Option(exists=True, file_okay=False, writable=True)
     ],
     young_modulus: Annotated[float, typer.Option(min=0)] = 3000,
     poisson_ratio: Annotated[float, typer.Option(min=0, max=0.5)] = 0.47,
+    step: Annotated[float, typer.Option(min=0, max=1)] = 1,
 ) -> None:
     ti.init(default_fp=ti.f64)
     mesh_io: meshio.Mesh = meshio.read(tet_file)
     mesh: ti.MeshInstance = io_ti_mesh.from_meshio(
-        mesh_io, relations=["EV", "CV", "CE", "VE"]
+        mesh_io, relations=["CE", "CV", "EV", "VE"]
     )
-    fixed_np: npt.NDArray = np.asarray(mesh_io.point_data["fixed"])
+    disp: npt.NDArray = np.asarray(mesh_io.point_data["disp"])
     mtm: MTM = MTM(mesh)
-    mtm.init_fixed(fixed_np, E=young_modulus, nu=poisson_ratio)
+    mtm.init(E=young_modulus, nu=poisson_ratio)
     mtm.calc_stiffness()
-    mtm.calc_b()
-    b_ti: ti.MatrixField = mtm.mesh.verts.get_member_field("b")
-    x0: npt.NDArray = np.zeros((np.count_nonzero(mtm.free_mask) * 3,))
-    x_free_np: npt.NDArray
-    info: int
-    x_free_np, info = scipy.sparse.linalg.minres(
-        Operator(float, mtm=mtm),
-        b_ti.to_numpy()[mtm.free_mask].flatten(),
-        x0=x0,
-        show=True,
+
+    bounds: tuple[npt.NDArray, npt.NDArray] = (
+        np.min(mesh_io.points, axis=0),
+        np.max(mesh_io.points, axis=0),
     )
-    assert info == 0
-    pos_np: npt.NDArray = mesh_io.points.copy()
-    pos_np[mtm.fixed_mask] = fixed_np[mtm.fixed_mask]
-    pos_np[mtm.free_mask] += x_free_np.reshape((-1, 3))
+    extend: npt.NDArray = bounds[1] - bounds[0]
+    scale = float(np.linalg.norm(extend))
+    max_disp: float = np.nanmax(tri_util.row_norm(disp))
+    steps: npt.NDArray = np.linspace(0, disp, int((max_disp / scale) // step) + 2)[1:]
+
+    pos: npt.NDArray = mesh_io.points.copy()
     meshio.write(
-        output_dir / "0.vtu",
-        meshio.Mesh(points=pos_np, cells={"tetra": mesh_io.get_cells_type("tetra")}),
+        output_dir / "00.vtu",
+        meshio.Mesh(points=pos, cells={"tetra": mesh_io.get_cells_type("tetra")}),
+    )
+    for i, disp in enumerate(steps, start=1):
+        mtm.set_disp(disp)
+        mtm.calc_b()
+        b_ti: ti.MatrixField = mtm.mesh.verts.get_member_field("b")
+        b_np: npt.NDArray = b_ti.to_numpy()
+        b_free_np: npt.NDArray = b_np[mtm.free_mask]
+        x_free_np: npt.NDArray = pos[mtm.free_mask] - mesh_io.points[mtm.free_mask]
+        info: int
+        x_free_np, info = scipy.sparse.linalg.minres(
+            Operator(float, mtm=mtm),
+            b_free_np.flatten(),
+            x0=x_free_np.flatten(),
+            show=True,
+        )
+        assert info == 0
+        pos = mesh_io.points.copy()
+        pos[mtm.fixed_mask] += disp[mtm.fixed_mask]
+        pos[mtm.free_mask] += x_free_np.reshape((-1, 3))
+        meshio.write(
+            output_dir / f"{i:02}.vtu",
+            meshio.Mesh(points=pos, cells={"tetra": mesh_io.get_cells_type("tetra")}),
+        )
+    meshio.write(
+        output_dir / "result.vtu",
+        meshio.Mesh(points=pos, cells={"tetra": mesh_io.get_cells_type("tetra")}),
     )
 
 
