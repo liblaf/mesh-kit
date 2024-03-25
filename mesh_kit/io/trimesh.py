@@ -10,15 +10,13 @@ from mesh_kit.typing import typechecked as _typechecked
 
 
 @overload
-def read(file: pathlib.Path, *, attr: Literal[False] = False) -> trimesh.Trimesh:
-    ...
+def read(file: pathlib.Path, *, attr: Literal[False] = False) -> trimesh.Trimesh: ...
 
 
 @overload
 def read(
     file: pathlib.Path, *, attr: Literal[True]
-) -> tuple[trimesh.Trimesh, dict[str, npt.NDArray]]:
-    ...
+) -> tuple[trimesh.Trimesh, dict[str, npt.NDArray]]: ...
 
 
 @_typechecked
