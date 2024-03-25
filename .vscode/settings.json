@@ -1,0 +1,16 @@
+{
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pixi": true
+  },
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingTypeArgument": "none",
+    "reportMissingTypeStubs": "none",
+    "reportUnknownArgumentType": "none",
+    "reportUnknownMemberType": "none",
+    "reportUnknownParameterType": "none",
+    "reportUnknownVariableType": "none"
+  },
+  "python.analysis.typeCheckingMode": "strict"
+}
