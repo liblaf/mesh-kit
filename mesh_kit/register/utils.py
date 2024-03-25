@@ -10,13 +10,13 @@ from mesh_kit.typing import check_shape as _check_shape
 @overload
 def normalize(
     x: trimesh.Trimesh, *, centroid: npt.NDArray, scale: float
-) -> trimesh.Trimesh:
-    ...
+) -> trimesh.Trimesh: ...
 
 
 @overload
-def normalize(x: npt.NDArray, *, centroid: npt.NDArray, scale: float) -> npt.NDArray:
-    ...
+def normalize(
+    x: npt.NDArray, *, centroid: npt.NDArray, scale: float
+) -> npt.NDArray: ...
 
 
 def normalize(
@@ -40,13 +40,13 @@ def normalize(
 @overload
 def denormalize(
     x: trimesh.Trimesh, *, centroid: npt.NDArray, scale: float
-) -> trimesh.Trimesh:
-    ...
+) -> trimesh.Trimesh: ...
 
 
 @overload
-def denormalize(x: npt.NDArray, *, centroid: npt.NDArray, scale: float) -> npt.NDArray:
-    ...
+def denormalize(
+    x: npt.NDArray, *, centroid: npt.NDArray, scale: float
+) -> npt.NDArray: ...
 
 
 def denormalize(
