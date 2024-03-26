@@ -7,6 +7,16 @@
 - disp: displacement
 - tet / tetra: tetrahedron
 
+### Denotations
+
+- `E`: Young's modulus
+- `f`: force
+- `K`: stiffness matrix / rigidity matrix
+- `lambda`: Lamé's first parameter
+- `mu`: Lamé's second parameter / shear modulus
+- `nu`: Poisson's ratio
+- `V`: volume
+
 ### Naming Convention
 
 Different types of mesh are distinguished by suffixes:

@@ -1,13 +1,14 @@
 import pathlib
-from typing import Annotated
+from typing import Annotated, Any
 
-import pytorch3d.io
-import torch
+import numpy as np
+import trimesh
 import typer
+from loguru import logger
 from mkit import cli as _cli
-from mkit.pytorch3d import transform as _transform
 from mkit.typing import as_any as _a
-from pytorch3d import ops, structures
+from numpy import typing as npt
+from trimesh import registration
 
 
 def main(
@@ -17,17 +18,16 @@ def main(
         pathlib.Path, typer.Option("-o", "--output", dir_okay=False)
     ],
 ) -> None:
-    io = pytorch3d.io.IO()
-    source_mesh: structures.Meshes = io.load_mesh(source_file)
-    target_mesh: structures.Meshes = io.load_mesh(target_file)
-    source_verts: torch.Tensor = _a(source_mesh.verts_padded())
-    target_verts: torch.Tensor = _a(target_mesh.verts_padded())
-    transform: ops.points_alignment.SimilarityTransform = (
-        ops.corresponding_points_alignment(
-            source_verts, target_verts, estimate_scale=False, allow_reflection=False
-        )
+    _: Any
+    source_mesh: trimesh.Trimesh = _a(trimesh.load(source_file))
+    target_mesh: trimesh.Trimesh = _a(trimesh.load(target_file))
+    matrix: npt.NDArray
+    cost: float
+    matrix, _, cost = registration.procrustes(
+        source_mesh.vertices, target_mesh.vertices, reflection=False, scale=False
     )
-    _transform.save(output_file, transform)
+    logger.info("procrustes(): cost = {}", cost)
+    np.save(output_file, matrix)
 
 
 if __name__ == "__main__":

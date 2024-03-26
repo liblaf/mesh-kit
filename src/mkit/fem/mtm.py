@@ -74,7 +74,6 @@ class MTM:
     @ti.kernel
     def _calc_stiffness_kernel(self):
         for c in self.mesh.cells:
-            # volume
             V = (
                 1
                 / 6
