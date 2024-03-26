@@ -194,4 +194,5 @@ pyrightconfig.json
 *.node
 *.obj
 *.ply
+*.smesh
 *.vtu

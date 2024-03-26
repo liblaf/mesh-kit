@@ -310,6 +310,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.5-hfc55251_0.conda
       - pypi: https://files.pythonhosted.org/packages/14/fd/2f20c40b45e4fb4324834aea24bd4afdf1143390242c0b33774da0e2e34f/anyio-4.3.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/22/76/6b320f9186b7dda672876a3b372d9e93481e2ca5a669e547c7b5e70086e8/autoprop-4.1.0-py2.py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/81/4a/97ea8a5afb289a25ae7db3b3ef68f0aad892bc1756be94565154877b173e/beartype-0.17.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c3/0c/1691919958957a822e1a12d83663f4f8d67b5d825424cb1b6bac58a0c72f/cascadio-0.0.10-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/38/6f/f5fbc992a329ee4e0f288c1fe0e2ad9485ed064cac731ed2fe47dcc38cbf/chardet-5.2.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/f3/18/3e867ab37a24fdf073c1617b9c7830e06ec270b1ea4694a624038fc40a03/colorlog-6.8.2-py3-none-any.whl
@@ -334,8 +335,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/13/d9/e0929a346d84c0c902e1ee58e1b39271edd11d49f74adc99c8d7841f5658/mapbox_earcut-1.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/19/31/4842022c24e401a344f34fa482924746b76baf3aa735a795306c1991d2d9/meshtaichi_patcher-0.0.19.tar.gz
       - pypi: https://files.pythonhosted.org/packages/50/e2/8e10e465ee3987bb7c9ab69efb91d867d93959095f4807db102d07995d94/more_itertools-10.2.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/a1/81/97e8539d6cdcfb3a8ae7eb1438c6983a9fc434ef9664572bfa7fd285cab9/mypy-1.9.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-      - pypi: https://files.pythonhosted.org/packages/2a/e2/5d3f6ada4297caebe1a2add3b126fe800c96f56dbe5d1988a2cbe0b267aa/mypy_extensions-1.0.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/1a/e6/6d2ead760a9ddb35e65740fd5a57e46aadd7b0c49861ab24f94812797a1c/nodeenv-1.8.0-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/6b/b1/fd0263f32058f34ce414a09d72a49b4f7deda9fe1ad5c783a4f260579fbe/openctm-0.0.4-py3-none-manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/a5/5b/0cc789b59e8cc1bf288b38111d002d8c5917123194d45b29dcdac64723cc/pluggy-1.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c5/4f/0e22aaa246f96d6ac87fe5ebb9c5a693fbe8877f537a1022527c47ca43c5/psutil-5.9.8-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
@@ -343,7 +343,9 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/66/04/e03cfc5ec197a711216b36b01054c551539c5422d4a372685b6ae6493399/pyglet-1.5.28-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/fa/f1/a5834ab1e8fce5b293d9f8603491513488acbc15e008b61339afdf83169e/pyinstrument-4.6.2-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/61/ee/fd967443937b4700927cb82eb5e5bd8ac0d18b6c54409b0a47502986ab2d/pymeshlab-2023.12.post1-cp311-cp311-manylinux_2_31_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/ed/a6/bc9e80336902fcb5e72b3a12a639d99b5a60e2ab5b2f00f3cf8cab479655/pyright-1.1.355-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/4d/7e/c79cecfdb6aa85c6c2e3cf63afc56d0f165f24f5c66c03c695c4d9b84756/pytest-8.1.1-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/aa/a0/9655b31886419e2e61ba6fc1a9e7526804eda6ce11a56f906a3f3c0079d7/pytest_beartype-0.0.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/78/3a/af5b4fa5961d9a1e6237b530eb87dd04aea6eb83da09d2a4073d81b54ccf/pytest_cov-5.0.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7f/4f/14f459dfafd8b6f150f569e1f04a189233a84269dddab9ff3cdcab166d5b/python_fcl-0.7.0.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/42/8e/ae1de7b12223986e949bdb886c004de7c304b6fa94de5b87c926c1099656/referencing-0.34.0-py3-none-any.whl
@@ -352,13 +354,13 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/2e/95/ec159b3cae9960811fe573586ca905578ff78d33f025ae054d30ef6c2b73/ruff-0.3.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/d4/34/e27bf2bfe7b52b884b49bd71ea91ff81e4737246735ee5ea383314c31876/scikit_image-0.22.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/0d/8f/4d3df127beac22a1fb9bcf9783d75550af805290476a29277c72494dcf73/shapely-2.0.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-      - pypi: https://files.pythonhosted.org/packages/de/99/78824ce4503c8cc6b5a301fa67b09a591ad1882e38056138bb718678ec1a/signature_dispatch-1.0.0-py2.py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/06/60/feaf4e9bd8de884a540816849565687dc64c20ef5d1c70ddee15d6e2e9d9/signature_dispatch-1.0.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/e9/44/75a9c9421471a6c4805dbf2356f7c181a29c1879239abab1ea2cc8f38b40/sniffio-1.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d6/ea/ec6101e1710ac74e88b10312e9b59734885155e47d7dbb1171e4d347a364/svg.path-6.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/81/d6/ee5c5b597bdc7a6916a00668cd38023fc806ead854629a9c765182c636c9/taichi-1.7.0-cp311-cp311-manylinux_2_27_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/cd/0b/33610b4d0d1bb83a6bfd20ed838f52e02a44e9b439116cd4f3d424e81a80/tifffile-2024.2.12-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/be/22/55fa05cdaa646756a9457184e7a00ae38da327a3af54d5d2c65b3b2888f3/trimesh-4.2.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/d9/59/e02336eb478ccdfc9bb0d4c27ce04a4260cd8b45aa04f6b00bcfdbb66a2a/typeguard-4.2.1-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/d2/23/644fe192feb5d3bc8f3dbc6e99a88a98445f36c5e64dc503e923b0c5ac1f/trimesh-4.2.2-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/e2/62/7d206b0ac6fcbb163215ecc622a54eb747f85ad86d14bc513a834442d0f6/typeguard-3.0.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/30/5f/2270eac805b788674704ed30b3b0f6e036b71744ff498e7878ce636c1eb8/vecrec-0.3.1-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/9d/28/869192842cc37a2771392629d8b653dea21e82c917b770901ed3b40475f9/vhacdx-0.0.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/3b/8e/bf91f0232a799d4291e732c653758204244ea190511f9c4f828abb11da46/xatlas-0.0.9-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
@@ -551,6 +553,39 @@ packages:
   - pytest-cov ; extra == 'test'
   - coveralls ; extra == 'test'
   requires_python: ~=3.6
+- kind: pypi
+  name: beartype
+  version: 0.17.2
+  url: https://files.pythonhosted.org/packages/81/4a/97ea8a5afb289a25ae7db3b3ef68f0aad892bc1756be94565154877b173e/beartype-0.17.2-py3-none-any.whl
+  sha256: c22b21e1f785cfcf5c4d3d13070f532b6243a3ad67e68d2298ff08d539847dce
+  requires_dist:
+  - typing-extensions >=3.10.0.0 ; extra == 'all'
+  - coverage >=5.5 ; extra == 'dev'
+  - equinox ; extra == 'dev'
+  - pandera ; extra == 'dev'
+  - typing-extensions >=3.10.0.0 ; extra == 'dev'
+  - pytest >=4.0.0 ; extra == 'dev'
+  - tox >=3.20.1 ; extra == 'dev'
+  - sphinx <6.0.0, >=4.2.0 ; extra == 'dev'
+  - pydata-sphinx-theme <=0.7.2 ; extra == 'dev'
+  - autoapi >=0.9.0 ; extra == 'dev'
+  - sphinxext-opengraph >=0.7.5 ; extra == 'dev'
+  - mypy >=0.800 ; platform_python_implementation != 'PyPy' and extra == 'dev'
+  - sphinx ; python_version >= '3.8.0' and extra == 'dev'
+  - numpy ; (sys_platform != 'darwin' and platform_python_implementation != 'PyPy') and extra == 'dev'
+  - sphinx <6.0.0, >=4.2.0 ; extra == 'doc-rtd'
+  - pydata-sphinx-theme <=0.7.2 ; extra == 'doc-rtd'
+  - autoapi >=0.9.0 ; extra == 'doc-rtd'
+  - sphinxext-opengraph >=0.7.5 ; extra == 'doc-rtd'
+  - equinox ; extra == 'test-tox'
+  - pandera ; extra == 'test-tox'
+  - typing-extensions >=3.10.0.0 ; extra == 'test-tox'
+  - pytest >=4.0.0 ; extra == 'test-tox'
+  - coverage >=5.5 ; extra == 'test-tox-coverage'
+  - mypy >=0.800 ; platform_python_implementation != 'PyPy' and extra == 'test-tox'
+  - sphinx ; python_version >= '3.8.0' and extra == 'test-tox'
+  - numpy ; (sys_platform != 'darwin' and platform_python_implementation != 'PyPy') and extra == 'test-tox'
+  requires_python: '>=3.8.0'
 - kind: conda
   name: blas
   version: '2.116'
@@ -3914,26 +3949,6 @@ packages:
   license_family: Apache
   size: 12452
   timestamp: 1600387789153
-- kind: pypi
-  name: mypy
-  version: 1.9.0
-  url: https://files.pythonhosted.org/packages/a1/81/97e8539d6cdcfb3a8ae7eb1438c6983a9fc434ef9664572bfa7fd285cab9/mypy-1.9.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: 2418488264eb41f69cc64a69a745fad4a8f86649af4b1041a4c64ee61fc61129
-  requires_dist:
-  - typing-extensions >=4.1.0
-  - mypy-extensions >=1.0.0
-  - tomli >=1.1.0 ; python_version < '3.11'
-  - psutil >=4.0 ; extra == 'dmypy'
-  - pip ; extra == 'install-types'
-  - setuptools >=50 ; extra == 'mypyc'
-  - lxml ; extra == 'reports'
-  requires_python: '>=3.8'
-- kind: pypi
-  name: mypy-extensions
-  version: 1.0.0
-  url: https://files.pythonhosted.org/packages/2a/e2/5d3f6ada4297caebe1a2add3b126fe800c96f56dbe5d1988a2cbe0b267aa/mypy_extensions-1.0.0-py3-none-any.whl
-  sha256: 4392f6c0eb8a5668a69e23d168ffa70f0be9ccfd32b5cc2d26a34ae5b844552d
-  requires_python: '>=3.5'
 - kind: conda
   name: mysql-common
   version: 8.0.33
@@ -4052,6 +4067,14 @@ packages:
   license_family: MIT
   size: 123069
   timestamp: 1710905127322
+- kind: pypi
+  name: nodeenv
+  version: 1.8.0
+  url: https://files.pythonhosted.org/packages/1a/e6/6d2ead760a9ddb35e65740fd5a57e46aadd7b0c49861ab24f94812797a1c/nodeenv-1.8.0-py2.py3-none-any.whl
+  sha256: df865724bb3c3adc86b3876fa209771517b0cfe596beff01a92700e0e8be4cec
+  requires_dist:
+  - setuptools
+  requires_python: '>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*'
 - kind: conda
   name: nspr
   version: '4.35'
@@ -4581,6 +4604,17 @@ packages:
   license_family: GPL
   size: 85162
   timestamp: 1695418076285
+- kind: pypi
+  name: pyright
+  version: 1.1.355
+  url: https://files.pythonhosted.org/packages/ed/a6/bc9e80336902fcb5e72b3a12a639d99b5a60e2ab5b2f00f3cf8cab479655/pyright-1.1.355-py3-none-any.whl
+  sha256: bf30b6728fd68ae7d09c98292b67152858dd89738569836896df786e52b5fe48
+  requires_dist:
+  - nodeenv >=1.6.0
+  - typing-extensions >=3.7 ; python_version < '3.8'
+  - twine >=3.4.1 ; extra == 'all'
+  - twine >=3.4.1 ; extra == 'dev'
+  requires_python: '>=3.7'
 - kind: conda
   name: pysocks
   version: 1.7.1
@@ -4620,6 +4654,19 @@ packages:
   - requests ; extra == 'testing'
   - setuptools ; extra == 'testing'
   - xmlschema ; extra == 'testing'
+  requires_python: '>=3.8'
+- kind: pypi
+  name: pytest-beartype
+  version: 0.0.2
+  url: https://files.pythonhosted.org/packages/aa/a0/9655b31886419e2e61ba6fc1a9e7526804eda6ce11a56f906a3f3c0079d7/pytest_beartype-0.0.2-py3-none-any.whl
+  sha256: 3203bc75e04b3d166623aaf5b58c766b3cecc0e0b7082013de9400c7a184605b
+  requires_dist:
+  - pytest
+  - beartype
+  - black ; extra == 'dev'
+  - mypy ; extra == 'dev'
+  - pytest-cov ; extra == 'dev'
+  - tox ; extra == 'dev'
   requires_python: '>=3.8'
 - kind: pypi
   name: pytest-cov
@@ -5154,18 +5201,18 @@ packages:
   timestamp: 1698144516278
 - kind: pypi
   name: signature-dispatch
-  version: 1.0.0
-  url: https://files.pythonhosted.org/packages/de/99/78824ce4503c8cc6b5a301fa67b09a591ad1882e38056138bb718678ec1a/signature_dispatch-1.0.0-py2.py3-none-any.whl
-  sha256: fe06861b49f9b9014a977fc1d940181582cd4a7437f13a83473e65c588f3397f
+  version: 1.0.1
+  url: https://files.pythonhosted.org/packages/06/60/feaf4e9bd8de884a540816849565687dc64c20ef5d1c70ddee15d6e2e9d9/signature_dispatch-1.0.1-py3-none-any.whl
+  sha256: a6aa41954b8e45ccf64d399144bb5ce9d5b0f8fd4295f2a39361d1606eca442f
   requires_dist:
-  - typeguard
+  - typeguard ~=3.0
   - sphinx ; extra == 'doc'
   - sphinx-rtd-theme ; extra == 'doc'
   - autoclasstoc ; extra == 'doc'
   - pytest ; extra == 'test'
   - pytest-cov ; extra == 'test'
   - coveralls ; extra == 'test'
-  requires_python: ~=3.6
+  requires_python: ~=3.7
 - kind: conda
   name: sip
   version: 6.7.12
@@ -5534,11 +5581,11 @@ packages:
   timestamp: 1707598746354
 - kind: pypi
   name: trimesh
-  version: 4.2.0
-  url: https://files.pythonhosted.org/packages/be/22/55fa05cdaa646756a9457184e7a00ae38da327a3af54d5d2c65b3b2888f3/trimesh-4.2.0-py3-none-any.whl
-  sha256: 119673cb17749c078cc821b30651b71e6c66610ed1e34c79b73332951543152e
+  version: 4.2.2
+  url: https://files.pythonhosted.org/packages/d2/23/644fe192feb5d3bc8f3dbc6e99a88a98445f36c5e64dc503e923b0c5ac1f/trimesh-4.2.2-py3-none-any.whl
+  sha256: 076fd788f33a1125ed9e7386ecfcc0ced446ae32849fde41f67da0007214598a
   requires_dist:
-  - numpy
+  - numpy >=1.20
   - trimesh[easy,recommend,test] ; extra == 'all'
   - colorlog ; extra == 'easy'
   - mapbox-earcut ; extra == 'easy'
@@ -5570,30 +5617,29 @@ packages:
   - manifold3d >=2.3.0 ; extra == 'recommend'
   - pytest-cov ; extra == 'test'
   - coveralls ; extra == 'test'
-  - mypy ; extra == 'test'
+  - pyright ; extra == 'test'
   - ezdxf ; extra == 'test'
   - pytest ; extra == 'test'
   - pymeshlab ; extra == 'test'
   - pyinstrument ; extra == 'test'
   - matplotlib ; extra == 'test'
   - ruff ; extra == 'test'
-  - typeguard >=4.1.2 ; extra == 'test'
+  - pytest-beartype ; python_version >= '3.10' and extra == 'test'
   requires_python: '>=3.7'
 - kind: pypi
   name: typeguard
-  version: 4.2.1
-  url: https://files.pythonhosted.org/packages/d9/59/e02336eb478ccdfc9bb0d4c27ce04a4260cd8b45aa04f6b00bcfdbb66a2a/typeguard-4.2.1-py3-none-any.whl
-  sha256: 7da3bd46e61f03e0852f8d251dcbdc2a336aa495d7daff01e092b55327796eb8
+  version: 3.0.2
+  url: https://files.pythonhosted.org/packages/e2/62/7d206b0ac6fcbb163215ecc622a54eb747f85ad86d14bc513a834442d0f6/typeguard-3.0.2-py3-none-any.whl
+  sha256: bbe993854385284ab42fd5bd3bee6f6556577ce8b50696d6cb956d704f286c8e
   requires_dist:
   - importlib-metadata >=3.6 ; python_version < '3.10'
-  - typing-extensions >=4.10.0 ; python_version < '3.13'
+  - typing-extensions >=4.4.0 ; python_version < '3.11'
   - packaging ; extra == 'doc'
-  - sphinx >=7 ; extra == 'doc'
+  - sphinx-rtd-theme ; extra == 'doc'
   - sphinx-autodoc-typehints >=1.2.0 ; extra == 'doc'
-  - coverage[toml] >=7 ; extra == 'test'
   - pytest >=7 ; extra == 'test'
-  - mypy >=1.2.0 ; platform_python_implementation != 'PyPy' and extra == 'test'
-  requires_python: '>=3.8'
+  - mypy >=0.991 ; platform_python_implementation != 'PyPy' and extra == 'test'
+  requires_python: '>=3.7.4'
 - kind: conda
   name: typer
   version: 0.10.0

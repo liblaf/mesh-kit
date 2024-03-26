@@ -1,5 +1,6 @@
 {
   "words": [
+    "arange",
     "bidi",
     "commitizen",
     "cuda",
@@ -8,6 +9,7 @@
     "dmypy",
     "dotenv",
     "dtype",
+    "fprint",
     "icosphere",
     "ipynb",
     "ipython",
@@ -44,7 +46,10 @@
     "scrapy",
     "sdist",
     "shfmt",
+    "smesh",
+    "spsolve",
     "tmpl",
+    "todense",
     "trimesh",
     "typer",
     "venv",

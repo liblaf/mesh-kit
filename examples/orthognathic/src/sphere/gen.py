@@ -14,7 +14,7 @@ def main(
     radius: Annotated[float, typer.Option(min=0)] = 1,
     displacement: Annotated[float, typer.Option()] = 0,
 ) -> None:
-    mesh: trimesh.Trimesh = creation.icosphere(radius=radius)
+    mesh: trimesh.Trimesh = creation.icosphere(subdivisions=1, radius=radius)
     if displacement:
         verts_mask: npt.NDArray = bounds.contains(
             [[-np.inf, -np.inf, -np.inf], [np.inf, 0, np.inf]], mesh.vertices
