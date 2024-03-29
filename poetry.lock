@@ -5102,13 +5102,13 @@ trame-client = "*"
 
 [[package]]
 name = "trimesh"
-version = "4.2.2"
+version = "4.2.3"
 description = "Import, export, process, analyze and view triangular meshes."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "trimesh-4.2.2-py3-none-any.whl", hash = "sha256:076fd788f33a1125ed9e7386ecfcc0ced446ae32849fde41f67da0007214598a"},
-    {file = "trimesh-4.2.2.tar.gz", hash = "sha256:972b1c6fb6189d3e00ee3b93d7ef420656f80e8784d4c4f8e993e14498026bae"},
+    {file = "trimesh-4.2.3-py3-none-any.whl", hash = "sha256:8a7cce6cdae555c720f0fea23b71f238b723d9b11a2f7d13260f01688c1e968c"},
+    {file = "trimesh-4.2.3.tar.gz", hash = "sha256:4f918d0b3d9a283c37bd83c61441b10573c30e8881e3ac44c564ee716c1823be"},
 ]
 
 [package.dependencies]
