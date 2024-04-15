@@ -11,7 +11,7 @@ def inner_point(mesh: trimesh.Trimesh) -> npt.NDArray:
         | trimesh.ray.ray_triangle.RayMeshIntersector
     ) = mesh.ray
     origin: npt.NDArray = mesh.bounds[0]
-    idx: int = 0
+    idx: int = 1
     direction: npt.NDArray = mesh.vertices[idx] - origin
     locations: npt.NDArray
     locations, _, _ = ray.intersects_location(

@@ -6,6 +6,7 @@ import numpy as np
 import scipy.sparse.linalg
 import taichi as ti
 import typer
+from icecream import ic
 from mkit import cli as _cli
 from mkit import io as _io
 from mkit.fem import mtm as _mtm
@@ -32,11 +33,26 @@ class MTM(_mtm.MTM):
     def set_disp(self, disp: npt.NDArray) -> None:
         _field.place_safe(
             self.mesh.verts,
-            {"Ax": ti.math.vec3, "b": ti.math.vec3, "disp": ti.math.vec3},
+            {
+                "Ax": ti.math.vec3,
+                "b": ti.math.vec3,
+                "disp": ti.math.vec3,
+                "x_new": ti.math.vec3,
+            },
         )
         disp_ti: ti.MatrixField = self.mesh.verts.get_member_field("disp")
         disp_ti.from_numpy(disp)
         self.free_mask = np.isnan(disp).any(axis=1)
+        self._set_disp_x()
+
+    @no_type_check
+    @ti.kernel
+    def _set_disp_x(self):
+        for v in self.mesh.verts:
+            if is_fixed(v):
+                v.x = v.disp
+            else:
+                v.x = 0
 
     def calc_b(self) -> None:
         b: ti.MatrixField = self.mesh.verts.get_member_field("b")
@@ -123,6 +139,40 @@ class MTM(_mtm.MTM):
                     elif e.verts[1].id == v.id and is_free(e.verts[0]):
                         v.Ax += e.K.transpose() @ e.verts[0].x
 
+    @no_type_check
+    @ti.kernel
+    def step_x(self):
+        """x_j = - K_{jj}^{-1} sum K_{jk} x_k"""
+        for v in self.mesh.verts:
+            if is_free(v):
+                K_inv = v.K.inverse()
+                v.x_new = 0
+                for e_idx in range(v.edges.size):
+                    e = v.edges[e_idx]
+                    if e.verts[0].id == v.id:
+                        v.x_new -= K_inv @ (e.K @ e.verts[1].x)
+                    elif e.verts[1].id == v.id:
+                        v.x_new -= K_inv @ (e.K.transpose() @ e.verts[0].x)
+        for v in self.mesh.verts:
+            if is_free(v):
+                v.x = v.x_new
+
+    @no_type_check
+    @ti.kernel
+    def total_force(self) -> float:
+        result = 0.0
+        for v in self.mesh.verts:
+            if is_free(v):
+                v.f = v.K @ v.x
+                for e_idx in range(v.edges.size):
+                    e = v.edges[e_idx]
+                    if e.verts[0].id == v.id:
+                        v.f += e.K @ e.verts[1].x
+                    elif e.verts[1].id == v.id:
+                        v.f += e.K.transpose() @ e.verts[0].x
+                result += v.f.norm()
+        return result
+
 
 class Operator(scipy.sparse.linalg.LinearOperator):
     mtm: MTM
@@ -149,9 +199,11 @@ class Operator(scipy.sparse.linalg.LinearOperator):
 def main(
     tet_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
     *,
-    output_file: Annotated[pathlib.Path, typer.Option(dir_okay=False, writable=True)],
+    output_file: Annotated[
+        pathlib.Path, typer.Option("-o", dir_okay=False, writable=True)
+    ],
     young_modulus: Annotated[float, typer.Option(min=0)] = 3000,
-    poisson_ratio: Annotated[float, typer.Option(min=0, max=0.5)] = 0.4,
+    poisson_ratio: Annotated[float, typer.Option(min=0, max=0.5)] = 0.0,
     step: Annotated[int, typer.Option(min=0)] = 2,
 ) -> None:
     ti.init(default_fp=ti.f64)
@@ -164,19 +216,18 @@ def main(
     mtm.init(E=young_modulus, nu=poisson_ratio)
     mtm.calc_stiffness()
     mtm.set_disp(disp)
-    K11: scipy.sparse.csr_matrix = mtm.export_K11()
 
-    mtm.set_disp(disp)
-    mtm.calc_b()
-    b_ti: ti.MatrixField = mtm.mesh.verts.get_member_field("b")
-    b_np: npt.NDArray = b_ti.to_numpy()
-    x_free_flatten: npt.NDArray = scipy.sparse.linalg.spsolve(
-        K11, b_np[mtm.free_mask].flatten()
-    )
-    x_free: npt.NDArray = x_free_flatten.reshape((-1, 3))
+    for i in range(100):
+        mtm.step_x()
+        loss = mtm.total_force()
+        ic(i, loss)
+
+    x_ti: ti.MatrixField = mtm.mesh.verts.get_member_field("x")
+    x_np: npt.NDArray = x_ti.to_numpy()
     result: meshio.Mesh = mesh_io.copy()
-    result.points[mtm.fixed_mask] += disp[mtm.fixed_mask]
-    result.points[mtm.free_mask] += x_free
+    result.points += x_np
+    # result.points[mtm.fixed_mask] += disp[mtm.fixed_mask]
+    # result.points[mtm.free_mask] += x_np[mtm.free_mask]
 
     x_ti: ti.MatrixField = mtm.mesh.verts.get_member_field("x")
     x_ti.from_numpy(result.points - mesh_io.points)

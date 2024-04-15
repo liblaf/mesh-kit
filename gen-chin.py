@@ -8,8 +8,8 @@ import typer
 from mkit import io as _io
 from mkit import points
 from mkit import tetgen as _tetgen
+from mkit.trimesh import ray as _ray
 from numpy import typing as npt
-from trimesh import creation
 
 
 def main(
@@ -17,15 +17,21 @@ def main(
         pathlib.Path, typer.Option("-o", "--output", dir_okay=False, writable=True)
     ],
 ) -> None:
-    pre_face: trimesh.Trimesh = creation.icosphere(subdivisions=3, radius=0.2)
-    pre_skull: trimesh.Trimesh = creation.icosphere(subdivisions=3, radius=0.1)
+    pre_face: trimesh.Trimesh = trimesh.load(
+        "/home/liblaf/Documents/data/template/04-face.ply"
+    )
+    # pre_face = pre_face.subdivide()
+    pre_skull: trimesh.Trimesh = trimesh.load(
+        "/home/liblaf/Documents/data/template/04-skull.ply"
+    )
     post_skull: trimesh.Trimesh = pre_skull.copy()
-    vert_mask: npt.NDArray = post_skull.vertices[:, 1] < 0
-    post_skull.vertices[vert_mask] += [0.05, 0, 0]
+    vert_mask: npt.NDArray = post_skull.vertices[:, 2] < -20.0
+    post_skull.vertices[vert_mask] += [0, -10.0, 0]
+    post_skull.export("post-skull.ply")
 
     mesh_tr: trimesh.Trimesh = pre_face.difference(pre_skull)
     tetgen: _tetgen.TetGen = _tetgen.from_meshio(_io.from_trimesh(mesh_tr))
-    tetgen.field_data["holes"] = np.asarray([[0, 0, 0]], dtype=float)
+    tetgen.field_data["holes"] = np.asarray([_ray.inner_point(pre_skull)])
     tetra_io: meshio.Mesh = tetgen.tetgen()
 
     fixed_mask: npt.NDArray = points.pos2idx(tetra_io.points, pre_skull.vertices)

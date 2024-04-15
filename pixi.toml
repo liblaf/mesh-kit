@@ -1,18 +1,23 @@
 [dependencies]
-icecream = "*"
+icecream = ">=2.1.3,<2.2"
 matplotlib = "*"
 meshio = "*"
 numpy = "*"
 pip = "*"
 python = "3.11"
+pytorch = { channel = "pytorch", version = "2.1.0" }
+pytorch3d = { channel = "pytorch3d", version = "*" }
 pyvista = "*"
 rich = "*"
+pytorch-cuda = { channel = "pytorch", version = "12.1" }
 scipy = "*"
+torchvision = { channel = "pytorch" }
 typer = "*"
+executing = ">=0.8.3,<0.9"
 
 [project]
 authors = ["liblaf <30631553+liblaf@users.noreply.github.com>"]
-channels = ["anaconda", "conda-forge"]
+channels = ["anaconda", "nvidia", "conda-forge", "pytorch", "pytorch3d"]
 description = "Add a short description here"
 name = "mesh-kit"
 platforms = ["linux-64"]
