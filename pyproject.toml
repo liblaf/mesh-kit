@@ -1,0 +1,63 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+authors = [
+  { email = "30631553+liblaf@users.noreply.github.com", name = "liblaf" },
+]
+dependencies = [
+  "loguru",
+  "meshio",
+  "meshtaichi-patcher",
+  "numpy",
+  "pyvista",
+  "scipy",
+  "taichi",
+  "trimesh[all]",
+  "typer",
+]
+description = "Add your description here"
+name = "mesh-kit"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+version = "0.0.0"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mkit"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.pixi.dependencies]
+pytorch = { channel = "pytorch", version = "2.1.0" }
+pytorch3d = { channel = "pytorch3d" }
+tetgen = ">=1.6.0,<1.7"
+torchvision = { channel = "pytorch" }
+
+[tool.pixi.environments]
+default = ["cuda121", "dev"]
+
+[tool.pixi.feature.cuda121]
+channels = ["nvidia"]
+
+[tool.pixi.feature.cuda121.dependencies]
+pytorch-cuda = { channel = "pytorch", version = "12.1" }
+
+[tool.pixi.feature.dev.pypi-dependencies]
+icecream = "*"
+
+[tool.pixi.project]
+channels = ["anaconda", "conda-forge", "pytorch", "pytorch3d"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+mesh-kit = { editable = true, path = "." }
+
+[tool.pixi.system-requirements]
+libc = { version = "2.39" }
+linux = "6.8"
+
+[tool.rye]
+dev-dependencies = []
+managed = true

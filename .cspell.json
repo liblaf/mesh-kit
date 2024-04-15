@@ -1,0 +1,28 @@
+{
+  "words": [
+    "cuda",
+    "dtype",
+    "fprint",
+    "icosphere",
+    "intp",
+    "lamé's",
+    "levelno",
+    "libc",
+    "liblaf",
+    "meshio",
+    "mkit",
+    "numpy",
+    "pixi",
+    "pycache",
+    "pypi",
+    "pyvista",
+    "scipy",
+    "smesh",
+    "trimesh",
+    "typer",
+    "venv",
+    "verts"
+  ],
+  "ignorePaths": ["**/*-lock.*", "**/*.lock", "**/.cspell.json"],
+  "allowCompoundWords": true
+}

@@ -1,0 +1,28 @@
+# python generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# venv
+.venv# pixi environments
+.pixi
+*.egg-info
+
+# mesh files
+*.edge
+*.ele
+*.face
+*.node
+*.obj
+*.off
+*.ply
+*.smesh
+*.stl
+*.vtk
+*.vtu
+
+# temporary files
+*hello*
