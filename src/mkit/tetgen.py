@@ -25,7 +25,7 @@ def tetgen(mesh: meshio.Mesh) -> meshio.Mesh:
         input_file: pathlib.Path = tmpdir / "mesh.smesh"
         save_smesh(input_file, mesh)
         subprocess.run(
-            ["tetgen", "-p", "-q", "-a1e-4", "-O", "-z", "-k", "-C", "-V", input_file],
+            ["tetgen", "-p", "-q", "-O", "-z", "-k", "-C", "-V", input_file],
             check=True,
         )
         tetra_mesh: meshio.Mesh = meshio.read(tmpdir / "mesh.1.vtk")

@@ -5,5 +5,8 @@
     "**/.ruff_cache": true
   },
   "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportAssignmentType": "none"
+  },
   "python.analysis.typeCheckingMode": "standard"
 }

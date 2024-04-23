@@ -11,15 +11,15 @@ dependencies = [
   "meshio",
   "meshtaichi-patcher",
   "numpy",
+  "pymeshfix",
   "pyvista",
   "scipy",
   "taichi",
   "trimesh[all]",
   "typer",
 ]
-description = "Add your description here"
+description = "Add a short description here"
 name = "mesh-kit"
-readme = "README.md"
 requires-python = ">=3.11,<3.12"
 version = "0.0.0"
 
@@ -32,7 +32,7 @@ allow-direct-references = true
 [tool.pixi.dependencies]
 pytorch = { channel = "pytorch", version = "2.1.0" }
 pytorch3d = { channel = "pytorch3d" }
-tetgen = ">=1.6.0,<1.7"
+tetgen = "*"
 torchvision = { channel = "pytorch" }
 
 [tool.pixi.environments]
@@ -57,7 +57,3 @@ mesh-kit = { editable = true, path = "." }
 [tool.pixi.system-requirements]
 libc = { version = "2.39" }
 linux = "6.8"
-
-[tool.rye]
-dev-dependencies = []
-managed = true
