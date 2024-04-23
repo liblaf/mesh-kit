@@ -1,6 +1,7 @@
 import inspect
 import logging
 
+import trimesh
 from loguru import logger
 
 
@@ -25,4 +26,5 @@ class InterceptHandler(logging.Handler):
 
 
 def init() -> None:
-    logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
+    # logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
+    trimesh.util.attach_to_log(handler=InterceptHandler())
