@@ -1,26 +1,7 @@
 {
-  "files.associations": {
-    ".envrc*": "shellscript"
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pixi": true
   },
-  "python.analysis.diagnosticMode": "workspace",
-  "python.analysis.diagnosticSeverityOverrides": {
-    "reportAssignmentType": "none",
-    "reportArgumentType": "none",
-    "reportPrivateImportUsage": "none"
-  },
-  "python.analysis.typeCheckingMode": "standard",
-  "python.testing.pytestArgs": ["mesh_kit"],
-  "python.testing.pytestEnabled": true,
-  "python.testing.unittestEnabled": false,
-  "yaml.schemas": {
-    "https://raw.githubusercontent.com/microsoft/vscode-python/main/schemas/conda-environment.json": [
-      "environment.yaml"
-    ]
-  },
-  "json.schemas": [
-    {
-      "fileMatch": ["examples/sculptor/config/*.json"],
-      "url": "./schemas/register.json"
-    }
-  ]
+  "python.analysis.diagnosticMode": "workspace"
 }

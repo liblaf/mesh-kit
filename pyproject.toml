@@ -1,130 +1,59 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core"]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
 
-[tool.mypy]
-ignore_missing_imports = true
-
-[tool.poetry]
-authors = ["liblaf <i@liblaf.me>"]
-description = ""
-exclude = ["**/*_test.py", "tests"]
-license = "MIT"
+[project]
+authors = [
+  { email = "30631553+liblaf@users.noreply.github.com", name = "liblaf" },
+]
+dependencies = [
+  "loguru",
+  "meshio",
+  "meshtaichi-patcher",
+  "pymeshfix",
+  "pyvista",
+  "taichi",
+  "trimesh[all]",
+  "typeguard",
+  "typer",
+]
+description = "Add a short description here"
 name = "mesh-kit"
-readme = "README.md"
+requires-python = ">= 3.11"
 version = "0.0.1"
 
-[tool.poetry.dependencies]
-fire = "^0.6.0"
-loguru = "^0.7.2"
-matplotlib = "^3.8.2"
-numpy = "^1.26.4"
-pydantic = "^2.6.1"
-pymeshfix = "^0.16.2"
-python = ">=3.11,<3.13"
-pyvista = { extras = ["all"], version = "^0.43.3" }
-pyyaml = "^6.0.1"
-rich = "^13.7.0"
-scipy = "^1.12.0"
-tetgen = "^0.6.3"
-tqdm = "^4.66.1"
-trimesh = { extras = ["all"], version = "^4.1.3" }
-typeguard = "^4.1.5"
-typer = "^0.12.0"
-pyacvd = "^0.2.10"
+[project.optional-dependencies]
+dev = ["icecream", "pyright"]
 
-[tool.poetry.group.dev.dependencies]
-icecream = "^2.1.3"
-mypy = "^1.8.0"
-poetry = "^1.7.1"
-poetry-plugin-export = "^1.6.0"
-py-spy = "^0.3.14"
-pytest = "^8.0.1"
-ruff = "^0.4.0"
+[tool.hatch.build.targets.wheel]
+packages = ["src/mkit"]
 
-[tool.poetry.scripts]
-mesh-kit = "mesh_kit.cli.main:app"
+[tool.hatch.metadata]
+allow-direct-references = true
 
-[tool.ruff.lint]
-ignore = [
-  "ANN",
-  "ARG",
-  "COM",
-  "D",
-  "ERA",
-  "FA",
-  "FIX",
-  "INP",
-  "ISC",
-  "N",
-  "PGH",
-  "PLC",
-  "PYI",
-  "S",
-  "T20",
-  "TCH",
-  "TD",
-]
-select = [
-  "A",
-  "AIR",
-  "ANN",
-  "ARG",
-  "ASYNC",
-  "B",
-  "BLE",
-  "C4",
-  "C90",
-  "COM",
-  "CPY",
-  "D",
-  "DJ",
-  "DTZ",
-  "E",
-  "E",
-  "EM",
-  "ERA",
-  "EXE",
-  "F",
-  "FA",
-  "FBT",
-  "FIX",
-  "FLY",
-  "FURB",
-  "G",
-  "I",
-  "ICN",
-  "INP",
-  "INT",
-  "ISC",
-  "LOG",
-  "N",
-  "NPY",
-  "PD",
-  "PERF",
-  "PGH",
-  "PIE",
-  "PL",
-  "PT",
-  "PTH",
-  "PYI",
-  "Q",
-  "RET",
-  "RSE",
-  "RUF",
-  "S",
-  "SIM",
-  "SLF",
-  "SLOT",
-  "T10",
-  "T20",
-  "TCH",
-  "TD",
-  "TID",
-  "TRIO",
-  "TRY",
-  "UP",
-  "W",
-  "W",
-  "YTT",
-]
+[tool.pixi.dependencies]
+python = "3.11.*"
+pytorch = { channel = "pytorch", version = "2.1.0" }
+pytorch3d = { channel = "pytorch3d" }
+tetgen = "*"
+torchvision = { channel = "pytorch" }
+
+[tool.pixi.environments]
+default = ["cuda121", "dev"]
+
+[tool.pixi.feature.cuda121]
+channels = ["nvidia"]
+
+[tool.pixi.feature.cuda121.dependencies]
+pytorch-cuda = { channel = "pytorch", version = "12.1" }
+
+[tool.pixi.project]
+channels = ["anaconda", "conda-forge", "pytorch", "pytorch3d"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+mesh-kit = { editable = true, path = "." }
+
+[tool.pixi.system-requirements]
+libc = "2.39"
+linux = "6.8"
