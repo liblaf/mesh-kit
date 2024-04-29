@@ -73,5 +73,5 @@ platforms = ["linux-64"]
 mesh-kit = { editable = true, path = "." }
 
 [tool.pixi.system-requirements]
-libc = "2.39"
+libc = "2.35"
 linux = "6.5"
