@@ -22,7 +22,7 @@ def main(
     ],
 ) -> None:
     skull_io: meshio.Mesh = meshio.read(input_file)
-    skull_tr: trimesh.Trimesh = _io.to_trimesh(skull_io)
+    skull_tr: trimesh.Trimesh = _io.as_trimesh(skull_io)
     mandible: trimesh.Trimesh
     maxilla: trimesh.Trimesh
     mandible, maxilla = skull_tr.split()
@@ -33,18 +33,14 @@ def main(
 def process(
     skull_io: meshio.Mesh, component_tr: trimesh.Trimesh, output_file: pathlib.Path
 ) -> None:
-    part_idx: npt.NDArray[np.intp] = index.position2index(
+    part_idx: npt.NDArray[np.intp] = index.position_to_index(
         skull_io.points, component_tr.vertices
     )
-    part_io: meshio.Mesh = meshio.Mesh(
-        points=component_tr.vertices,
-        cells=[("triangle", component_tr.faces)],
-        point_data={
-            key: value[part_idx]  # pyright: ignore [reportIndexIssue]
-            for key, value in skull_io.point_data.items()
-        },
-    )
-    part_io.write(output_file)
+    point_data = {
+        key: value[part_idx]  # pyright: ignore [reportIndexIssue]
+        for key, value in skull_io.point_data.items()
+    }
+    _io.save(output_file, component_tr, point_data=point_data)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+
+site_name: Mesh Kit
+site_url: https://liblaf.github.io/mesh-kit/
+repo_url: https://github.com/liblaf/mesh-kit
+site_author: liblaf
+
+theme:
+  name: material
+
+  features:
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - header.autohide
+    - navigation.footer
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.prune
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: system preference
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: light mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: dark mode
+
+plugins:
+  # Built-in plugins
+  # - optimize # Sponsors only
+  - search
+  # External plugins, schema provided by us
+  - gen-files:
+      scripts:
+        - scripts/gen-ref-pages.py
+  - git-authors
+  - git-committers:
+      enabled: !ENV [CI, false]
+      repository: liblaf/mesh-kit
+      branch: main
+  - literate-nav
+  - section-index
+  # External plugins, schema provided by our community
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - mkdocstrings:
+      default_handler: python
+      enable_inventory: true
+      handlers:
+        python:
+          import:
+            - https://docs.python.org/3/objects.inv
+            - https://docs.scipy.org/doc/scipy/objects.inv
+            - https://numpy.org/doc/stable/objects.inv
+            - https://pytorch.org/docs/stable/objects.inv
+            - https://pytorch3d.readthedocs.io/en/latest/objects.inv
+            - https://trimesh.org/objects.inv
+          options:
+            # Headings
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            # Members
+            inherited_members: true
+            # Docstrings
+            docstring_section_style: list
+            # Signatures
+            show_if_no_docstring: true
+            show_signature_annotations: true
+            signature_crossrefs: true

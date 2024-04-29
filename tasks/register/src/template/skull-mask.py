@@ -1,11 +1,11 @@
 import pathlib
 from typing import Annotated
 
-import meshio
 import numpy as np
 import trimesh
 import typer
 from mkit import cli
+from mkit import io as _io
 from numpy import typing as npt
 from scipy import interpolate
 
@@ -33,12 +33,7 @@ def main(
         skull.vertices,
         method="nearest",
     ).astype(np.bool_)
-    mesh = meshio.Mesh(
-        skull.vertices,
-        [("triangle", skull.faces)],
-        point_data={"effective": skull_mask.astype(np.int8)},
-    )
-    mesh.write(output_file)
+    _io.save(output_file, skull, point_data={"mask": skull_mask.astype(np.int8)})
 
 
 if __name__ == "__main__":

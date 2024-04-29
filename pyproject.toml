@@ -10,6 +10,8 @@ dependencies = [
   "loguru",
   "meshio",
   "meshtaichi-patcher",
+  "open3d",
+  "pydantic",
   "pymeshfix",
   "pyvista",
   "taichi",
@@ -24,6 +26,17 @@ version = "0.0.1"
 
 [project.optional-dependencies]
 dev = ["icecream", "pyright"]
+docs = [
+  "mkdocs",
+  "mkdocs-gen-files",
+  "mkdocs-git-authors-plugin",
+  "mkdocs-git-committers-plugin-2",
+  "mkdocs-git-revision-date-localized-plugin",
+  "mkdocs-literate-nav",
+  "mkdocs-material",
+  "mkdocs-section-index",
+  "mkdocstrings[python]",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mkit"]
@@ -39,13 +52,18 @@ tetgen = "*"
 torchvision = { channel = "pytorch" }
 
 [tool.pixi.environments]
-default = ["cuda121", "dev"]
+default = ["cuda121", "dev", "docs"]
 
 [tool.pixi.feature.cuda121]
 channels = ["nvidia"]
 
 [tool.pixi.feature.cuda121.dependencies]
 pytorch-cuda = { channel = "pytorch", version = "12.1" }
+
+[tool.pixi.feature.docs.tasks]
+docs = "mkdocs build"
+docs-deploy = "mkdocs gh-deploy"
+docs-serve = "mkdocs serve"
 
 [tool.pixi.project]
 channels = ["anaconda", "conda-forge", "pytorch", "pytorch3d"]

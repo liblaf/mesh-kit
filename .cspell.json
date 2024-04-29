@@ -5,9 +5,12 @@
     "cython",
     "dicom",
     "dmypy",
+    "dtype",
+    "hstack",
     "intp",
     "ipynb",
     "ipython",
+    "kdtree",
     "levelno",
     "libc",
     "liblaf",
@@ -15,6 +18,7 @@
     "mkdocs",
     "mkit",
     "mypy",
+    "optim",
     "pipenv",
     "pixi",
     "pybuilder",
@@ -37,8 +41,9 @@
     "trimesh",
     "typer",
     "venv",
-    "verts"
+    "verts",
+    "vmap"
   ],
-  "ignorePaths": ["**/*-lock.*", "**/*.lock*", "**/.cspell.json"],
+  "ignorePaths": ["**/*-lock.*", "**/*.lock", "**/.cspell.json"],
   "allowCompoundWords": true
 }

@@ -1,8 +1,8 @@
-import functools
 import pathlib
 from typing import Annotated, Optional
 
 import meshio
+import mkit.ops.register
 import numpy as np
 import trimesh
 import typer
@@ -22,57 +22,18 @@ def main(
 ) -> None:
     source_io: meshio.Mesh = meshio.read(source_file)
     target_io: meshio.Mesh = meshio.read(target_file)
-    source_tr: trimesh.Trimesh = _io.to_trimesh(source_io)
-    target_tr: trimesh.Trimesh = _io.to_trimesh(target_io)
-    source_effective_point_mask = source_io.point_data["effective"]
-    raise NotImplementedError
-
-
-def register(
-    source: trimesh.Trimesh,
-    target: trimesh.Trimesh,
-    *,
-    source_effective_vert_mask: npt.NDArray[np.bool_] | None = None,
-    target_effective_vert_mask: npt.NDArray[np.bool_] | None = None,
-) -> None:
-    scale: float = source.scale
-    centroid: npt.NDArray[np.float64] = source.centroid
-    _normalize = functools.partial(normalize, centroid=centroid, scale=scale)
-    _denormalize = functools.partial(denormalize, centroid=centroid, scale=scale)
-    source = _normalize(source)
-    target = _normalize(target)
-    source_mask: npt.NDArray[np.bool_] = effective_mask(source, target)
-    target_mask: npt.NDArray[np.bool_] = effective_mask(target, source)
-    raise NotImplementedError
-
-
-def effective_mask(
-    mesh: trimesh.Trimesh, other: trimesh.Trimesh, *, threshold: float = 0.1
-) -> npt.NDArray[np.bool_]:
-    closest: npt.NDArray[np.float64]
-    distance: npt.NDArray[np.float64]
-    triangle_id: npt.NDArray[np.int64]
-    closest, distance, triangle_id = other.nearest.on_surface(mesh.vertices)
-    mask: npt.NDArray[np.bool_] = distance < threshold
-    return mask
-
-
-def normalize(
-    mesh: trimesh.Trimesh, *, centroid: npt.NDArray[np.float64], scale: float
-) -> trimesh.Trimesh:
-    mesh = mesh.copy()
-    mesh.apply_scale(1 / scale)
-    mesh.apply_translation(-centroid)
-    return mesh
-
-
-def denormalize(
-    mesh: trimesh.Trimesh, *, centroid: npt.NDArray[np.float64], scale: float
-) -> trimesh.Trimesh:
-    mesh = mesh.copy()
-    mesh.apply_translation(centroid)
-    mesh.apply_scale(scale)
-    return mesh
+    source_tr: trimesh.Trimesh = _io.as_trimesh(source_io)
+    target_tr: trimesh.Trimesh = _io.as_trimesh(target_io)
+    source_vert_mask: npt.NDArray[np.bool_] = np.asarray(
+        source_io.point_data["mask"], np.bool_
+    )
+    mkit.ops.register.register(
+        source_tr,
+        target_tr,
+        source_vert_mask=source_vert_mask,
+        target_vert_mask=None,
+        record_dir=record_dir,
+    )
 
 
 if __name__ == "__main__":

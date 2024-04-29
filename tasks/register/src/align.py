@@ -16,7 +16,7 @@ def main(
     source_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
     target_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
     *,
-    initial_transform_file: Annotated[
+    initial_file: Annotated[
         Optional[pathlib.Path],
         typer.Option("--initial-transform", exists=True, dir_okay=False),
     ] = None,
@@ -31,16 +31,14 @@ def main(
 ) -> None:
     source_io: meshio.Mesh = meshio.read(source_file)
     target_io: meshio.Mesh = meshio.read(target_file)
-    initial_transform: npt.NDArray[np.float64] | None = (
-        np.load(initial_transform_file) if initial_transform_file is not None else None
+    initial: npt.NDArray[np.float64] | None = (
+        np.load(initial_file) if initial_file is not None else None
     )
-    source_tr: trimesh.Trimesh = _io.to_trimesh(source_io)
-    target_tr: trimesh.Trimesh = _io.to_trimesh(target_io)
+    source_tr: trimesh.Trimesh = _io.as_trimesh(source_io)
+    target_tr: trimesh.Trimesh = _io.as_trimesh(target_io)
     source2target: npt.NDArray[np.float64]
     cost: float
-    source2target, cost = align(
-        source_tr, target_tr, initial_transform=initial_transform
-    )
+    source2target, cost = align(source_tr, target_tr, initial=initial)
     if output_mesh_file is not None:
         source_tr.apply_transform(source2target)
         source_io.points = source_tr.vertices
@@ -53,26 +51,33 @@ def align(
     source: trimesh.Trimesh,
     target: trimesh.Trimesh,
     *,
-    initial_transform: npt.NDArray[np.float64] | None = None,
+    initial: npt.NDArray[np.float64] | None = None,
 ) -> tuple[npt.NDArray[np.float64], float]:
-    if initial_transform is None:
-        source2target: npt.NDArray[np.float64]
-        cost: float
-        source2target, cost = registration.mesh_other(
-            source, target, scale=True, icp_first=50, icp_final=100
+    if initial is None:
+        initial = trimesh.transformations.concatenate_matrices(
+            trimesh.transformations.translation_matrix(target.centroid),
+            trimesh.transformations.scale_matrix(target.scale / source.scale),
+            trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]),
+            trimesh.transformations.translation_matrix(-source.centroid),
         )
-    else:
-        source2target: npt.NDArray[np.float64]
-        transformed: npt.NDArray[np.float64]
-        cost: float
-        source2target, transformed, cost = registration.icp(
-            source.sample(10000),
-            target.sample(10000),
-            initial=initial_transform,
-            max_iterations=100,
-        )
+    source2target: npt.NDArray[np.float64]
+    transformed: npt.NDArray[np.float64]
+    cost: float
+    source2target, transformed, cost = registration.icp(
+        down_sample(source, 10000),
+        down_sample(target, 10000),
+        initial=initial,
+        max_iterations=100,
+    )
     logger.info("Align Cost: {}", cost)
     return source2target, cost
+
+
+def down_sample(mesh: trimesh.Trimesh, count: int) -> npt.NDArray[np.float64]:
+    if mesh.vertices.shape[0] <= count:
+        return mesh.vertices
+    verts: npt.NDArray[np.float64] = mesh.sample(count)
+    return verts
 
 
 if __name__ == "__main__":
