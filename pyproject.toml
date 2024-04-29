@@ -46,7 +46,7 @@ allow-direct-references = true
 
 [tool.pixi.dependencies]
 python = "3.11.*"
-pytorch = { channel = "pytorch", version = "2.1.0" }
+pytorch = { channel = "pytorch", version = "2.1.0.*" }
 pytorch3d = { channel = "pytorch3d" }
 tetgen = "*"
 torchvision = { channel = "pytorch" }
@@ -58,7 +58,7 @@ default = ["cuda121", "dev", "docs"]
 channels = ["nvidia"]
 
 [tool.pixi.feature.cuda121.dependencies]
-pytorch-cuda = { channel = "pytorch", version = "12.1" }
+pytorch-cuda = { channel = "pytorch", version = "12.1.*" }
 
 [tool.pixi.feature.docs.tasks]
 docs = "mkdocs build"

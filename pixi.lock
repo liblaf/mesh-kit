@@ -2290,7 +2290,7 @@ packages:
   name: mesh-kit
   version: 0.0.1
   path: .
-  sha256: 5b23f40ebf6a0632c169811d2831b51b35b9f055f8f09a2aafb2d57fddd4fcad
+  sha256: 41749a674efd1e232695f1781d9f9161ac77d58e0f233f778822c9389beec484
   requires_dist:
   - loguru
   - meshio
