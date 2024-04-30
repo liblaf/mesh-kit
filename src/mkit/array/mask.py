@@ -7,4 +7,4 @@ def vertex_to_face(
 ) -> npt.NDArray[np.bool_]:
     faces = np.asarray(faces)
     vert_mask = np.asarray(vert_mask)
-    return faces[vert_mask].all(axis=1)
+    return vert_mask[faces].all(axis=1)

@@ -1,12 +1,17 @@
 {
   "words": [
     "astype",
+    "cotcurv",
     "cuda",
     "cython",
     "dicom",
+    "disp",
     "dmypy",
     "dtype",
+    "fprint",
+    "gmsh",
     "hstack",
+    "interp",
     "intp",
     "ipynb",
     "ipython",
@@ -16,6 +21,7 @@
     "liblaf",
     "meshio",
     "mkdocs",
+    "mkdocstrings",
     "mkit",
     "mypy",
     "optim",
@@ -23,8 +29,10 @@
     "pixi",
     "pybuilder",
     "pycache",
+    "pydantic",
     "pyenv",
     "pyflow",
+    "pymdownx",
     "pymeshfix",
     "pypa",
     "pypackages",
@@ -37,6 +45,7 @@
     "pyvista",
     "scrapy",
     "sdist",
+    "smesh",
     "taplo",
     "trimesh",
     "typer",
@@ -44,6 +53,6 @@
     "verts",
     "vmap"
   ],
-  "ignorePaths": ["**/*-lock.*", "**/*.lock", "**/.cspell.json"],
+  "ignorePaths": ["**/*-lock.*", "**/*.lock*", "**/.cspell.json"],
   "allowCompoundWords": true
 }

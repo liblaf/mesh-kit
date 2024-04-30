@@ -268,7 +268,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/4b/2c/ffbf7a134b9ab11a67b0cf0726453cedd9c5043a4fe7a35d1cefa9a1bcfb/threadpoolctl-3.5.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/88/23/6398b7bca8967c853b90ba2f8da5e3ad1e9b2ca5b9f869a8c26ea41543e2/tifffile-2024.4.24-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/00/c0/8f5d070730d7836adc9c9b6408dec68c6ced86b304a9b26a14df072a6e8c/traitlets-5.14.3-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/ef/52/032d3ad50cb168cb3fd033f8e0123e5cb1267442b580c02345341ae151fa/trimesh-4.3.1-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/57/7b/557a411622ff3e144d52bebbf8ad8a28bb18ee55ff68e1eb5ebfce755975/trimesh-4.3.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/38/51/055758e85029bf0dec2fd80cc314863e997429eedc5d5ff7b65c5c2e7108/typeguard-4.2.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/20/b5/11cf2e34fbb11b937e006286ab5b8cfd334fde1c8fa4dd7f491226931180/typer-0.12.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/65/58/f9c9e6be752e9fcb8b6a0ee9fb87e6e7a1f6bcab2cdc73f02bb7ba91ada0/tzdata-2024.1-py2.py3-none-any.whl
@@ -2290,7 +2290,7 @@ packages:
   name: mesh-kit
   version: 0.0.1
   path: .
-  sha256: 41749a674efd1e232695f1781d9f9161ac77d58e0f233f778822c9389beec484
+  sha256: 838bfed318eee1e24985ea8838c1148b032e498a675ec77fd50bb1c61d2b06b7
   requires_dist:
   - loguru
   - meshio
@@ -2336,7 +2336,7 @@ packages:
   requires_dist:
   - meshio
   - numpy
-  requires_python: '>=3.7'
+  requires_python: '>=3.6'
 - kind: pypi
   name: mkdocs
   version: 1.6.0
@@ -4148,9 +4148,9 @@ packages:
   requires_python: '>=3.8'
 - kind: pypi
   name: trimesh
-  version: 4.3.1
-  url: https://files.pythonhosted.org/packages/ef/52/032d3ad50cb168cb3fd033f8e0123e5cb1267442b580c02345341ae151fa/trimesh-4.3.1-py3-none-any.whl
-  sha256: b3e53cf70dae39040d3d34f105eeff63e57c78cbc38e912d52a5f6f4f98fc70e
+  version: 4.3.2
+  url: https://files.pythonhosted.org/packages/57/7b/557a411622ff3e144d52bebbf8ad8a28bb18ee55ff68e1eb5ebfce755975/trimesh-4.3.2-py3-none-any.whl
+  sha256: 7563182a9379485b88a44e87156fe54b41fb6f8f030001b9b6de39abdef05c22
   requires_dist:
   - numpy>=1.20
   - trimesh[easy,recommend,test] ; extra == 'all'

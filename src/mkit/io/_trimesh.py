@@ -34,12 +34,18 @@ def as_trimesh(mesh: AnyMesh) -> trimesh.Trimesh:
         case pytorch3d.structures.Meshes():
             raise NotImplementedError  # TODO
         case pv.PolyData():
-            raise NotImplementedError  # TODO
+            return pyvista_to_trimesh(mesh)
         case _:
             raise NotImplementedError(f"unsupported mesh: {mesh}")
 
 
 def meshio_to_trimesh(mesh: meshio.Mesh) -> trimesh.Trimesh:
-    vertices: npt.NDArray[np.float64] = mesh.points
+    verts: npt.NDArray[np.floating] = mesh.points
     faces: npt.NDArray[np.integer] = mesh.get_cells_type("triangle")
-    return trimesh.Trimesh(vertices, faces)
+    return trimesh.Trimesh(verts, faces)
+
+
+def pyvista_to_trimesh(mesh: pv.PolyData) -> trimesh.Trimesh:
+    verts: npt.NDArray[np.floating] = mesh.points
+    faces: npt.NDArray[np.integer] = mesh.regular_faces
+    return trimesh.Trimesh(verts, faces)

@@ -16,7 +16,7 @@ from mkit.typing import StrPath
 class Attrs(TypedDict, total=False):
     point_data: dict[str, npt.ArrayLike] | None
     cell_data: dict[str, list[npt.ArrayLike]] | None
-    field_data: None
+    field_data: dict[str, npt.ArrayLike] | None
     point_sets: dict[str, npt.ArrayLike] | None
     cell_sets: dict[str, list[npt.ArrayLike]] | None
     gmsh_periodic: None

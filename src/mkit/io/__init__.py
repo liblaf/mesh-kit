@@ -5,6 +5,8 @@ import meshio
 from mkit.io import _meshio
 from mkit.io._meshio import as_meshio as as_meshio
 from mkit.io._meshio import load_meshio as load_meshio
+from mkit.io._pyvista import as_pyvista as as_pyvista
+from mkit.io._pyvista import load_pyvista as load_pyvista
 from mkit.io._trimesh import as_trimesh as as_trimesh
 from mkit.io._trimesh import load_trimesh as load_trimesh
 from mkit.io.types import AnyMesh
@@ -12,8 +14,10 @@ from mkit.typing import StrPath
 
 __all__ = [
     "as_meshio",
+    "as_pyvista",
     "as_trimesh",
     "load_meshio",
+    "load_pyvista",
     "load_trimesh",
     "save",
 ]
