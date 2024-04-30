@@ -62,7 +62,7 @@ pytorch-cuda = { channel = "pytorch", version = "12.1.*" }
 
 [tool.pixi.feature.docs.tasks]
 docs = "mkdocs build"
-docs-deploy = "mkdocs gh-deploy"
+docs-deploy = "mkdocs gh-deploy --force --no-history"
 docs-serve = "mkdocs serve"
 
 [tool.pixi.project]
