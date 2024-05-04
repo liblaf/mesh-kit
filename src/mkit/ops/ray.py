@@ -21,4 +21,4 @@ def find_inner_point(
         result: npt.NDArray = (locations[0] + locations[1]) / 2
         if mesh.contains([result])[0]:
             return result
-    raise ValueError("Cannot find inner point")
+    raise ValueError("failed to find inner point")

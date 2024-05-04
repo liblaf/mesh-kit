@@ -1,15 +1,18 @@
 import pathlib
 from typing import Annotated
 
+import mkit.cli
+import mkit.io
 import pyvista as pv
 import typer
-from mkit import cli
 
 
 def main(
     ct_path: Annotated[pathlib.Path, typer.Argument(exists=True)],
-    output_file: Annotated[pathlib.Path, typer.Argument(dir_okay=False, writable=True)],
     *,
+    output_file: Annotated[
+        pathlib.Path, typer.Option("-o", "--output", dir_okay=False, writable=True)
+    ],
     threshold: Annotated[float, typer.Option()],
 ) -> None:
     reader = pv.DICOMReader(ct_path)
@@ -21,4 +24,4 @@ def main(
 
 
 if __name__ == "__main__":
-    cli.run(main)
+    mkit.cli.run(main)

@@ -2,9 +2,9 @@ from collections.abc import Callable
 
 import typer
 
-from mkit import log
+import mkit.log
 
 
 def run(main: Callable) -> None:
-    log.init()
+    mkit.log.init()
     typer.run(main)

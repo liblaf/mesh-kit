@@ -2,7 +2,7 @@ import pathlib
 from typing import Annotated, Optional
 
 import meshio
-import mkit.ops.register
+import mkit.ops.register.nricp
 import numpy as np
 import trimesh
 import typer
@@ -27,7 +27,7 @@ def main(
     source_vert_mask: npt.NDArray[np.bool_] = np.asarray(
         source_io.point_data["mask"], np.bool_
     )
-    mkit.ops.register.register(
+    mkit.ops.register.nricp.register(
         source_tr,
         target_tr,
         source_vert_mask=source_vert_mask,

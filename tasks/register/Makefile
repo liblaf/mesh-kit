@@ -7,63 +7,72 @@ TARGET_CT    := $(DATA_DIR)/CT/$(TARGET_ID)/$(STAGE)
 TARGET_DIR   := $(DATA_DIR)/target/$(TARGET_ID)/$(STAGE)
 TEMPLATE_DIR := $(DATA_DIR)/template
 
-# default: $(TARGET_DIR)/04-mandible.vtu
 default: $(TARGET_DIR)/02-face.vtu
+default: $(TARGET_DIR)/02-mandible.vtu
+default: $(TARGET_DIR)/02-maxilla.vtu
 
 ############
 # Template #
 ############
 
-$(TEMPLATE_DIR)/00-%.ply:
+# Download template face
+$(TEMPLATE_DIR)/00-face.ply:
 	@ mkdir --parents --verbose "$(@D)"
-	wget --output-document="$@" "https://github.com/liblaf/sculptor/raw/main/model/template/$*.ply"
+	wget --output-document="$@" "https://github.com/liblaf/sculptor/raw/main/model/template/face.ply"
 
-$(TEMPLATE_DIR)/01-face.vtu: $(TEMPLATE_DIR)/00-face.ply $(srcdir)/template/face.py
+# Download template skull
+$(TEMPLATE_DIR)/00-skull.ply:
+	@ mkdir --parents --verbose "$(@D)"
+	wget --output-document="$@" "https://github.com/liblaf/sculptor/raw/main/model/template/skull.ply"
+
+# Process template face
+$(TEMPLATE_DIR)/01-face.ply: $(TEMPLATE_DIR)/00-face.ply $(srcdir)/template/face/process.py
 	python "$(lastword $^)" --output="$@" "$<"
 
-$(TEMPLATE_DIR)/01-skull.vtu: $(TEMPLATE_DIR)/00-skull.ply $(srcdir)/template/skull-mask.py
-	python "$(lastword $^)" "$<" "$@"
+# Process template skull
+$(TEMPLATE_DIR)/01-skull.vtu $(TEMPLATE_DIR)/01-mandible.vtu $(TEMPLATE_DIR)/01-maxilla.vtu &: $(TEMPLATE_DIR)/00-skull.ply $(srcdir)/template/skull/process.py
+	python "$(lastword $^)" --output="$(TEMPLATE_DIR)/01-skull.vtu" --mandible="$(TEMPLATE_DIR)/01-mandible.vtu" --maxilla="$(TEMPLATE_DIR)/01-maxilla.vtu" "$<"
 
-$(TEMPLATE_DIR)/01-mandible.vtu $(TEMPLATE_DIR)/01-maxilla.vtu &: $(TEMPLATE_DIR)/01-skull.vtu $(srcdir)/template/skull-split.py
-	python "$(lastword $^)" --mandible="$(TEMPLATE_DIR)/01-mandible.vtu" --maxilla="$(TEMPLATE_DIR)/01-maxilla.vtu" "$<"
+ground: $(TEMPLATE_DIR)/00-face.ply $(TARGET_DIR)/01-face.ply $(srcdir)/template/face/ground.py
+	python "$(lastword $^)" "$<" "$(word 2,$^)"
 
 ##########
 # Target #
 ##########
 
-# CT to skull mesh
-$(TARGET_DIR)/00-skull.ply: $(TARGET_CT) $(srcdir)/CT2mesh.py
-	@ mkdir --parents --verbose "$(@D)"
-	python "$(lastword $^)" --threshold=200 "$<" "$@"
-
 # CT to face mesh
 $(TARGET_DIR)/00-face.ply: $(TARGET_CT) $(srcdir)/CT2mesh.py
 	@ mkdir --parents --verbose "$(@D)"
-	python "$(lastword $^)" --threshold=-200 "$<" "$@"
+	python "$(lastword $^)" --output="$@" --threshold=-200 "$<"
 
-# simplify
-$(TARGET_DIR)/01-skull.ply: $(TARGET_DIR)/00-skull.ply $(srcdir)/simplify.py
-	python "$(lastword $^)" --face-count=-1 "$<" "$@"
+# CT to skull mesh
+$(TARGET_DIR)/00-skull.ply: $(TARGET_CT) $(srcdir)/CT2mesh.py
+	@ mkdir --parents --verbose "$(@D)"
+	python "$(lastword $^)" --output="$@" --threshold=200 "$<"
 
-# simplify
+# simplify face
 $(TARGET_DIR)/01-face.ply: $(TARGET_DIR)/00-face.ply $(srcdir)/simplify.py
-	python "$(lastword $^)" --face-count=-1 "$<" "$@"
+	python "$(lastword $^)" --output="$@" --face-count=-1 "$<"
+
+# simplify skull
+$(TARGET_DIR)/01-skull.ply: $(TARGET_DIR)/00-skull.ply $(srcdir)/simplify.py
+	python "$(lastword $^)" --output="$@" --face-count=-1 "$<"
 
 # align template skull to target skull
-$(TARGET_DIR)/02-skull.vtu $(TARGET_DIR)/template2target.npy &: $(TEMPLATE_DIR)/01-skull.vtu $(TARGET_DIR)/01-skull.ply $(srcdir)/align.py
-	python "$(lastword $^)" --output-mesh="$(TARGET_DIR)/02-skull.vtu" --output-transform="$(TARGET_DIR)/template2target.npy" "$<" "$(word 2,$^)"
+$(TARGET_DIR)/02-skull.vtu $(TARGET_DIR)/template_to_target.npy &: $(TEMPLATE_DIR)/01-skull.vtu $(TARGET_DIR)/01-skull.ply $(srcdir)/align.py
+	python "$(lastword $^)" --output="$(TARGET_DIR)/02-skull.vtu" --output-transform="$(TARGET_DIR)/template_to_target.npy" "$<" "$(word 2,$^)"
 
 # align template face to target face
-$(TARGET_DIR)/02-face.vtu: $(TEMPLATE_DIR)/01-face.vtu $(TARGET_DIR)/01-face.ply $(TARGET_DIR)/template2target.npy $(srcdir)/align.py
-	python "$(lastword $^)" --initial-transform="$(word 3,$^)" --output-mesh="$@" "$<" "$(word 2,$^)"
+$(TARGET_DIR)/02-face.vtu: $(TEMPLATE_DIR)/01-face.ply $(TARGET_DIR)/01-face.ply $(TARGET_DIR)/template_to_target.npy $(srcdir)/align.py
+	python "$(lastword $^)" --output="$@" --initial-transform="$(word 3,$^)" --inverse "$<" "$(word 2,$^)"
 
 # align template mandible to target mandible
-$(TARGET_DIR)/03-mandible.vtu: $(TEMPLATE_DIR)/01-mandible.vtu $(TARGET_DIR)/01-skull.ply $(TARGET_DIR)/template2target.npy $(srcdir)/align.py
-	python "$(lastword $^)" --initial-transform="$(word 3,$^)" --output-mesh="$@" "$<" "$(word 2,$^)"
+$(TARGET_DIR)/02-mandible.vtu: $(TEMPLATE_DIR)/01-mandible.vtu $(TARGET_DIR)/01-skull.ply $(TARGET_DIR)/template_to_target.npy $(srcdir)/align.py
+	python "$(lastword $^)" --output="$@" --initial-transform="$(word 3,$^)" "$<" "$(word 2,$^)"
 
 # align template maxilla to target maxilla
-$(TARGET_DIR)/03-maxilla.vtu: $(TEMPLATE_DIR)/01-maxilla.vtu $(TARGET_DIR)/01-skull.ply $(TARGET_DIR)/template2target.npy $(srcdir)/align.py
-	python "$(lastword $^)" --initial-transform="$(word 3,$^)" --output-mesh="$@" "$<" "$(word 2,$^)"
+$(TARGET_DIR)/02-maxilla.vtu: $(TEMPLATE_DIR)/01-maxilla.vtu $(TARGET_DIR)/01-skull.ply $(TARGET_DIR)/template_to_target.npy $(srcdir)/align.py
+	python "$(lastword $^)" --output="$@" --initial-transform="$(word 3,$^)" "$<" "$(word 2,$^)"
 
 # register template mandible
 $(TARGET_DIR)/04-mandible.vtu: $(TARGET_DIR)/03-mandible.vtu $(TARGET_DIR)/01-skull.ply $(srcdir)/register.py
