@@ -18,11 +18,12 @@ def main(
     output_file: Annotated[
         pathlib.Path, typer.Option("-o", "--output", dir_okay=False, writable=True)
     ],
+    displacement: Annotated[float, typer.Option()] = 0.05,
 ) -> None:
-    face: trimesh.Trimesh = trimesh.creation.icosphere(radius=1.0)
-    pre_skull: trimesh.Trimesh = trimesh.creation.icosphere(radius=0.5)
+    face: trimesh.Trimesh = trimesh.creation.icosphere(radius=0.2)
+    pre_skull: trimesh.Trimesh = trimesh.creation.icosphere(radius=0.1)
     post_skull: trimesh.Trimesh = pre_skull.copy()
-    post_skull.vertices[post_skull.vertices[:, 1] < 0.0] += [0.0, -0.1, 0.0]
+    post_skull.vertices[post_skull.vertices[:, 1] < 0.0] += [0.0, -displacement, 0.0]
     tri: trimesh.Trimesh = trimesh.util.concatenate([face, pre_skull])
     tet: meshio.Mesh = mkit.ops.tetgen.tetgen(
         mkit.io.as_meshio(
