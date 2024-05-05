@@ -53,12 +53,12 @@ class MTM:
         return volume_np
 
     def stiffness(self) -> None:
-        mkit.taichi.mesh.field.place(self.mesh.cells, {"K": ti.math.mat3})
         mkit.taichi.mesh.field.place(self.mesh.edges, {"K": ti.math.mat3})
-        K_cells: ti.MatrixField = self.mesh.cells.get_member_field("K")
-        K_cells.fill(0)
+        mkit.taichi.mesh.field.place(self.mesh.verts, {"K": ti.math.mat3})
         K_edges: ti.MatrixField = self.mesh.edges.get_member_field("K")
         K_edges.fill(0)
+        K_verts: ti.MatrixField = self.mesh.verts.get_member_field("K")
+        K_verts.fill(0)
         self._stiffness()
 
     def force(self, disp: npt.ArrayLike) -> npt.NDArray[np.floating]:
