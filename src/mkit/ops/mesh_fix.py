@@ -8,8 +8,8 @@ import mkit.io
 def mesh_fix(
     mesh: trimesh.Trimesh,
     *,
-    verbose: bool = False,
-    joincomp: bool = False,
+    verbose: bool = True,
+    joincomp: bool = True,
     remove_smallest_components: bool = True,
 ) -> trimesh.Trimesh:
     mesh_pv: pv.PolyData = mkit.io.as_pyvista(mesh)

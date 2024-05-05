@@ -33,6 +33,7 @@ $(TEMPLATE_DIR)/01-face.ply: $(TEMPLATE_DIR)/00-face.ply $(srcdir)/template/face
 $(TEMPLATE_DIR)/01-skull.vtu $(TEMPLATE_DIR)/01-mandible.vtu $(TEMPLATE_DIR)/01-maxilla.vtu &: $(TEMPLATE_DIR)/00-skull.ply $(srcdir)/template/skull/process.py
 	python "$(lastword $^)" --output="$(TEMPLATE_DIR)/01-skull.vtu" --mandible="$(TEMPLATE_DIR)/01-mandible.vtu" --maxilla="$(TEMPLATE_DIR)/01-maxilla.vtu" "$<"
 
+# Trim template face according to target face
 ground: $(TEMPLATE_DIR)/00-face.ply $(TARGET_DIR)/01-face.ply $(srcdir)/template/face/ground.py
 	python "$(lastword $^)" "$<" "$(word 2,$^)"
 

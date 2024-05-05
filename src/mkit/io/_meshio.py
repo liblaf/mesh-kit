@@ -30,6 +30,12 @@ def load_meshio(filename: StrPath) -> meshio.Mesh:
 def as_meshio(mesh: AnyMesh, **kwargs: Unpack[Attrs]) -> meshio.Mesh:
     match mesh:
         case meshio.Mesh():
+            if point_data := kwargs.get("point_data"):
+                mesh.point_data.update(point_data)
+            if cell_data := kwargs.get("cell_data"):
+                mesh.cell_data.update(cell_data)
+            if field_data := kwargs.get("field_data"):
+                mesh.field_data.update(field_data)
             return mesh
         case pytorch3d.structures.Meshes():
             return pytorch3d_to_meshio(mesh, **kwargs)

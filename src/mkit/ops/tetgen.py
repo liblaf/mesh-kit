@@ -12,10 +12,11 @@ from numpy import typing as npt
 from mkit.typing import StrPath
 
 
-def tetgen(mesh: meshio.Mesh) -> meshio.Mesh:
+def tetgen(mesh: meshio.Mesh, *, verbose: bool = True) -> meshio.Mesh:
     """
     Args:
         mesh: input mesh
+        holes: (N, 3) float
 
     Returns:
         tetrahedral mesh
@@ -24,10 +25,10 @@ def tetgen(mesh: meshio.Mesh) -> meshio.Mesh:
         tmpdir = pathlib.Path(tmpdir)
         input_file: pathlib.Path = tmpdir / "mesh.smesh"
         save_smesh(input_file, mesh)
-        subprocess.run(
-            ["tetgen", "-p", "-q", "-O", "-z", "-k", "-C", "-V", input_file],
-            check=True,
-        )
+        args: list[str] = ["tetgen", "-p", "-q", "-O", "-z", "-k", "-C"]
+        if verbose:
+            args.append("-V")
+        subprocess.run([*args, input_file], check=True)
         tetra_mesh: meshio.Mesh = meshio.read(tmpdir / "mesh.1.vtk")
         points: npt.NDArray[np.floating] = tetra_mesh.points
         tetra: npt.NDArray[np.intp] = tetra_mesh.get_cells_type("tetra")
@@ -109,7 +110,7 @@ def save_smesh(file: StrPath, mesh: meshio.Mesh) -> None:
         fprint()
         fprint("# Part 3 - hole list")
         fprint("# <# of holes>")
-        holes: npt.NDArray[np.float64] = mesh.field_data.get("holes", [])
+        holes: npt.NDArray[np.floating] = np.asarray(mesh.field_data.get("holes", []))
         fprint(len(holes))
         fprint("# <hole #> <x> <y> <z>")
         for hole_id, hole in enumerate(holes):
