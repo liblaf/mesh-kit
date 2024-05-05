@@ -168,9 +168,9 @@ class MTM:
             for e_idx in range(v.edges.size):
                 e = v.edges[e_idx]
                 if e.verts[0].id == v.id:
-                    v.Ax += e.K @ e.verts[1].x
+                    v.f += e.K @ e.verts[1].x
                 elif e.verts[1].id == v.id:
-                    v.Ax += e.K.transpose() @ e.verts[0].x
+                    v.f += e.K.transpose() @ e.verts[0].x
 
     @no_type_check
     @ti.kernel

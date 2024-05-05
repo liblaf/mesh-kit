@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from typing import Any
 
 import meshio
@@ -14,7 +15,7 @@ def load_taichi(filename: StrPath) -> ti.MeshInstance:
     raise NotImplementedError  # TODO
 
 
-def as_taichi(mesh: AnyMesh, relations: list[str] = []) -> ti.MeshInstance:
+def as_taichi(mesh: AnyMesh, relations: Iterable[str] = []) -> ti.MeshInstance:
     match mesh:
         case ti.MeshInstance():
             return mesh
@@ -24,7 +25,9 @@ def as_taichi(mesh: AnyMesh, relations: list[str] = []) -> ti.MeshInstance:
             raise NotImplementedError(f"unsupported mesh: {mesh}")
 
 
-def meshio_to_taichi(mesh: meshio.Mesh, relations: list[str] = []) -> ti.MeshInstance:
+def meshio_to_taichi(
+    mesh: meshio.Mesh, relations: Iterable[str] = []
+) -> ti.MeshInstance:
     total: dict[int, npt.NDArray] = {
         0: mesh.points,
         3: mesh.get_cells_type("tetra"),
