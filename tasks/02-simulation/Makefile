@@ -12,16 +12,18 @@ default: $(TARGET_DIR)/predict.vtu
 $(TARGET_DIR)/ground-truth.vtu: $(TARGET_DIR)/post/99-face.vtu
 	@ cp --verbose "$<" "$@"
 
-.PHONY: $(TARGET_DIR)/post/99-face.vtu
-$(TARGET_DIR)/post/99-face.vtu:
+# .PHONY: $(TARGET_DIR)/post/99-face.vtu
+$(TARGET_DIR)/post/99-face.vtu: force
 	$(MAKE) --directory="../00-register" STAGE=post "$@"
 
-.PHONY: $(TARGET_DIR)/tetra.vtu
-$(TARGET_DIR)/tetra.vtu:
+# .PHONY: $(TARGET_DIR)/tetra.vtu
+$(TARGET_DIR)/tetra.vtu: force
 	$(MAKE) --directory="../01-tetgen" "$@"
 
 $(TARGET_DIR)/predict.vtu: $(TARGET_DIR)/tetra.vtu $(srcdir)/mtm-matrix-free.py
 	python "$(lastword $^)" --output="$@" "$<"
+
+force:
 
 data/%.vtu: ../01-tetgen/src/create.py
 	@ mkdir --parents --verbose "$(@D)"
