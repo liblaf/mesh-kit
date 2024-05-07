@@ -77,13 +77,15 @@ def main(
     ti.init(ti.cpu, default_fp=ti.float64)
     mesh: meshio.Mesh = mkit.io.load_meshio(input_file)
     model = Model(mesh)
-    model.init_material(E=3000, nu=poisson_ratio)
+    model.init_material(E=3000 * 1e-9, nu=poisson_ratio)
     model.volume()
     model.stiffness()
     A = Operator(model)
     u_free: npt.NDArray[np.floating]
     info: int
-    u_free, info = scipy.sparse.linalg.gmres(A, model.b().flatten())
+    u_free, info = scipy.sparse.linalg.minres(
+        A, model.b().flatten(), show=True, rtol=1e-6
+    )
     u_free = u_free.reshape((model.n_free, 3))
     logger.info("GMRES info: {}", info)
     disp: npt.NDArray[np.floating] = mesh.point_data["disp"]

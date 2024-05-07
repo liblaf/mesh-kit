@@ -15,7 +15,9 @@ from numpy import typing as npt
 
 def main(
     source_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
-    target_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
+    target_file: Annotated[
+        Optional[pathlib.Path], typer.Argument(exists=True, dir_okay=False)
+    ] = None,
     *,
     initial_transform_file: Annotated[
         Optional[pathlib.Path],
@@ -29,24 +31,32 @@ def main(
         typer.Option("--output-transform", dir_okay=False, writable=True),
     ] = None,
     inverse: Annotated[bool, typer.Option()] = False,
+    smart_initial: Annotated[bool, typer.Option()] = False,
 ) -> None:
     source_io: meshio.Mesh
-    target_io: meshio.Mesh
-    source_tr: trimesh.Trimesh
-    target_tr: trimesh.Trimesh
-    source_io, source_tr = load_mesh_masked(source_file)
-    target_io, target_tr = load_mesh_masked(target_file)
-    initial: npt.NDArray[np.float64] | None = (
+    source_masked: trimesh.Trimesh
+    source_io, source_masked = load_mesh_masked(source_file)
+    initial: npt.NDArray[np.floating] | None = (
         np.load(initial_transform_file) if initial_transform_file is not None else None
     )
-    source_to_target: npt.NDArray[np.float64]
-    cost: float
-    source_to_target, cost = align(
-        source_tr, target_tr, initial=initial, inverse=inverse
-    )
+    source_to_target: npt.NDArray[np.floating] = initial
+    if target_file is not None:
+        target_io: meshio.Mesh
+        target_masked: trimesh.Trimesh
+        target_io, target_masked = load_mesh_masked(target_file)
+        cost: float
+        source_to_target, cost = align(
+            source_masked,
+            target_masked,
+            initial=initial,
+            inverse=inverse,
+            smart_initial=smart_initial,
+        )
     if output_file is not None:
-        source_tr.apply_transform(source_to_target)
-        source_io.points = source_tr.vertices
+        if source_to_target is not None:
+            source_tr: trimesh.Trimesh = mkit.io.as_trimesh(source_io)
+            source_tr.apply_transform(source_to_target)
+            source_io.points = source_tr.vertices
         source_io.write(output_file)
     if output_transform_file is not None:
         np.save(output_transform_file, source_to_target)
@@ -72,10 +82,11 @@ def align(
     source: trimesh.Trimesh,
     target: trimesh.Trimesh,
     *,
-    initial: npt.NDArray[np.float64] | None = None,
+    initial: npt.NDArray[np.floating] | None = None,
     inverse: bool = False,
-) -> tuple[npt.NDArray[np.float64], float]:
-    if initial is None:
+    smart_initial: bool = False,
+) -> tuple[npt.NDArray[np.floating], float]:
+    if smart_initial:
         initial = trimesh.transformations.concatenate_matrices(
             trimesh.transformations.translation_matrix(target.centroid),
             trimesh.transformations.scale_matrix(target.scale),
@@ -83,7 +94,7 @@ def align(
             trimesh.transformations.scale_matrix(1.0 / source.scale),
             trimesh.transformations.translation_matrix(-source.centroid),
         )
-    source_to_target: npt.NDArray[np.float64]
+    source_to_target: npt.NDArray[np.floating]
     cost: float
     source_to_target, cost = mkit.ops.register.icp.icp(
         source, target, initial=initial, inverse=inverse

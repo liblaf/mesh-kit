@@ -2,12 +2,11 @@ import pathlib
 from typing import Annotated, Optional
 
 import meshio
-import mkit.ops.register.nricp
+import mkit.cli
+import mkit.io
 import numpy as np
 import trimesh
 import typer
-from mkit import cli
-from mkit import io as _io
 from numpy import typing as npt
 
 
@@ -22,19 +21,17 @@ def main(
 ) -> None:
     source_io: meshio.Mesh = meshio.read(source_file)
     target_io: meshio.Mesh = meshio.read(target_file)
-    source_tr: trimesh.Trimesh = _io.as_trimesh(source_io)
-    target_tr: trimesh.Trimesh = _io.as_trimesh(target_io)
-    source_vert_mask: npt.NDArray[np.bool_] = np.asarray(
-        source_io.point_data["mask"], np.bool_
-    )
-    mkit.ops.register.nricp.register(
+    source_tr: trimesh.Trimesh = mkit.io.as_trimesh(source_io)
+    target_tr: trimesh.Trimesh = mkit.io.as_trimesh(target_io)
+    result: npt.NDArray[np.floating] = trimesh.registration.nricp_amberg(
         source_tr,
         target_tr,
-        source_vert_mask=source_vert_mask,
-        target_vert_mask=None,
-        record_dir=record_dir,
+        steps=[[0.02, 3, 0.5, 10], [0.007, 3, 0.5, 10], [0.002, 3, 0.5, 10]],
+        distance_threshold=0.05,
     )
+    source_io.points = result
+    mkit.io.save(output_file, source_io)
 
 
 if __name__ == "__main__":
-    cli.run(main)
+    mkit.cli.run(main)

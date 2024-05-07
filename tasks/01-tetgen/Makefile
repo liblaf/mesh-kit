@@ -1,13 +1,37 @@
 DATA_DIR  ?= $(HOME)/Documents/data
 TARGET_ID ?= 120056
-STAGE     ?= post
+export DATA_DIR
+export TARGET_ID
 
-srcdir       := src
-TARGET_CT    := $(DATA_DIR)/CT/$(TARGET_ID)/$(STAGE)
-TARGET_DIR   := $(DATA_DIR)/target/$(TARGET_ID)/$(STAGE)
-TEMPLATE_DIR := $(DATA_DIR)/template
+srcdir     := src
+TARGET_DIR := $(DATA_DIR)/target/$(TARGET_ID)
 
-default: test
+default: $(TARGET_DIR)/post/99-face.vtu
+default: $(TARGET_DIR)/tetra.vtu
 
-test: $(TEMPLATE_DIR)/01-face.vtu $(TEMPLATE_DIR)/01-mandible.vtu $(TEMPLATE_DIR)/01-maxilla.vtu $(srcdir)/tetgen.py
-	python "$(lastword $^)" --pre-face="$<" --pre-mandible="$(word 2,$^)" --pre-maxilla="$(word 3,$^)"
+.PHONY: $(TARGET_DIR)/pre/99-face.vtu
+$(TARGET_DIR)/pre/99-face.vtu:
+	$(MAKE) --directory="../00-register" STAGE=pre "$@"
+
+.PHONY: $(TARGET_DIR)/pre/99-mandible.vtu
+$(TARGET_DIR)/pre/99-mandible.vtu:
+	$(MAKE) --directory="../00-register" STAGE=pre "$@"
+
+.PHONY: $(TARGET_DIR)/pre/99-maxilla.vtu
+$(TARGET_DIR)/pre/99-maxilla.vtu:
+	$(MAKE) --directory="../00-register" STAGE=pre "$@"
+
+.PHONY: $(TARGET_DIR)/post/99-face.vtu
+$(TARGET_DIR)/post/99-face.vtu:
+	$(MAKE) --directory="../00-register" STAGE=post "$@"
+
+.PHONY: $(TARGET_DIR)/post/99-mandible.vtu
+$(TARGET_DIR)/post/99-mandible.vtu:
+	$(MAKE) --directory="../00-register" STAGE=post "$@"
+
+.PHONY: $(TARGET_DIR)/post/99-maxilla.vtu
+$(TARGET_DIR)/post/99-maxilla.vtu:
+	$(MAKE) --directory="../00-register" STAGE=post "$@"
+
+$(TARGET_DIR)/tetra.vtu: $(TARGET_DIR)/pre/99-face.vtu $(TARGET_DIR)/pre/99-mandible.vtu $(TARGET_DIR)/pre/99-maxilla.vtu $(TARGET_DIR)/post/99-mandible.vtu $(TARGET_DIR)/post/99-maxilla.vtu $(srcdir)/tetgen.py
+	python "$(lastword $^)" --output="$@" --pre-face="$<" --pre-mandible="$(word 2,$^)" --pre-maxilla="$(word 3,$^)" --post-mandible="$(word 4,$^)" --post-maxilla="$(word 5,$^)"
