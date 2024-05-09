@@ -1,3 +1,4 @@
+import pathlib
 from typing import TypedDict, Unpack
 
 import meshio
@@ -7,8 +8,12 @@ import pyvista as pv
 import taichi as ti
 import torch
 import trimesh
+from loguru import logger
 from numpy import typing as npt
 
+import mkit
+import mkit.array
+import mkit.array.points
 from mkit._typing import StrPath
 from mkit.io.types import AnyMesh
 
@@ -24,7 +29,17 @@ class Attrs(TypedDict, total=False):
 
 
 def load_meshio(filename: StrPath) -> meshio.Mesh:
-    return meshio.read(filename)
+    filename = pathlib.Path(filename)
+    mesh: meshio.Mesh = meshio.read(filename)
+    landmarks_file: pathlib.Path = filename.with_suffix(".xyz")
+    if landmarks_file.exists():
+        pos: npt.NDArray[np.floating] = np.loadtxt(landmarks_file)
+        idx: npt.NDArray[np.integer] = mkit.array.points.position_to_index(
+            mesh.points, pos
+        )
+        mesh.field_data["landmarks"] = idx
+        logger.debug('loaded {} landmarks from "{}"', len(idx), landmarks_file)
+    return mesh
 
 
 def as_meshio(mesh: AnyMesh, **kwargs: Unpack[Attrs]) -> meshio.Mesh:

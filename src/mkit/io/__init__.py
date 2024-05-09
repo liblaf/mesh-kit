@@ -1,6 +1,10 @@
+import pathlib
 from typing import Unpack
 
 import meshio
+import numpy as np
+from loguru import logger
+from numpy import typing as npt
 
 from mkit._typing import StrPath
 from mkit.io import _meshio
@@ -29,4 +33,11 @@ __all__ = [
 
 def save(filename: StrPath, mesh: AnyMesh, **kwargs: Unpack[_meshio.Attrs]) -> None:
     mesh_io: meshio.Mesh = _meshio.as_meshio(mesh, **kwargs)
+    if "landmarks" in mesh_io.field_data:
+        idx: npt.NDArray[np.integer] = mesh_io.field_data["landmarks"]
+        pos: npt.NDArray[np.floating] = mesh_io.points[idx]
+        filename = pathlib.Path(filename)
+        landmarks_file: StrPath = filename.with_suffix(".xyz")
+        np.savetxt(landmarks_file, pos)
+        logger.debug('saved {} landmarks to "{}"', len(idx), landmarks_file)
     mesh_io.write(filename)

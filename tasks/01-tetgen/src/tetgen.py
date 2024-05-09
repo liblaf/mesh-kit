@@ -60,7 +60,10 @@ def main(
     )
     validation: npt.NDArray[np.bool_] = np.full((len(tetra.points),), False)
     validation[face_mask] = scipy.interpolate.griddata(
-        pre_face.points, pre_face.point_data["validation"], tetra.points[face_mask]
+        pre_face.points,
+        pre_face.point_data["validation"],
+        tetra.points[face_mask],
+        method="nearest",
     )
 
     mkit.io.save(

@@ -25,7 +25,7 @@ def main(
 ) -> None:
     mesh: meshio.Mesh = mkit.io.load_meshio(input_file)
     landmarks: npt.NDArray[np.integer] = load_landmarks(mesh, landmarks_file)
-    mkit.io.save(output_file, mesh, field_data={"landmarks": landmarks})
+    mkit.io.save(output_file, mesh)
 
 
 def load_landmarks(

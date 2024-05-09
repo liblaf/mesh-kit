@@ -27,7 +27,7 @@ def check_type(val: Any, typ: type[T]) -> T:
         return val
 
 
-def check_shape(val: S, shape: Sequence[int]) -> S:
+def check_shape(val: T, shape: Sequence[int]) -> T:
     if __debug__:
         for a, b in zip(val.shape, shape):
             if b < 0:

@@ -80,7 +80,7 @@ def main(
     )
     if output_file is not None:
         source.points = trimesh.transform_points(source.points, source_to_target)
-        source.write(output_file)
+        mkit.io.save(output_file, source)
     if output_transform_file is not None:
         np.save(output_transform_file, source_to_target)
 
@@ -124,7 +124,7 @@ def align(
     inverse: bool = False,
     smart_initial: bool = False,
 ) -> tuple[npt.NDArray[np.floating], float]:
-    if smart_initial:
+    if initial is None and smart_initial:
         initial = trimesh.transformations.concatenate_matrices(
             trimesh.transformations.translation_matrix(target.centroid),
             trimesh.transformations.scale_matrix(target.scale),

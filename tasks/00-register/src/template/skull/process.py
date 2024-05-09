@@ -14,8 +14,8 @@ from numpy import typing as npt
 def main(
     input_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
     *,
-    output_file: Annotated[
-        pathlib.Path, typer.Option("-o", "--output", dir_okay=False, writable=True)
+    skull_file: Annotated[
+        pathlib.Path, typer.Option("--skull", dir_okay=False, writable=True)
     ],
     mandible_file: Annotated[
         pathlib.Path, typer.Option("--mandible", dir_okay=False, writable=True)
@@ -26,7 +26,7 @@ def main(
     threshold: Annotated[float, typer.Option()] = 0.02,
 ) -> None:
     mkit.cli.up_to_date(
-        [output_file, mandible_file, maxilla_file], [__file__, input_file]
+        [skull_file, mandible_file, maxilla_file], [__file__, input_file]
     )
     skull: trimesh.Trimesh = trimesh.load(input_file)
     mandible: trimesh.Trimesh
@@ -45,9 +45,7 @@ def main(
         skull.vertices,
         method="nearest",
     ).astype(np.bool_)
-    mkit.io.save(
-        output_file, skull, point_data={"register": skull_mask.astype(np.int8)}
-    )
+    mkit.io.save(skull_file, skull, point_data={"register": skull_mask.astype(np.int8)})
     mkit.io.save(
         mandible_file, mandible, point_data={"register": mandible_mask.astype(np.int8)}
     )
