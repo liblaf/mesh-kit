@@ -72,7 +72,7 @@ def main(
     output_file: Annotated[
         pathlib.Path, typer.Option("-o", "--output", dir_okay=False, writable=True)
     ],
-    poisson_ratio: Annotated[float, typer.Option()] = 0.0,
+    poisson_ratio: Annotated[float, typer.Option()] = 0.25,
 ) -> None:
     ti.init(ti.cpu, default_fp=ti.float64)
     mesh: meshio.Mesh = mkit.io.load_meshio(input_file)

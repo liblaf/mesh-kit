@@ -25,23 +25,14 @@ def tetgen(mesh: meshio.Mesh, *, verbose: bool = True) -> meshio.Mesh:
         tmpdir = pathlib.Path(tmpdir)
         input_file: pathlib.Path = tmpdir / "mesh.smesh"
         save_smesh(input_file, mesh)
-        args: list[str] = ["tetgen", "-p", "-q", "-O", "-z", "-k", "-C"]
+        args: list[str] = ["tetgen", "-p", "-q", "-O", "-z", "-k", "-C", "-X"]
         if verbose:
             args.append("-V")
         subprocess.run([*args, input_file], check=True)
         tetra_mesh: meshio.Mesh = meshio.read(tmpdir / "mesh.1.vtk")
         points: npt.NDArray[np.floating] = tetra_mesh.points
         tetra: npt.NDArray[np.intp] = tetra_mesh.get_cells_type("tetra")
-        faces: npt.NDArray[np.intp]
-        boundary_marker: npt.NDArray[np.intp]
-        faces, boundary_marker = load_face(tmpdir / "mesh.1.face")
-        return meshio.Mesh(
-            points=points,
-            cells=[("tetra", tetra), ("triangle", faces)],
-            cell_data={
-                "boundary_marker": [np.zeros(len(tetra), np.intp), boundary_marker]
-            },
-        )
+        return meshio.Mesh(points=points, cells=[("tetra", tetra)])
 
 
 def load_face(

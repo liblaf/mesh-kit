@@ -33,7 +33,17 @@ def main(
     )
     mesh.update_faces(~faces_to_remove)
     mesh = mkit.ops.mesh_fix.mesh_fix(mesh, verbose=True)
-    mkit.io.save(output_file, mesh)
+    validation_mask: npt.NDArray[np.bool_] = trimesh.bounds.contains(
+        [[-np.inf, -np.inf, -38.0], [np.inf, 150.0, 80.0]], mesh.vertices
+    )
+    mkit.io.save(
+        output_file,
+        mesh,
+        point_data={
+            "register": np.ones((len(mesh.vertices),), np.int8),
+            "validation": validation_mask.astype(np.int8),
+        },
+    )
 
 
 if __name__ == "__main__":

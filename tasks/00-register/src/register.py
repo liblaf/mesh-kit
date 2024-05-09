@@ -27,7 +27,12 @@ def main(
     result: npt.NDArray[np.floating] = trimesh.registration.nricp_amberg(
         source_tr,
         target_tr,
-        steps=[[0.02, 3, 0.5, 10], [0.007, 3, 0.5, 10], [0.002, 3, 0.5, 10]],
+        steps=[
+            [0.02, 3, 0.5, 10],
+            [0.007, 3, 0.5, 10],
+            [0.002, 3, 0.5, 10],
+            # [0.001, 0, 0.0, 10],
+        ],
         distance_threshold=0.05,
     )
     source_io.points = result

@@ -45,12 +45,14 @@ def main(
         skull.vertices,
         method="nearest",
     ).astype(np.bool_)
-    mkit.io.save(output_file, skull, point_data={"mask": skull_mask.astype(np.int8)})
     mkit.io.save(
-        mandible_file, mandible, point_data={"mask": mandible_mask.astype(np.int8)}
+        output_file, skull, point_data={"register": skull_mask.astype(np.int8)}
     )
     mkit.io.save(
-        maxilla_file, maxilla, point_data={"mask": maxilla_mask.astype(np.int8)}
+        mandible_file, mandible, point_data={"register": mandible_mask.astype(np.int8)}
+    )
+    mkit.io.save(
+        maxilla_file, maxilla, point_data={"register": maxilla_mask.astype(np.int8)}
     )
 
 
