@@ -1,9 +1,10 @@
 import pathlib
 from typing import Annotated
 
+import mkit.cli
+import mkit.io
 import trimesh
 import typer
-from mkit import cli
 
 
 def main(
@@ -14,11 +15,12 @@ def main(
     ],
     face_count: Annotated[int, typer.Option("--face-count")] = 10000,
 ) -> None:
-    mesh: trimesh.Trimesh = trimesh.load(input_file)
+    mkit.cli.up_to_date(output_file, [__file__, input_file])
+    mesh: trimesh.Trimesh = mkit.io.load_trimesh(input_file)
     if face_count > 0 and mesh.faces.shape[0] > face_count:
         mesh = mesh.simplify_quadric_decimation(face_count)
-    mesh.export(output_file)
+    mkit.io.save(output_file, mesh)
 
 
 if __name__ == "__main__":
-    cli.run(main)
+    mkit.cli.run(main)

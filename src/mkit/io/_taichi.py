@@ -7,8 +7,8 @@ import taichi as ti
 import taichi.lang.mesh
 from numpy import typing as npt
 
+from mkit._typing import StrPath
 from mkit.io.types import AnyMesh
-from mkit.typing import StrPath
 
 
 def load_taichi(filename: StrPath) -> ti.MeshInstance:

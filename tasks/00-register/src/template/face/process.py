@@ -19,6 +19,7 @@ def main(
         pathlib.Path, typer.Option("-o", "--output", dir_okay=False, writable=True)
     ],
 ) -> None:
+    mkit.cli.up_to_date(output_file, [__file__, input_file])
     mesh: trimesh.Trimesh = mkit.io.load_trimesh(input_file)
     plane_origin: npt.ArrayLike = [-145.73205847, 120.19102723, -46.35020492]
     plane_normal: npt.ArrayLike = [-0.00281506, -0.12219853, 0.99250168]

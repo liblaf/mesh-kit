@@ -86,8 +86,9 @@ def main(
     u_free, info = scipy.sparse.linalg.minres(
         A, model.b().flatten(), show=True, rtol=1e-6
     )
-    u_free = u_free.reshape((model.n_free, 3))
     logger.info("GMRES info: {}", info)
+    assert info == 0
+    u_free = u_free.reshape((model.n_free, 3))
     disp: npt.NDArray[np.floating] = mesh.point_data["disp"]
     mesh.points[model.fixed_mask] += disp[model.fixed_mask]
     mesh.points[model.free_mask] += u_free

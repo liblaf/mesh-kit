@@ -17,7 +17,7 @@ dependencies = [
   "taichi",
   "trimesh[all]",
   "typeguard",
-  "typer",
+  "typer", "libigl",
 ]
 description = "Add a short description here"
 name = "mesh-kit"

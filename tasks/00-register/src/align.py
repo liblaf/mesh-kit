@@ -15,17 +15,21 @@ from numpy import typing as npt
 
 def main(
     source_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
-    target_file: Annotated[
+    target_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
+    *,
+    source_landmarks_file: Annotated[
         Optional[pathlib.Path], typer.Argument(exists=True, dir_okay=False)
     ] = None,
-    *,
+    target_landmarks_file: Annotated[
+        Optional[pathlib.Path], typer.Argument(exists=True, dir_okay=False)
+    ] = None,
     initial_transform_file: Annotated[
         Optional[pathlib.Path],
         typer.Option("--initial-transform", exists=True, dir_okay=False),
     ] = None,
     output_file: Annotated[
         Optional[pathlib.Path], typer.Option("--output", dir_okay=False, writable=True)
-    ],
+    ] = None,
     output_transform_file: Annotated[
         Optional[pathlib.Path],
         typer.Option("--output-transform", dir_okay=False, writable=True),
@@ -33,31 +37,45 @@ def main(
     inverse: Annotated[bool, typer.Option()] = False,
     smart_initial: Annotated[bool, typer.Option()] = False,
 ) -> None:
-    source_io: meshio.Mesh
-    source_masked: trimesh.Trimesh
-    source_io, source_masked = load_mesh_masked(source_file)
-    initial: npt.NDArray[np.floating] | None = (
-        np.load(initial_transform_file) if initial_transform_file is not None else None
+    mkit.cli.up_to_date(
+        [output_file, output_transform_file],
+        [
+            __file__,
+            source_file,
+            target_file,
+            source_landmarks_file,
+            target_landmarks_file,
+            initial_transform_file,
+        ],
     )
-    source_to_target: npt.NDArray[np.floating] = initial
-    if target_file is not None:
-        target_io: meshio.Mesh
-        target_masked: trimesh.Trimesh
-        target_io, target_masked = load_mesh_masked(target_file)
-        cost: float
-        source_to_target, cost = align(
-            source_masked,
-            target_masked,
-            initial=initial,
-            inverse=inverse,
-            smart_initial=smart_initial,
+    source: meshio.Mesh
+    target: meshio.Mesh
+    source_masked: trimesh.Trimesh
+    target_masked: trimesh.Trimesh
+    source, source_masked = load_mesh_masked(source_file)
+    target, target_masked = load_mesh_masked(target_file)
+    initial: npt.NDArray[np.floating] | None = None
+    cost: float
+    if initial_transform_file:
+        initial = np.load(initial_transform_file)
+    elif source_landmarks_file and target_landmarks_file:
+        source_landmarks: npt.NDArray[np.floating] = np.loadtxt(source_landmarks_file)
+        target_landmarks: npt.NDArray[np.floating] = np.loadtxt(target_landmarks_file)
+        initial, cost = trimesh.registration.procrustes(
+            source_landmarks, target_landmarks
         )
+        logger.info("Procrustes Cost: {}", cost)
+    source_to_target: npt.NDArray[np.floating]
+    source_to_target, cost = align(
+        source_masked,
+        target_masked,
+        initial=initial,
+        inverse=inverse,
+        smart_initial=smart_initial,
+    )
     if output_file is not None:
-        if source_to_target is not None:
-            source_tr: trimesh.Trimesh = mkit.io.as_trimesh(source_io)
-            source_tr.apply_transform(source_to_target)
-            source_io.points = source_tr.vertices
-        source_io.write(output_file)
+        source.points = trimesh.transform_points(source.points, source_to_target)
+        source.write(output_file)
     if output_transform_file is not None:
         np.save(output_transform_file, source_to_target)
 

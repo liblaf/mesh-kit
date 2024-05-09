@@ -19,6 +19,7 @@ def main(
         Optional[pathlib.Path], typer.Option(file_okay=False, writable=True)
     ] = None,
 ) -> None:
+    mkit.cli.up_to_date(output_file, [__file__, source_file, target_file])
     source_io: meshio.Mesh = meshio.read(source_file)
     target_io: meshio.Mesh = meshio.read(target_file)
     source_tr: trimesh.Trimesh = mkit.io.as_trimesh(source_io)

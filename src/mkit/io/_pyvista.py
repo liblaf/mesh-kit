@@ -1,8 +1,8 @@
 import pyvista as pv
 import trimesh
 
+from mkit._typing import StrPath
 from mkit.io.types import AnyMesh
-from mkit.typing import StrPath
 
 
 def load_pyvista(filename: StrPath) -> pv.PolyData:

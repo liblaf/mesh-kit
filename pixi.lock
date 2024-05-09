@@ -1,4 +1,4 @@
-version: 4
+version: 5
 environments:
   default:
     channels:
@@ -7,6 +7,8 @@ environments:
     - url: https://conda.anaconda.org/conda-forge/
     - url: https://conda.anaconda.org/pytorch/
     - url: https://conda.anaconda.org/pytorch3d/
+    indexes:
+    - https://pypi.org/simple
     packages:
       linux-64:
       - conda: https://conda.anaconda.org/anaconda/linux-64/_libgcc_mutex-0.1-main.tar.bz2
@@ -180,6 +182,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/24/da/db1cb0387a7e4086780aff137987ee924e953d7f91b2a870f994b9b1eeb8/jupyterlab_widgets-3.0.10-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/17/ba/17a706b232308e65f57deeccae503c268292e6a091313f6ce833a23093ea/kiwisolver-1.4.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/83/60/d497a310bde3f01cb805196ac61b7ad6dc5dcf8dce66634dc34364b20b4f/lazy_loader-0.4-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/f3/e5/4256e661a6b487fed7ccd2e92bba0a0e901c4c1aa6b08b899e728119817b/libigl-2.5.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/03/0a/4f6fed21aa246c6b49b561ca55facacc2a44b87d65b8b92362a8e99ba202/loguru-0.7.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/be/c3/1765e019344d3f042dfe750eb9a424c0ea2fd43deb6b2ac176b5603a436e/lxml-5.2.1-cp311-cp311-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/2b/f8/a828735d3286858cb1ffb616245a04a567ff63052fd7b2f0ce7c4a3d4733/manifold3d-2.4.5-cp311-cp311-manylinux_2_28_x86_64.manylinux_2_27_x86_64.whl
@@ -1911,6 +1914,14 @@ packages:
   license_family: OTHER
   size: 160073
   timestamp: 1684519377878
+- kind: pypi
+  name: libigl
+  version: 2.5.1
+  url: https://files.pythonhosted.org/packages/f3/e5/4256e661a6b487fed7ccd2e92bba0a0e901c4c1aa6b08b899e728119817b/libigl-2.5.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: e949a145fa1d1913ed3d325032c9e7d6a20486be393a2dfbfe68f97015f5762b
+  requires_dist:
+  - numpy
+  - scipy
 - kind: conda
   name: libjpeg-turbo
   version: 2.1.1
@@ -2310,7 +2321,7 @@ packages:
   name: mesh-kit
   version: 0.0.1
   path: .
-  sha256: fbcf799d99eadbf7632e45d4a21f438a775fbc7506bb57a7f005665714457cb2
+  sha256: 996eda6179ef21fce6e751e72543c1be22609a7201360ab4e964458f071f20db
   requires_dist:
   - loguru
   - meshio[all]
@@ -2323,6 +2334,7 @@ packages:
   - trimesh[all]
   - typeguard
   - typer
+  - libigl
   - icecream ; extra == 'dev'
   - pyright ; extra == 'dev'
   - mkdocs ; extra == 'docs'

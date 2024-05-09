@@ -9,8 +9,8 @@ import torch
 import trimesh
 from numpy import typing as npt
 
+from mkit._typing import StrPath
 from mkit.io.types import AnyMesh
-from mkit.typing import StrPath
 
 
 class Attrs(TypedDict, total=False):

@@ -1,7 +1,7 @@
 default: fmt
 
-fmt: fmt-toml/pyproject.toml
+fmt: fmt-toml\:pyproject.toml
 
-fmt-toml/%:
+fmt-toml\:%:
 	toml-sort --in-place --all "$*"
 	taplo format "$*"

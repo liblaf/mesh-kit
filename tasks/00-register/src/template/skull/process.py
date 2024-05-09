@@ -25,6 +25,9 @@ def main(
     ],
     threshold: Annotated[float, typer.Option()] = 0.02,
 ) -> None:
+    mkit.cli.up_to_date(
+        [output_file, mandible_file, maxilla_file], [__file__, input_file]
+    )
     skull: trimesh.Trimesh = trimesh.load(input_file)
     mandible: trimesh.Trimesh
     maxilla: trimesh.Trimesh

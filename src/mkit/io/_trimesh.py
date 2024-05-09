@@ -5,8 +5,8 @@ import pyvista as pv
 import trimesh
 from numpy import typing as npt
 
+from mkit._typing import StrPath
 from mkit.io.types import AnyMesh
-from mkit.typing import StrPath
 
 
 def load_trimesh(filename: StrPath) -> trimesh.Trimesh:
@@ -18,7 +18,7 @@ def load_trimesh(filename: StrPath) -> trimesh.Trimesh:
         trimesh.Trimesh
     """
     try:
-        mesh_tr: trimesh.Trimesh = trimesh.load(filename)
+        mesh_tr: trimesh.Trimesh = trimesh.load(str(filename))
         return mesh_tr
     except Exception:
         mesh_io: meshio.Mesh = meshio.read(filename)

@@ -1,5 +1,5 @@
-import pathlib
 from collections.abc import Sequence
+from os import PathLike
 from typing import Any, Protocol, TypeAlias, TypeVar, runtime_checkable
 
 import numpy as np
@@ -7,7 +7,7 @@ import torch
 import typeguard
 from numpy import typing as npt
 
-StrPath: TypeAlias = str | pathlib.Path
+StrPath: TypeAlias = str | PathLike[str]
 
 
 @runtime_checkable
