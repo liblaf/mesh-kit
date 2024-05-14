@@ -2321,8 +2321,9 @@ packages:
   name: mesh-kit
   version: 0.0.1
   path: .
-  sha256: 996eda6179ef21fce6e751e72543c1be22609a7201360ab4e964458f071f20db
+  sha256: 0d23d41f9f84d01a86bf31d0f5ff17accd059c5a3f714d4f16cb2e85644cb13a
   requires_dist:
+  - libigl
   - loguru
   - meshio[all]
   - meshtaichi-patcher
@@ -2334,7 +2335,6 @@ packages:
   - trimesh[all]
   - typeguard
   - typer
-  - libigl
   - icecream ; extra == 'dev'
   - pyright ; extra == 'dev'
   - mkdocs ; extra == 'docs'

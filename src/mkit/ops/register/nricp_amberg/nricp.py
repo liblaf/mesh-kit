@@ -11,9 +11,7 @@ from scipy import sparse
 from scipy.sparse import linalg
 from trimesh import util
 
-from mkit import log as _log
 from mkit._typing import check_shape as _check_shape
-from mkit.ops import tetgen as _tetgen
 from mkit.ops.register.nricp_amberg import config as _config
 from mkit.ops.register.nricp_amberg import nearest as _nearest
 from mkit.ops.register.nricp_amberg import utils as _utils

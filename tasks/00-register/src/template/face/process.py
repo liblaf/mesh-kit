@@ -34,7 +34,9 @@ def main(
     mesh.update_faces(~faces_to_remove)
     mesh = mkit.ops.mesh_fix.mesh_fix(mesh, verbose=True)
     validation_mask: npt.NDArray[np.bool_] = trimesh.bounds.contains(
-        [[-np.inf, -np.inf, -38.0], [np.inf, 150.0, 80.0]], mesh.vertices
+        [[-np.inf, -np.inf, -40.0], [np.inf, 130.0, 80.0]], mesh.vertices
+    ) | trimesh.bounds.contains(
+        [[-np.inf, -np.inf, -30.0], [np.inf, 160.0, 80.0]], mesh.vertices
     )
     mkit.io.save(
         output_file,

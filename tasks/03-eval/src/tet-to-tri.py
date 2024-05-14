@@ -3,6 +3,7 @@ from typing import Annotated
 
 import igl
 import meshio
+import mkit.array.points
 import mkit.cli
 import mkit.io
 import numpy as np
@@ -21,7 +22,15 @@ def main(
     tetra: meshio.Mesh = mkit.io.load_meshio(input_file)
     faces: npt.NDArray[np.integer] = igl.boundary_facets(tetra.get_cells_type("tetra"))  # pyright: ignore [reportAttributeAccessIssue]
     triangle = trimesh.Trimesh(tetra.points, faces)
-    mkit.io.save(output_file, triangle)
+    validation: npt.NDArray[np.bool_] = np.asarray(
+        tetra.point_data["validation"], np.bool_
+    )
+    validation = validation[
+        mkit.array.points.position_to_index(tetra.points, triangle.vertices)
+    ]
+    mkit.io.save(
+        output_file, triangle, point_data={"validation": validation.astype(np.int8)}
+    )
 
 
 if __name__ == "__main__":

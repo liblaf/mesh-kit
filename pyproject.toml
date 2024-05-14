@@ -7,6 +7,7 @@ authors = [
   { email = "30631553+liblaf@users.noreply.github.com", name = "liblaf" },
 ]
 dependencies = [
+  "libigl",
   "loguru",
   "meshio[all]",
   "meshtaichi-patcher",
@@ -17,7 +18,7 @@ dependencies = [
   "taichi",
   "trimesh[all]",
   "typeguard",
-  "typer", "libigl",
+  "typer",
 ]
 description = "Add a short description here"
 name = "mesh-kit"
