@@ -25,7 +25,7 @@ def tetgen(mesh: meshio.Mesh, *, verbose: bool = True) -> meshio.Mesh:
         tmpdir = pathlib.Path(tmpdir)
         input_file: pathlib.Path = tmpdir / "mesh.smesh"
         save_smesh(input_file, mesh)
-        args: list[str] = ["tetgen", "-p", "-q", "-O", "-z", "-k", "-C"]
+        args: list[str] = ["tetgen", "-p", "-q", "-O", "-z", "-k", "-C", "-T1e-16"]
         if verbose:
             args.append("-V")
         subprocess.run([*args, input_file], check=True)

@@ -20,8 +20,8 @@ def main(
     ],
     displacement: Annotated[float, typer.Option()] = 0.05,
 ) -> None:
-    face: trimesh.Trimesh = trimesh.creation.icosphere(radius=0.2)
-    pre_skull: trimesh.Trimesh = trimesh.creation.icosphere(radius=0.1)
+    face: trimesh.Trimesh = trimesh.creation.icosphere(subdivisions=1, radius=0.2)
+    pre_skull: trimesh.Trimesh = trimesh.creation.icosphere(subdivisions=1, radius=0.1)
     post_skull: trimesh.Trimesh = pre_skull.copy()
     post_skull.vertices[post_skull.vertices[:, 1] < 0.0] += [0.0, -displacement, 0.0]
     tri: trimesh.Trimesh = trimesh.util.concatenate([face, pre_skull])

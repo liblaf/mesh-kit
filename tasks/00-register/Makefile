@@ -9,8 +9,8 @@ TEMPLATE_DIR := $(DATA_DIR)/template
 default: $(TARGET_DIR)/pre/99-face.vtu
 default: $(TARGET_DIR)/pre/99-mandible.vtu
 default: $(TARGET_DIR)/pre/99-maxilla.vtu
-default: $(TARGET_DIR)/post/99-face.vtu
-default: $(TARGET_DIR)/post/99-mandible.vtu
-default: $(TARGET_DIR)/post/99-maxilla.vtu
+# default: $(TARGET_DIR)/post/99-face.vtu
+# default: $(TARGET_DIR)/post/99-mandible.vtu
+# default: $(TARGET_DIR)/post/99-maxilla.vtu
 
 include makefiles/*.mk

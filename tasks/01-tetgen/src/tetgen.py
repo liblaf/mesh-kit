@@ -57,6 +57,7 @@ def main(
             )
         ),
         tetra.points[skull_mask],
+        method="nearest",
     )
     validation: npt.NDArray[np.bool_] = np.full((len(tetra.points),), False)
     validation[face_mask] = scipy.interpolate.griddata(
@@ -100,7 +101,7 @@ def extract_face_skull(
     boundary_faces: npt.NDArray[np.integer] = mkit.tetra.boundary_faces(
         tetra.get_cells_type("tetra")
     )
-    triangle = trimesh.Trimesh(tetra.points, boundary_faces)
+    triangle = trimesh.Trimesh(tetra.points, boundary_faces, process=False)
     face: trimesh.Trimesh
     skull: trimesh.Trimesh
     face, skull = triangle.split()

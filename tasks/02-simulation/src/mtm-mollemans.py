@@ -86,11 +86,11 @@ def main(
     ti.init(ti.cpu, default_fp=ti.float64)
     mesh: meshio.Mesh = mkit.io.load_meshio(input_file)
     model = Model(mesh)
-    model.init_material(E=3000, nu=poisson_ratio)
+    model.init_material(E=3000 * 1e-9, nu=poisson_ratio)
     model.volume()
     model.stiffness()
     u_free: npt.NDArray[np.floating] = np.zeros((model.n_free, 3))
-    for i in range(10):
+    for i in range(1000):
         u_free = model.step(u_free)
     disp: npt.NDArray[np.floating] = mesh.point_data["disp"]
     mesh.points[model.fixed_mask] += disp[model.fixed_mask]
