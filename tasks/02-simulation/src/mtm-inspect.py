@@ -57,7 +57,7 @@ class Model(mkit.physics.mtm.MTM):
 def main(
     input_file: Annotated[pathlib.Path, typer.Argument(exists=True, dir_okay=False)],
     *,
-    poisson_ratio: Annotated[float, typer.Option()] = 0.46,
+    poisson_ratio: Annotated[float, typer.Option()] = 0.01,
 ) -> None:
     ti.init(ti.cpu, default_fp=ti.float64, debug=True)
     mesh: meshio.Mesh = mkit.io.load_meshio(input_file)
@@ -69,6 +69,7 @@ def main(
     free_mask: npt.NDArray[np.bool_] = np.repeat(model.free_mask, 3)
     stiffness = stiffness[free_mask][:, free_mask]
     ic(np.linalg.cond(stiffness))
+    print(poisson_ratio, np.linalg.cond(stiffness), sep=",")
 
 
 if __name__ == "__main__":

@@ -74,7 +74,7 @@ class MTM:
 
     def stiffness_sparse_matrix(self) -> scipy.sparse.coo_array:
         builder = ti.linalg.SparseMatrixBuilder(
-            self.n_verts * 3, self.n_verts * 3, int(1e6)
+            self.n_verts * 3, self.n_verts * 3, int(1e7)
         )
         self._stiffness_matrix(builder)
         K_ti: ti.linalg.SparseMatrix = builder.build()
