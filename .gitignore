@@ -177,7 +177,11 @@ poetry.toml
 
 .pixi
 
+*.csv
+*.msh
+*.obj
+*.pdf
 *.ply
 *.png
+*.stl
 *.vtu
-*.pdf
