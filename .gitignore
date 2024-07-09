@@ -124,7 +124,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+# .env
 .venv
 env/
 venv/
@@ -171,17 +171,9 @@ poetry.toml
 .ruff_cache/
 
 # LSP config files
-# pyrightconfig.json
+pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
-
+# pixi environments
 .pixi
-
-*.csv
-*.msh
-*.obj
-*.pdf
-*.ply
-*.png
-*.stl
-*.vtu
+*.egg-info

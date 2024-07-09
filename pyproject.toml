@@ -7,37 +7,27 @@ authors = [
   { email = "30631553+liblaf@users.noreply.github.com", name = "liblaf" },
 ]
 dependencies = [
+  "icecream",
   "libigl",
   "loguru",
   "meshio[all]",
   "meshtaichi-patcher",
-  "open3d",
-  "pydantic",
-  "pymeshfix",
+  "numpy",
   "pyvista",
+  "rich",
   "taichi",
   "trimesh[all]",
-  "typeguard",
-  "typer",
+  "typer", "tetgen",
 ]
 description = "Add a short description here"
 name = "mesh-kit"
-requires-python = ">= 3.11"
+requires-python = ">= 3.11, < 3.12"
 version = "0.0.1"
 
 [project.optional-dependencies]
-dev = ["icecream", "pyright"]
-docs = [
-  "mkdocs",
-  "mkdocs-gen-files",
-  "mkdocs-git-authors-plugin",
-  "mkdocs-git-committers-plugin-2",
-  "mkdocs-git-revision-date-localized-plugin",
-  "mkdocs-literate-nav",
-  "mkdocs-material",
-  "mkdocs-section-index",
-  "mkdocstrings[python]",
-]
+cpu = ["jax"]
+cuda12 = ["jax[cuda12]"]
+dev = ["marimo", "pytest", "ruff"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mkit"]
@@ -46,25 +36,23 @@ packages = ["src/mkit"]
 allow-direct-references = true
 
 [tool.pixi.dependencies]
-python = "3.11.*"
-pytorch = { channel = "pytorch", version = "2.1.0.*" }
-pytorch3d = { channel = "pytorch3d" }
-tetgen = "*"
+pytorch = { channel = "pytorch", version = "2.3.1" }
 torchvision = { channel = "pytorch" }
 
 [tool.pixi.environments]
-default = ["cuda121", "dev", "docs"]
+cpu = ["cpu", "dev"]
+cuda12 = ["cuda12", "dev"]
+default = ["cuda12", "dev"]
 
-[tool.pixi.feature.cuda121]
+[tool.pixi.feature.cpu.dependencies]
+cpuonly = { channel = "pytorch" }
+
+[tool.pixi.feature.cuda12]
 channels = ["nvidia"]
 
-[tool.pixi.feature.cuda121.dependencies]
-pytorch-cuda = { channel = "pytorch", version = "12.1.*" }
-
-[tool.pixi.feature.docs.tasks]
-docs = "mkdocs build"
-docs-deploy = "mkdocs gh-deploy --force --no-history"
-docs-serve = "mkdocs serve"
+[tool.pixi.feature.cuda12.dependencies]
+pytorch-cuda = { channel = "pytorch", version = "12.1" }
+pytorch3d = { channel = "pytorch3d" }
 
 [tool.pixi.project]
 channels = ["anaconda", "conda-forge", "pytorch", "pytorch3d"]
@@ -73,6 +61,12 @@ platforms = ["linux-64"]
 [tool.pixi.pypi-dependencies]
 mesh-kit = { editable = true, path = "." }
 
+[tool.pixi.pypi-options]
+index-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+
 [tool.pixi.system-requirements]
 libc = "2.35"
 linux = "6.5"
+
+[tool.pixi.tasks]
+test = "pytest"

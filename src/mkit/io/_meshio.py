@@ -1,80 +1,45 @@
-import pathlib
-from typing import TypedDict, Unpack
+from __future__ import annotations
 
-import meshio
-import numpy as np
-import pytorch3d.structures
-import pyvista as pv
-import taichi as ti
-import torch
-import trimesh
-from loguru import logger
-from numpy import typing as npt
+from typing import TYPE_CHECKING, Any
 
-import mkit
-import mkit.array
-import mkit.array.points
-from mkit._typing import StrPath
-from mkit.io.types import AnyMesh
+from mkit.io.typing import (
+    UnsupportedMeshError,
+    is_meshio,
+    is_polydata,
+    is_taichi,
+    is_trimesh,
+)
 
-
-class Attrs(TypedDict, total=False):
-    point_data: dict[str, npt.ArrayLike] | None
-    cell_data: dict[str, list[npt.ArrayLike]] | None
-    field_data: dict[str, npt.ArrayLike] | None
-    point_sets: dict[str, npt.ArrayLike] | None
-    cell_sets: dict[str, list[npt.ArrayLike]] | None
-    gmsh_periodic: None
-    info: None
+if TYPE_CHECKING:
+    import meshio
+    import pyvista as pv
+    import taichi as ti
+    import trimesh
 
 
-def load_meshio(filename: StrPath) -> meshio.Mesh:
-    filename = pathlib.Path(filename)
-    mesh: meshio.Mesh = meshio.read(filename)
-    landmarks_file: pathlib.Path = filename.with_suffix(".xyz")
-    if landmarks_file.exists():
-        pos: npt.NDArray[np.floating] = np.loadtxt(landmarks_file)
-        idx: npt.NDArray[np.integer] = mkit.array.points.position_to_index(
-            mesh.points, pos
-        )
-        mesh.field_data["landmarks"] = idx
-        logger.debug('loaded {} landmarks from "{}"', len(idx), landmarks_file)
-    return mesh
+def as_meshio(mesh: Any) -> meshio.Mesh:
+    if is_meshio(mesh):
+        return mesh
+    if is_polydata(mesh):
+        return polydata_to_meshio(mesh)
+    if is_taichi(mesh):
+        return taichi_to_meshio(mesh)
+    if is_trimesh(mesh):
+        return trimesh_to_meshio(mesh)
+    raise UnsupportedMeshError(mesh)
 
 
-def as_meshio(mesh: AnyMesh, **kwargs: Unpack[Attrs]) -> meshio.Mesh:
-    match mesh:
-        case meshio.Mesh():
-            if point_data := kwargs.get("point_data"):
-                mesh.point_data.update(point_data)
-            if cell_data := kwargs.get("cell_data"):
-                mesh.cell_data.update(cell_data)
-            if field_data := kwargs.get("field_data"):
-                mesh.field_data.update(field_data)
-            return mesh
-        case pytorch3d.structures.Meshes():
-            return pytorch3d_to_meshio(mesh, **kwargs)
-        case pv.PolyData():
-            raise NotImplementedError  # TODO
-        case ti.MeshInstance():
-            raise NotImplementedError  # TODO
-        case trimesh.Trimesh():
-            return trimesh_to_meshio(mesh, **kwargs)
-        case _:
-            raise NotImplementedError(f"unsupported mesh: {mesh}")
+def polydata_to_meshio(mesh: pv.PolyData) -> meshio.Mesh:
+    import meshio
+
+    return meshio.Mesh(points=mesh.points, cells=[("triangle", mesh.regular_faces)])
 
 
-def pytorch3d_to_meshio(
-    mesh: pytorch3d.structures.Meshes, **kwargs: Unpack[Attrs]
-) -> meshio.Mesh:
-    verts_pt: torch.Tensor = mesh.verts_packed()
-    faces_pt: torch.Tensor = mesh.faces_packed()
-    verts_np: npt.NDArray[np.floating] = verts_pt.detach().cpu().numpy()
-    faces_np: npt.NDArray[np.integer] = faces_pt.detach().cpu().numpy()
-    mesh_io = meshio.Mesh(verts_np, [("triangle", faces_np)], **kwargs)
-    return mesh_io
+def taichi_to_meshio(mesh: ti.MeshInstance) -> meshio.Mesh:
+    raise NotImplementedError
 
 
-def trimesh_to_meshio(mesh: trimesh.Trimesh, **kwargs: Unpack[Attrs]) -> meshio.Mesh:
-    mesh_io = meshio.Mesh(mesh.vertices, [("triangle", mesh.faces)], **kwargs)
-    return mesh_io
+def trimesh_to_meshio(mesh: trimesh.Trimesh) -> meshio.Mesh:
+    import meshio
+
+    return meshio.Mesh(points=mesh.vertices, cells=[("triangle", mesh.faces)])

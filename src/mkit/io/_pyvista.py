@@ -1,24 +1,15 @@
+from typing import Any
+
 import pyvista as pv
-import trimesh
 
-from mkit._typing import StrPath
-from mkit.io.types import AnyMesh
+from mkit.io.typing import UnsupportedMeshError, is_meshio, is_polydata, is_trimesh
 
 
-def load_pyvista(filename: StrPath) -> pv.PolyData:
-    raise NotImplementedError  # TODO
-
-
-def as_pyvista(mesh: AnyMesh) -> pv.PolyData:
-    match mesh:
-        case pv.PolyData():
-            return mesh
-        case trimesh.Trimesh():
-            return trimesh_to_pyvista(mesh)
-        case _:
-            raise NotImplementedError(f"unsupported mesh: {mesh}")
-
-
-def trimesh_to_pyvista(mesh: trimesh.Trimesh) -> pv.PolyData:
-    mesh_pv: pv.PolyData = pv.wrap(mesh)
-    return mesh_pv
+def as_polydata(mesh: Any) -> pv.PolyData:
+    if is_polydata(mesh):
+        return mesh
+    if is_trimesh(mesh):
+        return pv.wrap(mesh)  # pyright: ignore [reportReturnType]
+    if is_meshio(mesh):
+        return pv.wrap(mesh)  # pyright: ignore [reportReturnType]
+    raise UnsupportedMeshError(mesh)
