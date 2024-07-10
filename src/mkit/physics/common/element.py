@@ -2,7 +2,7 @@ import jax
 import jax.numpy as jnp
 import jax.typing as jt
 
-
+@jax.jit
 def calc_volume(points: jt.ArrayLike) -> jax.Array:
     points = jnp.asarray(points)  # (4, 3) float
     shape: jax.Array = jnp.vstack(
@@ -12,6 +12,7 @@ def calc_volume(points: jt.ArrayLike) -> jax.Array:
     return volume
 
 
+@jax.jit
 def calc_grad(points: jt.ArrayLike) -> jax.Array:
     points = jnp.asarray(points)  # (4, 3) float
     shape: jax.Array = jnp.vstack(
@@ -24,11 +25,12 @@ def calc_grad(points: jt.ArrayLike) -> jax.Array:
     return grad
 
 
+@jax.jit
 def calc_deformation_gradient(
     position: jt.ArrayLike, position_rest: jt.ArrayLike
 ) -> jax.Array:
     position = jnp.asarray(position)  # (4, 3) float
     position_rest = jnp.asarray(position_rest)  # (4, 3) float
-    grad: jax.Array = calc_grad(position_rest)  # (3, 4) float
+    grad: jax.Array = calc_grad(position)  # (3, 4) float
     deformation_gradient: jax.Array = grad @ position  # (3, 3) float
     return deformation_gradient
