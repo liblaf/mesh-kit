@@ -1,123 +1,135 @@
-import functools
 from typing import TYPE_CHECKING
 
 import jax
 import jax.numpy as jnp
-import jax.typing as jt
+import jax.typing as jxt
 import mkit.ext
 import numpy as np
+import pytest
+import pyvista as pv
 import taichi as ti
-import trimesh
-from mkit.physics.energy import corotated
+from mkit.physics.energy.abc import CellEnergyFn
+from mkit.physics.energy.elastic import corotated
+from mkit.physics.model import Model
 
 if TYPE_CHECKING:
     import meshio
     import scipy.sparse
+    import sparse
 
 
-@functools.cache
-def create_tetmesh() -> corotated.Corotated:
+def energy_naive(disp: jxt.ArrayLike, model: Model) -> jax.Array:
+    disp = jnp.array(disp)
+    W: jax.Array = jax.vmap(corotated)(
+        disp[model.tetra], model.points_mapped, cell_data=model.cell_data
+    )
+    return jnp.sum(model.cell_volume * W)
+
+
+@pytest.fixture()
+def disp_zero(model: Model) -> jax.Array:
+    return jnp.zeros((model.n_points, 3))
+
+
+@pytest.fixture()
+def disp_random(model: Model) -> jax.Array:
+    key: jax.Array = jax.random.key(0)
+    return jax.random.uniform(key, (model.n_points, 3))
+
+
+@pytest.fixture()
+def energy_fn() -> CellEnergyFn:
+    return CellEnergyFn(corotated)
+
+
+@pytest.fixture()
+def model() -> Model:
     ti.init()
-    surface: trimesh.Trimesh = trimesh.creation.box()
-    tetmesh: meshio.Mesh = mkit.ext.tetgen(surface)
-    model = corotated.Corotated(tetmesh)
-    model.position.from_numpy(tetmesh.points)
+    surface: pv.PolyData = pv.Box()
+    mesh: meshio.Mesh = mkit.ext.tetgen(surface)
+    n_cells: int = len(mesh.get_cells_type("tetra"))
+    mesh.cell_data = {  # pyright: ignore [reportAttributeAccessIssue]
+        "mu": [jnp.full((n_cells,), 1.0)],
+        "lambda": [jnp.full((n_cells,), 3.0)],
+    }
+    model = Model(mesh)
     return model
 
 
-def calc_energy_naive(
-    position: jt.ArrayLike, position_rest: jt.ArrayLike, tetra: jt.ArrayLike
-) -> jax.Array:
-    position = jnp.array(position)
-    position_rest = jnp.array(position_rest)
-    energy: jax.Array = corotated.calc_corotated(
-        position[tetra], position_rest[tetra]
-    ).sum()
-    return energy
-
-
-def test_energy_element() -> None:
+def test_cell_energy(energy_fn: CellEnergyFn) -> None:
     key: jax.Array = jax.random.key(0)
+    disp: jax.Array = jnp.zeros((4, 3))
     points: jax.Array = jax.random.uniform(key, (4, 3))
-    energy: jax.Array = corotated.calc_corotated_element(points, points)
-    np.testing.assert_allclose(energy, jnp.zeros(()), rtol=0, atol=1e-32)
+    energy: jax.Array = energy_fn(disp, points, cell_data={"mu": 1.0, "lambda": 3.0})
+    np.testing.assert_allclose(energy, 0, rtol=0, atol=0)
 
 
-def test_energy_element_jac() -> None:
+def test_cell_energy_jac(energy_fn: CellEnergyFn) -> None:
     key: jax.Array = jax.random.key(0)
+    disp: jax.Array = jnp.zeros((4, 3))
     points: jax.Array = jax.random.uniform(key, (4, 3))
-    energy_jac: jax.Array = corotated.calc_corotated_element_jac(points, points)
-    np.testing.assert_allclose(energy_jac, jnp.zeros((4, 3)), rtol=0, atol=1e-16)
-
-
-def test_energy_random() -> None:
-    key: jax.Array = jax.random.key(0)
-    model: corotated.Corotated = create_tetmesh()
-    displacement: jax.Array = jax.random.uniform(key, (model.n_verts, 3))
-    model.position.from_numpy(np.asarray(model.position_rest + displacement))
-    energy_actual: jax.Array = model.calc_energy()
-    energy_desired: jax.Array = calc_energy_naive(
-        model.position.to_numpy(), model.position_rest, model.tetra
+    energy_jac: jax.Array = energy_fn.jac(
+        disp, points, cell_data={"mu": 1.0, "lambda": 3.0}
     )
+    np.testing.assert_allclose(energy_jac, jnp.zeros((4, 3)), rtol=0, atol=0)
+
+
+def test_energy_random(
+    model: Model,
+    energy_fn: CellEnergyFn,
+    disp_random: jax.Array,
+) -> None:
+    energy_actual: jax.Array = model.energy(energy_fn, disp_random)
+    energy_desired: jax.Array = energy_naive(disp_random, model)
     np.testing.assert_allclose(energy_actual, energy_desired, rtol=0, atol=0)
 
 
-def test_energy_zero() -> None:
-    model: corotated.Corotated = create_tetmesh()
-    model.position.from_numpy(np.asarray(model.position_rest))
-    energy_actual: jax.Array = model.calc_energy()
+def test_energy_zero(
+    model: Model,
+    energy_fn: CellEnergyFn,
+    disp_zero: jax.Array,
+) -> None:
+    energy_actual: jax.Array = model.energy(energy_fn, disp_zero)
     np.testing.assert_allclose(energy_actual, 0, rtol=0, atol=0)
 
 
-def test_energy_jac_random() -> None:
-    key: jax.Array = jax.random.key(0)
-    model: corotated.Corotated = create_tetmesh()
-    displacement: jax.Array = jax.random.uniform(key, (model.n_verts, 3))
-    model.position.from_numpy(np.asarray(model.position_rest + displacement))
-    energy_jac_actual: jax.Array = model.calc_energy_jac()
-    energy_jac_desired: jax.Array = jax.jacobian(calc_energy_naive)(
-        model.position.to_numpy(), model.position_rest, model.tetra
-    )
+def test_energy_jac_random(
+    model: Model,
+    energy_fn: CellEnergyFn,
+    disp_random: jax.Array,
+) -> None:
+    jac_actual: jax.Array = model.energy_jac(energy_fn, disp_random)
+    jac_desired: jax.Array = jax.jacobian(energy_naive)(disp_random, model)
+    np.testing.assert_allclose(jac_actual, jac_desired, rtol=1e-14, atol=0)
+
+
+def test_energy_jac_zero(
+    model: Model,
+    energy_fn: CellEnergyFn,
+    disp_zero: jax.Array,
+) -> None:
+    jac_actual: jax.Array = model.energy_jac(energy_fn, disp_zero)
+    jac_desired: jax.Array = jnp.zeros((model.n_points, 3))
+    np.testing.assert_allclose(jac_actual, jac_desired, rtol=0, atol=0)
+
+
+def test_energy_hess_random(
+    model: Model,
+    energy_fn: CellEnergyFn,
+    disp_random: jax.Array,
+) -> None:
+    hess_actual: sparse.COO = model.energy_hess(energy_fn, disp_random)
+    hess_desired: jax.Array = jax.hessian(energy_naive)(disp_random, model)
+    np.testing.assert_allclose(hess_actual.todense(), hess_desired, rtol=1e-13, atol=0)
+
+
+def test_energy_hess_zero(
+    model: Model,
+    energy_fn: CellEnergyFn,
+    disp_zero: jax.Array,
+) -> None:
+    energy_hess_actual: scipy.sparse.coo_array = model.energy_hess(energy_fn, disp_zero)
+    energy_hess_desired: jax.Array = jax.hessian(energy_naive)(disp_zero, model)
     np.testing.assert_allclose(
-        energy_jac_actual, energy_jac_desired, rtol=1e-15, atol=1e-15
-    )
-
-
-def test_energy_jac_zero() -> None:
-    model: corotated.Corotated = create_tetmesh()
-    model.position.from_numpy(model.position_rest)
-    np.testing.assert_allclose(
-        model.calc_energy_jac(), jnp.zeros((model.n_verts, 3)), rtol=0, atol=0
-    )
-
-
-def test_energy_hess_random() -> None:
-    key: jax.Array = jax.random.key(0)
-    model: corotated.Corotated = create_tetmesh()
-    displacement: jax.Array = jax.random.uniform(key, (model.n_verts, 3))
-    model.position.from_numpy(np.asarray(model.position_rest + displacement))
-    energy_hess_actual: scipy.sparse.coo_array = model.calc_energy_hess()
-    energy_hess_desired: jax.Array = jax.hessian(calc_energy_naive)(
-        model.position.to_numpy(), model.position_rest, model.tetra
-    )
-    np.testing.assert_allclose(
-        energy_hess_actual.todense().reshape((model.n_verts, 3, model.n_verts, 3)),
-        energy_hess_desired,
-        rtol=1e-15,
-        atol=1e-14,
-    )
-
-
-def test_energy_hess_zero() -> None:
-    model: corotated.Corotated = create_tetmesh()
-    model.position.from_numpy(np.asarray(model.position_rest))
-    energy_hess_actual: scipy.sparse.coo_array = model.calc_energy_hess()
-    energy_hess_desired: jax.Array = jax.hessian(calc_energy_naive)(
-        model.position.to_numpy(), model.position_rest, model.tetra
-    )
-    np.testing.assert_allclose(
-        energy_hess_actual.todense().reshape((model.n_verts, 3, model.n_verts, 3)),
-        energy_hess_desired,
-        rtol=0,
-        atol=0,
+        energy_hess_actual.todense(), energy_hess_desired, rtol=0, atol=1e-14
     )

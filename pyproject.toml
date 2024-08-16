@@ -7,27 +7,39 @@ authors = [
   { email = "30631553+liblaf@users.noreply.github.com", name = "liblaf" },
 ]
 dependencies = [
-  "icecream",
-  "libigl",
   "loguru",
   "meshio[all]",
+  "meshpy",
   "meshtaichi-patcher",
   "numpy",
+  "omegaconf",
   "pyvista",
   "rich",
+  "sparse",
   "taichi",
+  "tetgen",
   "trimesh[all]",
-  "typer", "tetgen",
+  "typer",
 ]
 description = "Add a short description here"
 name = "mesh-kit"
-requires-python = ">= 3.11, < 3.12"
+requires-python = ">=3.11,<3.12"
 version = "0.0.1"
 
 [project.optional-dependencies]
 cpu = ["jax"]
 cuda12 = ["jax[cuda12]"]
-dev = ["marimo", "pytest", "ruff"]
+dev = [
+  "dvc",
+  "dvclive",
+  "icecream",
+  "marimo",
+  "py-spy",
+  "pyright",
+  "pytest",
+  "pytest-benchmark",
+  "ruff",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mkit"]
@@ -36,6 +48,7 @@ packages = ["src/mkit"]
 allow-direct-references = true
 
 [tool.pixi.dependencies]
+cyipopt = "*"
 pytorch = { channel = "pytorch", version = "2.3.1" }
 torchvision = { channel = "pytorch" }
 
@@ -55,14 +68,12 @@ pytorch-cuda = { channel = "pytorch", version = "12.1" }
 pytorch3d = { channel = "pytorch3d" }
 
 [tool.pixi.project]
-channels = ["anaconda", "conda-forge", "pytorch", "pytorch3d"]
+channel-priority = "disabled"
+channels = ["conda-forge", "pytorch", "pytorch3d"]
 platforms = ["linux-64"]
 
 [tool.pixi.pypi-dependencies]
 mesh-kit = { editable = true, path = "." }
-
-[tool.pixi.pypi-options]
-index-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 [tool.pixi.system-requirements]
 libc = "2.35"

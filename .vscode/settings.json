@@ -6,7 +6,7 @@
     "**/*.egg-info/": true
   },
   "python.analysis.diagnosticMode": "workspace",
-  "python.testing.pytestArgs": ["src/tests/"],
+  "python.testing.pytestArgs": ["src/benchmark/", "src/tests/"],
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
   "yaml.customTags": [

@@ -1,0 +1,6 @@
+{
+  "typeCheckingMode": "standard",
+
+  "reportAssignmentType": "none",
+  "reportPrivateImportUsage": "none"
+}

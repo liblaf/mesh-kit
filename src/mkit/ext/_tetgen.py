@@ -1,22 +1,20 @@
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
-import meshio
-
-if TYPE_CHECKING:
-    import numpy as np
-    import numpy.typing as npt
-    import pyvista as pv
+import pyvista as pv
 
 
-def tetgen(surface: Any, *args, **kwargs) -> meshio.Mesh:
-    import tetgen
+def tetgen(surface: Any) -> pv.UnstructuredGrid:
+    import meshpy.tet
 
     import mkit.io
 
     surface_mesh: pv.PolyData = mkit.io.as_polydata(surface)
-    tet = tetgen.TetGen(surface_mesh)
-    points: npt.NDArray[np.floating]
-    tetra: npt.NDArray[np.integer]
-    points, tetra = tet.tetrahedralize(*args, **kwargs)
-    tetmesh = meshio.Mesh(points, [("tetra", tetra)])
+    surface_mesh = surface_mesh.triangulate(progress_bar=True)
+    surface_info = meshpy.tet.MeshInfo()
+    surface_info.set_points(surface_mesh.points)
+    surface_info.set_facets(surface_mesh.regular_faces)
+    tetmesh_info: meshpy.tet.MeshInfo = meshpy.tet.build(surface_info, verbose=True)
+    tetmesh: pv.UnstructuredGrid = mkit.io.unstructured_grid_tetmesh(
+        tetmesh_info.points, tetmesh_info.elements
+    )
     return tetmesh

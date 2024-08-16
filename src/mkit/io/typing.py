@@ -40,3 +40,12 @@ def is_trimesh(mesh: Any) -> bool:
         return isinstance(mesh, trimesh.Trimesh)
     except ImportError:
         return False
+
+
+def is_unstructured_grid(mesh: Any) -> bool:
+    try:
+        import pyvista as pv
+
+        return isinstance(mesh, pv.UnstructuredGrid)
+    except ImportError:
+        return False
