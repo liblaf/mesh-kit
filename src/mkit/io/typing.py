@@ -1,9 +1,16 @@
+from __future__ import annotations
+
 from typing import Any
 
+# TODO: Better typing
+AnyTriMesh = Any
+AnyTetMesh = Any
+AnyMesh = AnyTriMesh | AnyTetMesh
 
-class UnsupportedMeshError(ValueError):
-    def __init__(self, mesh: Any) -> None:
-        super().__init__(f"Unsupported mesh type: {type(mesh)}")
+
+class UnsupportedConversionError(ValueError):
+    def __init__(self, from_: Any, to: type) -> None:
+        super().__init__(f"Unsupported conversion: {type(from_)} -> {to}")
 
 
 def is_meshio(mesh: Any) -> bool:

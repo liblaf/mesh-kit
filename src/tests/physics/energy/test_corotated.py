@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 import pyvista as pv
 import taichi as ti
-from mkit.physics.energy.abc import CellEnergyFn
+from mkit.physics.energy.abc import CellEnergy
 from mkit.physics.energy.elastic import corotated
 from mkit.physics.model import Model
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 def energy_naive(disp: jxt.ArrayLike, model: Model) -> jax.Array:
     disp = jnp.array(disp)
-    W: jax.Array = jax.vmap(corotated)(
+    W: jax.Array = jax.jit(jax.vmap(corotated))(
         disp[model.tetra], model.points_mapped, cell_data=model.cell_data
     )
     return jnp.sum(model.cell_volume * W)
@@ -38,8 +38,8 @@ def disp_random(model: Model) -> jax.Array:
 
 
 @pytest.fixture()
-def energy_fn() -> CellEnergyFn:
-    return CellEnergyFn(corotated)
+def energy_fn() -> CellEnergy:
+    return CellEnergy(corotated)
 
 
 @pytest.fixture()
@@ -56,7 +56,7 @@ def model() -> Model:
     return model
 
 
-def test_cell_energy(energy_fn: CellEnergyFn) -> None:
+def test_cell_energy(energy_fn: CellEnergy) -> None:
     key: jax.Array = jax.random.key(0)
     disp: jax.Array = jnp.zeros((4, 3))
     points: jax.Array = jax.random.uniform(key, (4, 3))
@@ -64,7 +64,7 @@ def test_cell_energy(energy_fn: CellEnergyFn) -> None:
     np.testing.assert_allclose(energy, 0, rtol=0, atol=0)
 
 
-def test_cell_energy_jac(energy_fn: CellEnergyFn) -> None:
+def test_cell_energy_jac(energy_fn: CellEnergy) -> None:
     key: jax.Array = jax.random.key(0)
     disp: jax.Array = jnp.zeros((4, 3))
     points: jax.Array = jax.random.uniform(key, (4, 3))
@@ -76,7 +76,7 @@ def test_cell_energy_jac(energy_fn: CellEnergyFn) -> None:
 
 def test_energy_random(
     model: Model,
-    energy_fn: CellEnergyFn,
+    energy_fn: CellEnergy,
     disp_random: jax.Array,
 ) -> None:
     energy_actual: jax.Array = model.energy(energy_fn, disp_random)
@@ -86,7 +86,7 @@ def test_energy_random(
 
 def test_energy_zero(
     model: Model,
-    energy_fn: CellEnergyFn,
+    energy_fn: CellEnergy,
     disp_zero: jax.Array,
 ) -> None:
     energy_actual: jax.Array = model.energy(energy_fn, disp_zero)
@@ -95,7 +95,7 @@ def test_energy_zero(
 
 def test_energy_jac_random(
     model: Model,
-    energy_fn: CellEnergyFn,
+    energy_fn: CellEnergy,
     disp_random: jax.Array,
 ) -> None:
     jac_actual: jax.Array = model.energy_jac(energy_fn, disp_random)
@@ -105,7 +105,7 @@ def test_energy_jac_random(
 
 def test_energy_jac_zero(
     model: Model,
-    energy_fn: CellEnergyFn,
+    energy_fn: CellEnergy,
     disp_zero: jax.Array,
 ) -> None:
     jac_actual: jax.Array = model.energy_jac(energy_fn, disp_zero)
@@ -115,7 +115,7 @@ def test_energy_jac_zero(
 
 def test_energy_hess_random(
     model: Model,
-    energy_fn: CellEnergyFn,
+    energy_fn: CellEnergy,
     disp_random: jax.Array,
 ) -> None:
     hess_actual: sparse.COO = model.energy_hess(energy_fn, disp_random)
@@ -125,7 +125,7 @@ def test_energy_hess_random(
 
 def test_energy_hess_zero(
     model: Model,
-    energy_fn: CellEnergyFn,
+    energy_fn: CellEnergy,
     disp_zero: jax.Array,
 ) -> None:
     energy_hess_actual: scipy.sparse.coo_array = model.energy_hess(energy_fn, disp_zero)

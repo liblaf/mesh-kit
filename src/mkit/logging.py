@@ -6,6 +6,7 @@ import time
 from collections.abc import Callable
 from typing import ParamSpec, TypeVar
 
+import rich.traceback
 from loguru import logger
 
 
@@ -37,6 +38,7 @@ def init(level: str | int = logging.NOTSET) -> None:
         filter={"jax._src": logging.INFO, "numba.core": logging.INFO},
     )
     logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
+    rich.traceback.install(show_locals=True)
 
 
 P = ParamSpec("P")

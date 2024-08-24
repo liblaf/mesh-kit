@@ -179,9 +179,12 @@ poetry.toml
 .pixi
 *.egg-info
 
+.benchmarks/
+
 *.pdf
 *.ply
 *.png
 *.pvcc
+*.svg
 *.vtp
 *.vtu

@@ -1,0 +1,20 @@
+- Linear:
+  - $\providecommand{\tr}{\operatorname{tr}} W = \frac{\lambda}{2} \tr(E)^2 + \mu \tr(E^2)$
+  - $E = \frac{1}{2} (F + F^T) - I$
+  - Young's modulus $E = 1e6$, Poisson's ratio $\nu = 0.49$ => Lamé's first parameter $\lambda = 1.6e7$, Shear modulus $\mu = 3.4e5$
+- Saint Venant-Kirchhoff
+  - $\providecommand{\tr}{\operatorname{tr}} W = \frac{\lambda}{2} \tr(E)^2 + \mu \tr(E^2)$
+  - $E = \frac{1}{2} (F^TF - I)$
+  - Lamé's first parameter $\lambda = 1.6e7$, Shear modulus $\mu = 3.4e5$
+- Corotated (Stomakhin 2012)
+  - $W = \mu \|F - R\|_F^2 + \frac{\lambda}{2} (\operatorname{det}(F) - 1)^2$
+  - $\lambda = 1.6e7$, $\mu = 3.4e5$
+- Neo-Hookean (Macklin 2021)
+  - $W = \frac{\mu}{2} \|F\|_F^2 + \frac{\hat{\lambda}}{2} (\det(F) - 1 - \frac{\mu}{\hat{\lambda}})^2$
+  - Lamé's first parameter $\lambda = 1.6e7$, Shear modulus $\mu = 3.4e5$, $\hat{\lambda} = \lambda + \mu$
+- Neo-Hookean (Bower 2009)
+  - $W = \frac{\mu}{2}(J^{-\frac{2}{3}} I_C - 3) + \frac{\lambda}{2} (J - 1)^2$
+  - Lamé's first parameter $\lambda = 1.6e7$, Shear modulus $\mu = 3.4e5$
+- Stable Neo-Hookean (Smith 2018)
+  - $W = \frac{\mu}{2} (\|F\|_F^2 - 3) + \frac{\lambda}{2} (J - 1 - \frac{3 \mu}{4 \lambda})^2 - \frac{\mu}{2} \ln(1 + \|F\|_F^2)$
+  - Lamé's first parameter $\lambda = 1.6e7$, Shear modulus $\mu = 3.4e5$

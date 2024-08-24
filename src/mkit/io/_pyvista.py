@@ -1,38 +1,47 @@
-from typing import Any
+from __future__ import annotations
 
-import numpy as np
-import numpy.typing as npt
-import pyvista as pv
-from icecream import ic
+from typing import TYPE_CHECKING, Any
 
 from mkit.io.typing import (
-    UnsupportedMeshError,
+    UnsupportedConversionError,
     is_meshio,
     is_polydata,
     is_trimesh,
     is_unstructured_grid,
 )
 
+if TYPE_CHECKING:
+    import numpy as np
+    import numpy.typing as npt
+    import pyvista as pv
+
 
 def as_polydata(mesh: Any) -> pv.PolyData:
+    import pyvista as pv
+
     if is_polydata(mesh):
         return mesh
     if is_trimesh(mesh):
         return pv.wrap(mesh)  # pyright: ignore [reportReturnType]
     if is_meshio(mesh):
         return pv.wrap(mesh)  # pyright: ignore [reportReturnType]
-    raise UnsupportedMeshError(mesh)
+    raise UnsupportedConversionError(mesh, pv.PolyData)
 
 
 def as_unstructured_grid(mesh: Any) -> pv.UnstructuredGrid:
+    import pyvista as pv
+
     if is_unstructured_grid(mesh):
         return mesh
-    raise UnsupportedMeshError(mesh)
+    raise UnsupportedConversionError(mesh, pv.UnstructuredGrid)
 
 
 def unstructured_grid_tetmesh(
     points: npt.ArrayLike, tetra: npt.ArrayLike
 ) -> pv.UnstructuredGrid:
+    import numpy as np
+    import pyvista as pv
+
     points = np.asarray(points)
     tetra = np.asarray(tetra)
     cells: npt.NDArray[np.integer] = np.hstack(

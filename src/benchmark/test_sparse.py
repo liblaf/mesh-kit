@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def sparse_mask_naive(
-    arr: sparse.COO, masks: tuple[npt.NDArray[np.bool], ...]
+    arr: sparse.COO, masks: Sequence[npt.NDArray[np.bool]]
 ) -> sparse.COO:
     for i, mask in enumerate(masks):
         idx: list = [slice(None) for _ in masks]
@@ -27,24 +28,23 @@ def arr() -> sparse.COO:
 
 
 @pytest.fixture()
-def masks() -> tuple[npt.NDArray[np.bool], ...]:
+def masks(arr: sparse.COO) -> list[npt.NDArray[np.bool]]:
     generator: Generator = np.random.default_rng()
-    mask: npt.NDArray[np.bool] = generator.choice([False, True], (1000,))
-    return mask, mask
+    masks: list[npt.NDArray[np.bool]] = []
+    for d in arr.shape:
+        mask: npt.NDArray[np.bool] = generator.choice([False, True], (d,))
+        masks.append(mask)
+    return masks
 
 
 def test_sparse_mask(
-    benchmark: BenchmarkFixture,
-    arr: sparse.COO,
-    masks: tuple[npt.NDArray[np.bool], ...],
+    benchmark: BenchmarkFixture, arr: sparse.COO, masks: Sequence[npt.NDArray[np.bool]]
 ) -> None:
     assert sparse.all(sparse_mask(arr, masks) == sparse_mask_naive(arr, masks))
     benchmark(sparse_mask, arr, masks)
 
 
 def test_sparse_mask_naive(
-    benchmark: BenchmarkFixture,
-    arr: sparse.COO,
-    masks: tuple[npt.NDArray[np.bool], ...],
+    benchmark: BenchmarkFixture, arr: sparse.COO, masks: Sequence[npt.NDArray[np.bool]]
 ) -> None:
     benchmark(sparse_mask_naive, arr, masks)

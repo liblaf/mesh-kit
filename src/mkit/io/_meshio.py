@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from mkit.io.typing import (
-    UnsupportedMeshError,
+    UnsupportedConversionError,
     is_meshio,
     is_polydata,
     is_taichi,
@@ -19,6 +19,8 @@ if TYPE_CHECKING:
 
 
 def as_meshio(mesh: Any) -> meshio.Mesh:
+    import meshio
+
     if is_meshio(mesh):
         return mesh
     if is_polydata(mesh):
@@ -29,7 +31,7 @@ def as_meshio(mesh: Any) -> meshio.Mesh:
         return trimesh_to_meshio(mesh)
     if is_unstructured_grid(mesh):
         return unstructured_grid_to_meshio(mesh)
-    raise UnsupportedMeshError(mesh)
+    raise UnsupportedConversionError(mesh, meshio.Mesh)
 
 
 def polydata_to_meshio(mesh: pv.PolyData) -> meshio.Mesh:
@@ -51,10 +53,11 @@ def trimesh_to_meshio(mesh: trimesh.Trimesh) -> meshio.Mesh:
 
 def unstructured_grid_to_meshio(mesh: pv.UnstructuredGrid) -> meshio.Mesh:
     import meshio
+    import pyvista as pv
 
     return meshio.Mesh(
         points=mesh.points,
-        cells=[("tetra", mesh.cell_connectivity.reshape((-1, 4)))],
+        cells=[("tetra", mesh.cells_dict[pv.CellType.TETRA])],
         point_data=dict(mesh.point_data),
         cell_data={k: [v] for k, v in mesh.cell_data.items()},
         field_data=dict(mesh.field_data),

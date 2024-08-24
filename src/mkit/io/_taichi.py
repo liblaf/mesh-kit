@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from mkit.io.typing import UnsupportedMeshError, is_meshio, is_taichi
+from mkit.io.typing import UnsupportedConversionError, is_meshio, is_taichi
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -13,11 +13,13 @@ if TYPE_CHECKING:
 
 
 def as_taichi(mesh: Any, relations: Iterable[str] = []) -> ti.MeshInstance:
+    import taichi as ti
+
     if is_taichi(mesh):
         return mesh
     if is_meshio(mesh):
         return meshio_to_taichi(mesh, relations)
-    raise UnsupportedMeshError(mesh)
+    raise UnsupportedConversionError(mesh, ti.MeshInstance)
 
 
 def meshio_to_taichi(

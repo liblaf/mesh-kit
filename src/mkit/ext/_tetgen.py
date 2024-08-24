@@ -2,7 +2,10 @@ from typing import Any
 
 import pyvista as pv
 
+from mkit.logging import log_time
 
+
+@log_time
 def tetgen(surface: Any) -> pv.UnstructuredGrid:
     import meshpy.tet
 
