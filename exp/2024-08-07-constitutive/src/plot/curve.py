@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 import jax
 import jax.numpy as jnp
 import jax.typing as jxt
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mkit.creation.tetmesh
 from icecream import ic
@@ -66,6 +67,7 @@ def compute_energy_jac_2_z(
 
 
 def main() -> None:
+    mpl.rcParams["figure.dpi"] = 300
     x: jax.Array = jnp.linspace(-1, 2)
     mesh: pv.UnstructuredGrid = mkit.creation.tetmesh.tetrahedron()
     ic(mesh.points)
@@ -80,7 +82,7 @@ def main() -> None:
     plt.xlabel("Displacement")
     plt.ylabel("Energy")
     plt.ylim(top=1e7)
-    plt.savefig("plot/energy.svg")
+    plt.savefig("plot/curve/energy.png")
     plt.close()
 
     plt.figure()
@@ -94,7 +96,7 @@ def main() -> None:
     plt.xlabel("Displacement")
     plt.ylabel("Normal Force")
     plt.ylim(-1e7, 1e7)
-    plt.savefig("plot/force-normal.svg")
+    plt.savefig("plot/curve/force-normal.png")
     plt.close()
 
     plt.figure()
@@ -108,7 +110,7 @@ def main() -> None:
     plt.xlabel("Displacement")
     plt.ylabel("Shear Force")
     plt.ylim(top=1e7)
-    plt.savefig("plot/force-shear.svg")
+    plt.savefig("plot/curve/force-shear.png")
     plt.close()
 
 

@@ -28,7 +28,7 @@ MODELS: dict[str, Config] = {
         elastic.corotated_stomakhin,
         {"lambda": lambda_, "mu": G},
     ),
-    "neo_hookean": Config(
+    "neo_hookean_macklin": Config(
         "Neo-Hookean (Macklin 2021)",
         elastic.neo_hookean_macklin,
         {"lambda": lambda_, "mu": G},

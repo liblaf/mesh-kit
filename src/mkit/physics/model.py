@@ -45,10 +45,10 @@ class Model:
         )  # (C, 4, 3)
         jac_mapped = self.cell_volume[:, None, None] * jac_mapped
         jac: jax.Array = jax.ops.segment_sum(
-            jac_mapped.reshape((-1, 3)),
+            jac_mapped.reshape((self.n_cells * 4, 3)),
             self.tetra.flatten(),
             num_segments=self.n_points,
-        )
+        )  # (V, 3)
         return jac
 
     @log_time

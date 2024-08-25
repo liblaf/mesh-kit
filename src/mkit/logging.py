@@ -1,6 +1,7 @@
 import functools
 import inspect
 import logging
+import pathlib
 import sys
 import time
 from collections.abc import Callable
@@ -8,6 +9,8 @@ from typing import ParamSpec, TypeVar
 
 import rich.traceback
 from loguru import logger
+
+from mkit.typing import StrPath
 
 
 class InterceptHandler(logging.Handler):
@@ -30,13 +33,18 @@ class InterceptHandler(logging.Handler):
         )
 
 
-def init(level: str | int = logging.NOTSET) -> None:
+FILTER: dict[str | None, str | int | bool] = {
+    "jax._src": logging.INFO,
+    "numba.core": logging.INFO,
+}
+
+
+def init(level: str | int = logging.NOTSET, filepath: StrPath | None = None) -> None:
     logger.remove()
-    logger.add(
-        sys.stderr,
-        level=level,
-        filter={"jax._src": logging.INFO, "numba.core": logging.INFO},
-    )
+    logger.add(sys.stderr, level=level, filter=FILTER)
+    if filepath is not None:
+        filepath = pathlib.Path(filepath)
+        logger.add(filepath.open("w"), level=level, filter=FILTER)
     logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
     rich.traceback.install(show_locals=True)
 

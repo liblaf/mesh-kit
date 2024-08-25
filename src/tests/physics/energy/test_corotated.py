@@ -8,19 +8,18 @@ import numpy as np
 import pytest
 import pyvista as pv
 import taichi as ti
+from mkit.physics.energy import elastic
 from mkit.physics.energy.abc import CellEnergy
-from mkit.physics.energy.elastic import corotated
 from mkit.physics.model import Model
 
 if TYPE_CHECKING:
-    import meshio
     import scipy.sparse
     import sparse
 
 
 def energy_naive(disp: jxt.ArrayLike, model: Model) -> jax.Array:
     disp = jnp.array(disp)
-    W: jax.Array = jax.jit(jax.vmap(corotated))(
+    W: jax.Array = jax.jit(jax.vmap(elastic.corotated.fn))(
         disp[model.tetra], model.points_mapped, cell_data=model.cell_data
     )
     return jnp.sum(model.cell_volume * W)
@@ -39,19 +38,15 @@ def disp_random(model: Model) -> jax.Array:
 
 @pytest.fixture()
 def energy_fn() -> CellEnergy:
-    return CellEnergy(corotated)
+    return elastic.corotated_stomakhin
 
 
 @pytest.fixture()
 def model() -> Model:
     ti.init()
     surface: pv.PolyData = pv.Box()
-    mesh: meshio.Mesh = mkit.ext.tetgen(surface)
-    n_cells: int = len(mesh.get_cells_type("tetra"))
-    mesh.cell_data = {  # pyright: ignore [reportAttributeAccessIssue]
-        "mu": [jnp.full((n_cells,), 1.0)],
-        "lambda": [jnp.full((n_cells,), 3.0)],
-    }
+    mesh: pv.UnstructuredGrid = mkit.ext.tetgen(surface)
+    mesh.cell_data.update({"mu": 1.0, "lambda": 3.0})  # pyright: ignore [reportArgumentType]
     model = Model(mesh)
     return model
 

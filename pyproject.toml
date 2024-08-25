@@ -9,6 +9,7 @@ authors = [
 dependencies = [
   "loguru",
   "meshio[all]",
+  "meshlib>=2.4.3.170,<3",
   "meshpy",
   "meshtaichi-patcher",
   "numpy",
@@ -18,7 +19,7 @@ dependencies = [
   "sparse",
   "taichi",
   "trimesh[all]",
-  "typer", "optimesh>=0.10.4,<0.11", "meshzoo>=0.11.6,<0.12", "meshlib>=2.4.3.170,<3",
+  "typer",
 ]
 description = "Add a short description here"
 name = "mesh-kit"

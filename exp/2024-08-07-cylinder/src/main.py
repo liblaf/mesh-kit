@@ -112,15 +112,22 @@ class Problem:
 
 
 def main() -> None:
-    mkit.logging.init(logging.INFO)
+    mkit.logging.init(logging.INFO, filepath="log/main.log")
     mesh: pv.UnstructuredGrid = pv.read("data/input.vtu")
     for name, cfg in MODELS.items():
         logger.info("Solving {}...", cfg.name)
         problem: Problem = Problem(mesh, name)
         res: scipy.optimize.OptimizeResult = problem.solve()
+        logger.info("{}", res)
         disp: npt.NDArray[np.floating] = problem.make_disp(res.x)
         mesh.point_data["solution"] = disp
-        mesh.cell_data["energy_density"] = np.asarray(problem.energy_density(res.x))
+        mesh.cell_data["energy_density"] = np.asarray(
+            problem.model.energy_density(problem.energy_fn, disp)
+        )
+        mesh.point_data["energy_jac"] = np.asarray(
+            problem.model.energy_jac(problem.energy_fn, disp)
+        )
+        mesh.field_data["execution_time"] = res["execution_time"]
         mesh.save(f"data/{name}.vtu")
 
 
