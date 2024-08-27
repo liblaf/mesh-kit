@@ -1,13 +1,13 @@
-from typing import Any, no_type_check
+from typing import no_type_check
 
-import mkit.ext
-import mkit.io
-import mkit.logging
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
 import taichi as ti
-from icecream import ic
+
+import mkit.ext
+import mkit.io
+import mkit.logging
 from mkit.logging import log_time
 
 ti.init()

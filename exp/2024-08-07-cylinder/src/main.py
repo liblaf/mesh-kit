@@ -3,14 +3,15 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 import jax
-import mkit.logging
-import mkit.sparse
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
 import scipy.optimize
 import scipy.sparse
 from loguru import logger
+
+import mkit.logging
+import mkit.sparse
 from mkit.physics.energy.abc import CellEnergy
 from mkit.physics.model import Model
 from mkit.physics.preset.elastic import MODELS, Config
@@ -24,10 +25,10 @@ class Problem:
     energy_fn: CellEnergy
 
     def __init__(self, mesh: Any, name: str) -> None:
-        self.model = Model(mesh)
-        config: Config = MODELS[name]
-        self.energy_fn = config.energy_fn
-        for k, v in config.params.items():
+        cfg: Config = MODELS[name]
+        self.model = Model(mesh, cfg.energy_fn)
+        self.energy_fn = cfg.energy_fn
+        for k, v in cfg.params.items():
             self.mesh.cell_data[k] = v  # pyright: ignore [reportArgumentType]
 
     def solve(self) -> scipy.optimize.OptimizeResult:
@@ -44,17 +45,17 @@ class Problem:
 
     def fun(self, x: npt.ArrayLike) -> jax.Array:
         disp: npt.NDArray[np.floating] = self.make_disp(x)
-        energy: jax.Array = self.model.energy(self.energy_fn, disp)
+        energy: jax.Array = self.model.energy(disp)
         return energy
 
     def jac(self, x: npt.ArrayLike) -> jax.Array:
         disp: npt.NDArray[np.floating] = self.make_disp(x)
-        jac: jax.Array = self.model.energy_jac(self.energy_fn, disp)
+        jac: jax.Array = self.model.energy_jac(disp)
         return jac[self.free_mask].flatten()
 
     def hess(self, x: npt.NDArray) -> scipy.sparse.coo_matrix:
         disp: npt.NDArray[np.floating] = self.make_disp(x)
-        hess: sparse.COO = self.model.energy_hess(self.energy_fn, disp)
+        hess: sparse.COO = self.model.energy_hess(disp)
         coord_mask: npt.NDArray[np.bool] = np.ones((3,), bool)
         hess = mkit.sparse.sparse_mask(
             hess, (self.free_mask, coord_mask, self.free_mask, coord_mask)
@@ -69,7 +70,7 @@ class Problem:
 
     def energy_density(self, x: npt.ArrayLike) -> jax.Array:
         disp: npt.NDArray[np.floating] = self.make_disp(x)
-        W: jax.Array = self.model.energy_density(self.energy_fn, disp)
+        W: jax.Array = self.model.energy_density(disp)
         return W
 
     @property
@@ -122,11 +123,9 @@ def main() -> None:
         disp: npt.NDArray[np.floating] = problem.make_disp(res.x)
         mesh.point_data["solution"] = disp
         mesh.cell_data["energy_density"] = np.asarray(
-            problem.model.energy_density(problem.energy_fn, disp)
+            problem.model.energy_density(disp)
         )
-        mesh.point_data["energy_jac"] = np.asarray(
-            problem.model.energy_jac(problem.energy_fn, disp)
-        )
+        mesh.point_data["energy_jac"] = np.asarray(problem.model.energy_jac(disp))
         mesh.field_data["execution_time"] = res["execution_time"]
         mesh.save(f"data/{name}.vtu")
 

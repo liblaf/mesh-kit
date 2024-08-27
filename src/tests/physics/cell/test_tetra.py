@@ -1,7 +1,8 @@
 import jax
 import jax.numpy as jnp
-import mkit.physics.cell.tetra
 import numpy as np
+
+import mkit.physics.cell.tetra
 
 
 def test_deformation_gradient() -> None:

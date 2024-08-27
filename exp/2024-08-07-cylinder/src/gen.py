@@ -1,18 +1,18 @@
 from typing import Literal
 
-import mkit.cli
-import mkit.ext
-import mkit.transfer
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
+
+import mkit.cli
+import mkit.ext
+import mkit.transfer.point_data
 
 
 class Config(mkit.cli.BaseConfig):
     deform: Literal["squash", "stretch", "twist"]
 
 
-@mkit.cli.cli(Config)
 def main(cfg: Config) -> None:
     surface: pv.PolyData = pv.Cylinder()
     surface.triangulate(inplace=True, progress_bar=True)
@@ -32,9 +32,9 @@ def main(cfg: Config) -> None:
         case "twist":
             raise NotImplementedError
     surface.point_data["pin_disp"] = pin_disp
-    tetmesh = mkit.transfer.surface_to_tetmesh(surface, tetmesh)
+    tetmesh = mkit.transfer.point_data.surface_to_tetmesh(surface, tetmesh)
     tetmesh.save("data/input.vtu")
 
 
 if __name__ == "__main__":
-    main()
+    mkit.cli.run(main, schema=Config)

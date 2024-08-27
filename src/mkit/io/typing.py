@@ -31,15 +31,6 @@ def is_polydata(mesh: Any) -> bool:
         return False
 
 
-def is_taichi(mesh: Any) -> bool:
-    try:
-        import taichi as ti
-
-        return isinstance(mesh, ti.MeshInstance)
-    except ImportError:
-        return False
-
-
 def is_trimesh(mesh: Any) -> bool:
     try:
         import trimesh

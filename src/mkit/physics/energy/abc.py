@@ -29,6 +29,7 @@ class EnergyFnOptional(Protocol):
 
 
 def _wraps(fn: EnergyFn) -> EnergyFnOptional:
+    @functools.wraps(fn)
     def wrapped(
         disp: jxt.ArrayLike,
         points: jxt.ArrayLike,

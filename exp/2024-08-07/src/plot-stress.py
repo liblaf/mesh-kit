@@ -5,14 +5,9 @@ import jax
 import jax.numpy as jnp
 import jax.typing as jxt
 import matplotlib.pyplot as plt
-import mkit
-import mkit.ext
 import numpy as np
-import pyvista as pv
-from icecream import ic
+
 from mkit.physics.cell import tetra
-from mkit.physics.energy.abc import CellEnergyFn
-from mkit.physics.model import Model
 
 E: float = 3e3
 nu: float = 0.46

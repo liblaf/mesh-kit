@@ -1,4 +1,3 @@
-import functools
 import pathlib
 from collections.abc import Callable
 from typing import ClassVar, ParamSpec, TypeVar
@@ -24,18 +23,11 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def cli(schema: type[C] = BaseConfig) -> Callable[[Callable[[C], T]], Callable[[], T]]:
-    def wrapper(fn: Callable[[C], T]) -> Callable[[], T]:
-        @functools.wraps(fn)
-        def wrapped() -> T:
-            cfg: C = schema()
-            mkit.logging.init(cfg.log_level, cfg.log_file)
-            logger.info("{}", cfg)
-            return fn(cfg)
-
-        return wrapped
-
-    return wrapper
+def run(fn: Callable[[C], T], schema: type[C] = BaseConfig, **kwargs) -> T:
+    cfg: C = schema(**kwargs)
+    mkit.logging.init(cfg.log_level, cfg.log_file)
+    logger.info("{}", cfg)
+    return fn(cfg)
 
 
-__all__ = ["BaseConfig", "cli"]
+__all__ = ["BaseConfig", "run"]

@@ -3,11 +3,11 @@ from typing import TYPE_CHECKING
 import jax
 import jax.numpy as jnp
 import jax.typing as jxt
-import mkit.ext
 import numpy as np
 import pytest
 import pyvista as pv
-import taichi as ti
+
+import mkit.ext
 from mkit.physics.energy import elastic
 from mkit.physics.energy.abc import CellEnergy
 from mkit.physics.model import Model
@@ -20,30 +20,29 @@ if TYPE_CHECKING:
 def energy_naive(disp: jxt.ArrayLike, model: Model) -> jax.Array:
     disp = jnp.array(disp)
     W: jax.Array = jax.jit(jax.vmap(elastic.corotated.fn))(
-        disp[model.tetra], model.points_mapped, cell_data=model.cell_data
+        disp[model.tetra], model.points_mapped, {}, model.cell_data, {}
     )
     return jnp.sum(model.cell_volume * W)
 
 
-@pytest.fixture()
+@pytest.fixture
 def disp_zero(model: Model) -> jax.Array:
     return jnp.zeros((model.n_points, 3))
 
 
-@pytest.fixture()
+@pytest.fixture
 def disp_random(model: Model) -> jax.Array:
     key: jax.Array = jax.random.key(0)
     return jax.random.uniform(key, (model.n_points, 3))
 
 
-@pytest.fixture()
+@pytest.fixture
 def energy_fn() -> CellEnergy:
     return elastic.corotated_stomakhin
 
 
-@pytest.fixture()
+@pytest.fixture
 def model() -> Model:
-    ti.init()
     surface: pv.PolyData = pv.Box()
     mesh: pv.UnstructuredGrid = mkit.ext.tetgen(surface)
     mesh.cell_data.update({"mu": 1.0, "lambda": 3.0})  # pyright: ignore [reportArgumentType]

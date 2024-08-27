@@ -19,26 +19,38 @@ from mkit.physics.energy.abc import CellEnergy
 
 class Model:
     mesh: pv.UnstructuredGrid
+    energy_fn: CellEnergy | None = None
 
-    def __init__(self, mesh: Any) -> None:
+    def __init__(self, mesh: Any, energy_fn: CellEnergy | None = None) -> None:
         self.mesh = mkit.io.as_unstructured_grid(mesh)
+        self.energy_fn = energy_fn
 
     @log_time
-    def energy(self, energy_fn: CellEnergy, disp: jxt.ArrayLike) -> jax.Array:
-        W: jax.Array = self.energy_density(energy_fn, disp)  # (C,)
+    def energy(
+        self, disp: jxt.ArrayLike, energy_fn: CellEnergy | None = None
+    ) -> jax.Array:
+        W: jax.Array = self.energy_density(disp, energy_fn)  # (C,)
         return jnp.sum(self.cell_volume * W)
 
     @log_time
-    def energy_density(self, energy_fn: CellEnergy, disp: jxt.ArrayLike) -> jax.Array:
-        disp = jnp.asarray(disp)  # (V, 3)
+    def energy_density(
+        self, _disp: jxt.ArrayLike, energy_fn: CellEnergy | None = None
+    ) -> jax.Array:
+        disp: jax.Array = jnp.asarray(_disp)  # (V, 3)
+        energy_fn = energy_fn or self.energy_fn
+        assert energy_fn is not None
         disp_mapped: jax.Array = disp[self.tetra]  # (C, 4, 3)
         return energy_fn.vmap(
             disp_mapped, self.points_mapped, self.point_data_mapped, self.cell_data
         )
 
     @log_time
-    def energy_jac(self, energy_fn: CellEnergy, disp: jxt.ArrayLike) -> jax.Array:
-        disp = jnp.asarray(disp)  # (V, 3)
+    def energy_jac(
+        self, _disp: jxt.ArrayLike, energy_fn: CellEnergy | None = None
+    ) -> jax.Array:
+        disp: jax.Array = jnp.asarray(_disp)  # (V, 3)
+        energy_fn = energy_fn or self.energy_fn
+        assert energy_fn is not None
         disp_mapped: jax.Array = disp[self.tetra]  # (C, 4, 3)
         jac_mapped: jax.Array = energy_fn.vmap_jac(
             disp_mapped, self.points_mapped, self.point_data_mapped, self.cell_data
@@ -52,13 +64,17 @@ class Model:
         return jac
 
     @log_time
-    def energy_hess(self, energy_fn: CellEnergy, disp: jxt.ArrayLike) -> sparse.COO:
-        disp = jnp.asarray(disp)  # (V, 3)
+    def energy_hess(
+        self, _disp: jxt.ArrayLike, energy_fn: CellEnergy | None = None
+    ) -> sparse.COO:
+        disp: jax.Array = jnp.asarray(_disp)  # (V, 3)
+        energy_fn = energy_fn or self.energy_fn
+        assert energy_fn is not None
         disp_mapped: jax.Array = disp[self.tetra]  # (C, 4, 3)
         hess_mapped: jax.Array = energy_fn.vmap_hess(
             disp_mapped, self.points_mapped, self.point_data_mapped, self.cell_data
         )  # (C, 4, 3, 4, 3)
-        hess_mapped = self.cell_volume[:, None, None, None, None] * hess_mapped
+        hess_mapped *= self.cell_volume[:, None, None, None, None]
         return sparse.COO(
             self.energy_hess_coords,
             hess_mapped.flatten(),
@@ -72,7 +88,7 @@ class Model:
 
     @property
     def cell_data(self) -> Mapping[str, jxt.ArrayLike]:
-        return dict(self.mesh.cell_data)  # pyright: ignore [reportReturnType]
+        return dict(self.mesh.cell_data)
 
     @functools.cached_property
     def cell_volume(self) -> jax.Array:
@@ -89,7 +105,7 @@ class Model:
 
     @property
     def point_data(self) -> Mapping[str, jxt.ArrayLike]:
-        return self.mesh.point_data  # pyright: ignore [reportReturnType]
+        return dict(self.mesh.point_data)
 
     @functools.cached_property
     def point_data_mapped(self) -> dict[str, jax.Array]:
