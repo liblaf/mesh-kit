@@ -1,0 +1,17 @@
+schema: '2.0'
+stages:
+  gen:
+    cmd: python src/gen.py
+    deps:
+    - path: src/gen.py
+      hash: md5
+      md5: 3fd3cd9aa4430b6d2b68bd228b8598e0
+      size: 1329
+    params:
+      params.yaml:
+        deform: squash
+    outs:
+    - path: data/input.vtu
+      hash: md5
+      md5: 35fd88cbe49cc130c3e5c1f39e92e4ce
+      size: 308382

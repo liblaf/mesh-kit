@@ -3,6 +3,7 @@ all: plot/solution/linear.png plot/volume.png plot/time.png
 
 .PHONY: clean
 clean:
+	$(RM) --recursive log
 	$(RM) --recursive plot
 
 data/input.vtu: src/gen.py
@@ -10,6 +11,7 @@ data/input.vtu: src/gen.py
 	python "$<"
 
 data/linear.vtu: src/main.py data/input.vtu
+	@ mkdir --parents --verbose log
 	JAX_DEBUG_NANS=False python "$<"
 
 plot/solution/linear.png: src/plot/solution.py data/linear.vtu

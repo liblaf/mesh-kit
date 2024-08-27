@@ -1,0 +1,9 @@
+stages:
+  gen:
+    cmd: python src/gen.py
+    deps:
+      - src/gen.py
+    outs:
+      - data/input.vtu
+    params:
+      - deform

@@ -82,7 +82,7 @@ def main() -> None:
     plt.xlabel("Displacement")
     plt.ylabel("Energy")
     plt.ylim(top=1e7)
-    plt.savefig("plot/curve/energy.png")
+    plt.savefig("plot/curve/energy.svg")
     plt.close()
 
     plt.figure()
@@ -96,7 +96,7 @@ def main() -> None:
     plt.xlabel("Displacement")
     plt.ylabel("Normal Force")
     plt.ylim(-1e7, 1e7)
-    plt.savefig("plot/curve/force-normal.png")
+    plt.savefig("plot/curve/force-normal.svg")
     plt.close()
 
     plt.figure()
@@ -110,7 +110,7 @@ def main() -> None:
     plt.xlabel("Displacement")
     plt.ylabel("Shear Force")
     plt.ylim(top=1e7)
-    plt.savefig("plot/curve/force-shear.png")
+    plt.savefig("plot/curve/force-shear.svg")
     plt.close()
 
 

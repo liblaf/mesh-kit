@@ -13,20 +13,17 @@ def main() -> None:
     pl.add_mesh(mesh)
     pl.add_arrows(mesh.points[0], np.asarray([1.0, 0, 0]), name="arrow")
     camera.tight(0.1)
-    pl.screenshot("plot/tet/rest.png")
+    pl.save_graphic("plot/tet/rest.svg")
     pl.add_arrows(mesh.points[2], np.asarray([0, 0, 1.0]), name="arrow")
     camera.tight(0.1)
-    pl.update()
-    pl.screenshot("plot/tet/shear.png")
+    pl.save_graphic("plot/tet/shear.svg")
     pl.remove_actor("arrow")  # pyright: ignore [reportArgumentType]
     mesh.points[0][0] -= 0.5
     camera.tight(0.1)
-    pl.update()
-    pl.screenshot("plot/tet/squash.png")
+    pl.save_graphic("plot/tet/squash.svg")
     mesh.points[0][0] += 1.5
     camera.tight(0.1)
-    pl.update()
-    pl.screenshot("plot/tet/stretch.png")
+    pl.save_graphic("plot/tet/stretch.svg")
 
 
 if __name__ == "__main__":
