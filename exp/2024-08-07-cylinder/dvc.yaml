@@ -1,9 +1,81 @@
 stages:
   gen:
-    cmd: python src/gen.py
+    matrix:
+      deform: &deform
+        - squash
+        - stretch
+        - twist
+    cmd: >-
+      python src/gen.py
+      --deform ${item.deform}
+      --output data/${item.deform}/input.vtu
     deps:
       - src/gen.py
     outs:
-      - data/input.vtu
-    params:
-      - deform
+      - data/${item.deform}/input.vtu
+
+  sim:
+    matrix:
+      deform: *deform
+      model: &model
+        - corotated
+        - linear
+        - neo_hookean_bower
+        - neo_hookean_macklin
+        - neo_hookean_stable
+        - saint_venant_kirchhoff
+        - yeoh
+    cmd: >-
+      python src/main.py
+      --input data/${item.deform}/input.vtu
+      --model ${item.model}
+      --output data/${item.deform}/${item.model}.vtu
+    deps:
+      - data/${item.deform}/input.vtu
+      - src/main.py
+    outs:
+      - data/${item.deform}/${item.model}.vtu
+
+  plot/input:
+    matrix:
+      deform: *deform
+    cmd: >-
+      python src/plot/input.py
+      --camera plot/${item.deform}/camera.json
+      --fig plot/${item.deform}/input.svg
+      --input data/${item.deform}/input.vtu
+    deps:
+      - data/${item.deform}/input.vtu
+      - plot/${item.deform}/camera.json
+      - src/plot/input.py
+    outs:
+      - plot/${item.deform}/input.svg
+
+  plot/camera:
+    matrix:
+      deform: *deform
+    cmd: >-
+      python src/plot/camera.py
+      --camera plot/${item.deform}/camera.json
+      --data_dir data/${item.deform}
+    deps:
+      - data/${item.deform}
+      - src/plot/camera.py
+    outs:
+      - plot/${item.deform}/camera.json
+
+  plot/solution:
+    matrix:
+      deform: *deform
+      model: *model
+    cmd: >-
+      python src/plot/solution.py
+      --camera plot/${item.deform}/camera.json
+      --fig plot/${item.deform}/${item.model}.svg
+      --solution data/${item.deform}/${item.model}.vtu
+    deps:
+      - data/${item.deform}/${item.model}.vtu
+      - plot/${item.deform}/camera.json
+      - src/plot/solution.py
+    outs:
+      - plot/${item.deform}/${item.model}.svg

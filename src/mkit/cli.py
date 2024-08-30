@@ -1,3 +1,4 @@
+import inspect
 import pathlib
 from collections.abc import Callable
 from typing import ClassVar, ParamSpec, TypeVar
@@ -23,8 +24,22 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def run(fn: Callable[[C], T], schema: type[C] = BaseConfig, **kwargs) -> T:
-    cfg: C = schema(**kwargs)
+def run(
+    fn: Callable[[C], T],
+    log_level: int | str = "INFO",
+    log_file: pathlib.Path | None = None,
+    **kwargs,
+) -> T:
+    sig: inspect.Signature = inspect.signature(fn)
+    annotation: type[C] = sig.parameters["cfg"].annotation
+    kwargs.update({"log_level": log_level, "log_file": log_file})
+    cfg: C = annotation(
+        config_sources=[
+            confz.FileSource("params.yaml", optional=True),
+            confz.CLArgSource(),
+            confz.DataSource(kwargs),
+        ]
+    )
     mkit.logging.init(cfg.log_level, cfg.log_file)
     logger.info("{}", cfg)
     return fn(cfg)

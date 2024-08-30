@@ -69,7 +69,7 @@ def compute_energy_jac_2_z(
 
 def main() -> None:
     mpl.rcParams["figure.dpi"] = 300
-    x: jax.Array = jnp.linspace(-1, 2)
+    x: jax.Array = jnp.linspace(-2, 2)
     mesh: pv.UnstructuredGrid = mkit.creation.tetmesh.tetrahedron()
     ic(mesh.points)
 
@@ -82,7 +82,7 @@ def main() -> None:
     plt.legend()
     plt.xlabel("Displacement")
     plt.ylabel("Energy")
-    plt.ylim(top=1e7)
+    plt.ylim(-1e6, 1e7)
     plt.savefig("plot/curve/energy.svg")
     plt.close()
 
@@ -97,7 +97,7 @@ def main() -> None:
     plt.xlabel("Displacement")
     plt.ylabel("Normal Force")
     plt.ylim(-1e7, 1e7)
-    plt.savefig("plot/curve/force-normal.svg")
+    plt.savefig("plot/curve/normal-force.svg")
     plt.close()
 
     plt.figure()
@@ -111,7 +111,7 @@ def main() -> None:
     plt.xlabel("Displacement")
     plt.ylabel("Shear Force")
     plt.ylim(top=1e7)
-    plt.savefig("plot/curve/force-shear.svg")
+    plt.savefig("plot/curve/shear-force.svg")
     plt.close()
 
 

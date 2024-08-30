@@ -10,7 +10,7 @@ def point_to_index(
     import scipy.spatial
 
     _: Any
-    scale: float = np.linalg.norm(np.ptp(points, axis=0))  # pyright: ignore [reportAssignmentType]
+    scale: float = np.linalg.norm(np.ptp(points, axis=0))
     tree = scipy.spatial.KDTree(points)
     index: npt.NDArray[np.integer]
     _, index = tree.query(query, distance_upper_bound=tol * scale)

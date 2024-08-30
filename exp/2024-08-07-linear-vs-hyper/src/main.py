@@ -136,6 +136,7 @@ def main(cfg: Config) -> None:
     disp: npt.NDArray[np.floating] = problem.make_disp(res.x)
     mesh.point_data["solution"] = disp
     mesh.cell_data["energy_density"] = np.asarray(problem.model.energy_density(disp))
+    mesh.point_data["energy_jac"] = np.asarray(problem.model.energy_jac(disp))
     mesh.field_data["execution_time"] = res["execution_time"]
     mesh.field_data["success"] = res["success"]
     mesh.save(cfg.output)

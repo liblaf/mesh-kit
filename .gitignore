@@ -188,3 +188,5 @@ poetry.toml
 *.svg
 *.vtp
 *.vtu
+
+camera.json

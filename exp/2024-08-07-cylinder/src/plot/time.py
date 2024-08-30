@@ -16,7 +16,7 @@ def main() -> None:
     plt.xlabel("Execution Time (s)")
     plt.ylabel("Model")
     plt.tight_layout()
-    plt.savefig("plot/time.png")
+    plt.savefig("plot/time.svg")
     plt.close()
 
 

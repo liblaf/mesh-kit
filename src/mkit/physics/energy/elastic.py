@@ -158,7 +158,7 @@ def yeoh_wiki(
     C11: jax.Array = jnp.asarray(cell_data["C11"])
     F: jax.Array = tetra.deformation_gradient(disp, points)
     B: jax.Array = F @ F.T  # left Cauchy-Green deformation tensor
-    B_bar: jax.Array = jnp.linalg.det(B) ** (-1 / 3) * B
+    B_bar: jax.Array = B / jnp.cbrt(jnp.linalg.det(B))
     I1bar: jax.Array = jnp.trace(B_bar)
     J: jax.Array = jnp.linalg.det(F)
     W: jax.Array = (
@@ -294,7 +294,10 @@ def neo_hookean_bower(
     J: jax.Array = jnp.linalg.det(F)  # relative volume change
     C: jax.Array = F.T @ F  # right Cauchy-Green tensor
     I_C: jax.Array = jnp.trace(C)
-    W: jax.Array = 0.5 * mu * (J ** (-2 / 3) * I_C - 3) + 0.5 * lambda_ * (J - 1) ** 2
+    # W: jax.Array = 0.5 * mu * (J ** (-2 / 3) * I_C - 3) + 0.5 * lambda_ * (J - 1) ** 2
+    W: jax.Array = (
+        0.5 * mu * (I_C / (jnp.cbrt(J) ** 2) - 3) + 0.5 * lambda_ * (J - 1) ** 2
+    )
     return W
 
 

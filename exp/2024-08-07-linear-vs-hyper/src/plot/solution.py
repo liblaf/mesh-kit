@@ -11,6 +11,7 @@ class Config(mkit.cli.BaseConfig):
     camera: pathlib.Path | None = None
     fig: pathlib.Path
     solution: pathlib.Path
+    stretch: float | None = None
 
 
 def main(cfg: Config) -> None:
@@ -27,13 +28,18 @@ def main(cfg: Config) -> None:
     else:
         camera: pv.Camera = pl.camera
         camera.tight(0.1)
+    if cfg.stretch is not None:
+        pl.add_text(
+            f"Stretch: {cfg.stretch:.1f}",
+            position=(0, pl.window_size[1] - 1 * 18 * 2),  # pyright: ignore [reportArgumentType]
+        )
     pl.add_text(
         f"Relative Volume Change: {relative_volume_change:.2f}",
-        position=(0, pl.window_size[1] - 1 * 18 * 2),  # pyright: ignore [reportArgumentType]
+        position=(0, pl.window_size[1] - 2 * 18 * 2),  # pyright: ignore [reportArgumentType]
     )
     pl.add_text(
         f"Execution Time: {execution_time:.1f} s",
-        position=(0, pl.window_size[1] - 2 * 18 * 2),  # pyright: ignore [reportArgumentType]
+        position=(0, pl.window_size[1] - 3 * 18 * 2),  # pyright: ignore [reportArgumentType]
     )
     pl.save_graphic(cfg.fig)
 
