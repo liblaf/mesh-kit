@@ -1,51 +1,39 @@
-import meshio
-import numpy as np
-import pytorch3d.structures
-import pyvista as pv
-import trimesh
-from numpy import typing as npt
+from __future__ import annotations
 
-from mkit._typing import StrPath
-from mkit.io.types import AnyMesh
+from typing import TYPE_CHECKING, Any
 
+from mkit.io.typing import (
+    UnsupportedConversionError,
+    is_meshio,
+    is_polydata,
+    is_trimesh,
+)
 
-def load_trimesh(filename: StrPath) -> trimesh.Trimesh:
-    """
-    Args:
-        filename:
-
-    Returns:
-        trimesh.Trimesh
-    """
-    try:
-        mesh_tr: trimesh.Trimesh = trimesh.load(str(filename))
-        return mesh_tr
-    except Exception:
-        mesh_io: meshio.Mesh = meshio.read(filename)
-        return as_trimesh(mesh_io)
+if TYPE_CHECKING:
+    import meshio
+    import pyvista as pv
+    import trimesh
 
 
-def as_trimesh(mesh: AnyMesh) -> trimesh.Trimesh:
-    match mesh:
-        case trimesh.Trimesh():
-            return mesh
-        case meshio.Mesh():
-            return meshio_to_trimesh(mesh)
-        case pytorch3d.structures.Meshes():
-            raise NotImplementedError  # TODO
-        case pv.PolyData():
-            return pyvista_to_trimesh(mesh)
-        case _:
-            raise NotImplementedError(f"unsupported mesh: {mesh}")
+def as_trimesh(mesh: Any) -> trimesh.Trimesh:
+    import trimesh
+
+    if is_trimesh(mesh):
+        return mesh
+    if is_meshio(mesh):
+        return meshio_to_trimesh(mesh)
+    if is_polydata(mesh):
+        return polydata_to_trimesh(mesh)
+    raise UnsupportedConversionError(mesh, trimesh.Trimesh)
 
 
 def meshio_to_trimesh(mesh: meshio.Mesh) -> trimesh.Trimesh:
-    verts: npt.NDArray[np.floating] = mesh.points
-    faces: npt.NDArray[np.integer] = mesh.get_cells_type("triangle")
-    return trimesh.Trimesh(verts, faces)
+    import trimesh
+
+    return trimesh.Trimesh(vertices=mesh.points, faces=mesh.get_cells_type("triangle"))
 
 
-def pyvista_to_trimesh(mesh: pv.PolyData) -> trimesh.Trimesh:
-    verts: npt.NDArray[np.floating] = mesh.points
-    faces: npt.NDArray[np.integer] = mesh.regular_faces
-    return trimesh.Trimesh(verts, faces)
+def polydata_to_trimesh(mesh: pv.PolyData) -> trimesh.Trimesh:
+    import trimesh
+
+    return trimesh.Trimesh(vertices=mesh.points, faces=mesh.regular_faces)

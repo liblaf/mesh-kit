@@ -1,52 +1,48 @@
-import datetime
+import inspect
 import pathlib
-import shlex
-from collections.abc import Callable, Sequence
-from os import PathLike
+from collections.abc import Callable
+from typing import ClassVar, ParamSpec, TypeVar
 
-import typer
+import confz
+from icecream import ic
 from loguru import logger
 
-import mkit.log
-from mkit._typing import StrPath
+import mkit.logging
 
 
-def run(main: Callable) -> None:
-    mkit.log.init()
-    typer.run(main)
+class BaseConfig(confz.BaseConfig):
+    log_level: int | str = "INFO"
+    log_file: pathlib.Path | None = None
+    CONFIG_SOURCES: ClassVar = [confz.FileSource("params.yaml"), confz.CLArgSource()]
+
+    def __post_init__(self) -> None:
+        ic(self)
 
 
-def up_to_date(
-    outputs: StrPath | Sequence[StrPath | None] | None,
-    inputs: StrPath | Sequence[StrPath | None] | None = None,
-) -> None:
-    return
-    outputs = _as_list(outputs)
-    inputs = _as_list(inputs)
-    earlist_output: datetime.datetime = datetime.datetime.max
-    for o in outputs:
-        if not o.exists():
-            return
-        earlist_output = min(
-            earlist_output, datetime.datetime.fromtimestamp(o.stat().st_mtime)
-        )
-    latest_input: datetime.datetime = datetime.datetime.min
-    for i in inputs:
-        if not i.exists():
-            raise FileNotFoundError(i)
-        latest_input = max(
-            latest_input, datetime.datetime.fromtimestamp(i.stat().st_mtime)
-        )
-    if latest_input < earlist_output:
-        logger.info("{} is up to date.", shlex.join([str(o) for o in outputs]))
-    else:
-        raise typer.Exit()
+C = TypeVar("C", bound=BaseConfig)
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
-def _as_list(x: StrPath | Sequence[StrPath | None] | None) -> list[pathlib.Path]:
-    if x is None:
-        return []
-    elif isinstance(x, str | PathLike):
-        return [pathlib.Path(x)]
-    else:
-        return [pathlib.Path(i) for i in x if i is not None]
+def run(
+    fn: Callable[[C], T],
+    log_level: int | str = "INFO",
+    log_file: pathlib.Path | None = None,
+    **kwargs,
+) -> T:
+    sig: inspect.Signature = inspect.signature(fn)
+    annotation: type[C] = sig.parameters["cfg"].annotation
+    kwargs.update({"log_level": log_level, "log_file": log_file})
+    cfg: C = annotation(
+        config_sources=[
+            confz.FileSource("params.yaml", optional=True),
+            confz.CLArgSource(),
+            confz.DataSource(kwargs),
+        ]
+    )
+    mkit.logging.init(cfg.log_level, cfg.log_file)
+    logger.info("{}", cfg)
+    return fn(cfg)
+
+
+__all__ = ["BaseConfig", "run"]

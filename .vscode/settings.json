@@ -1,9 +1,14 @@
 {
   "files.exclude": {
-    "**/__pycache__": true,
-    "**/.pixi": true
+    "**/__pycache__/": true,
+    "**/.pixi/": true,
+    "**/.pytest_cache/": true,
+    "**/*.egg-info/": true
   },
   "python.analysis.diagnosticMode": "workspace",
+  "python.testing.pytestArgs": ["src/benchmark/", "src/tests/"],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
   "yaml.customTags": [
     "!ENV scalar",
     "!ENV sequence",

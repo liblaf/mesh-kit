@@ -1,0 +1,24 @@
+- Linear:
+  - $W = \frac{\lambda}{2} tr(E)^2 + \mu tr(E^2)$
+  - $E = \frac{1}{2} (F + F^T) - I$
+  - Young's modulus $E = 1e6$, Poisson's ratio $\nu = 0.49$
+  - => Lamé's first parameter $\lambda = 1.6e7$, Shear modulus $\mu = 3.4e5$
+- Saint Venant-Kirchhoff
+  - $W = \frac{\lambda}{2} tr(E)^2 + \mu tr(E^2)$
+  - $E = \frac{1}{2} (F^TF - I)$
+  - $\lambda = 1.6e7$, $\mu = 3.4e5$
+- Corotated (Stomakhin 2012)
+  - $W = \mu \|F - R\|_F^2 + \frac{\lambda}{2} (J - 1)^2$
+  - $\lambda = 1.6e7$, $\mu = 3.4e5$
+- Neo-Hookean (Macklin 2021)
+  - $W = \frac{\mu}{2} \|F\|_F^2 + \frac{\hat{\lambda}}{2} (J - 1 - \frac{\mu}{\hat{\lambda}})^2$
+  - $\lambda = 1.6e7$, $\mu = 3.4e5$, $\hat{\lambda} = \lambda + \mu$
+- Neo-Hookean (Bower 2009)
+  - $W = \frac{\mu}{2}(J^{-\frac{2}{3}} I_C - 3) + \frac{\lambda}{2} (J - 1)^2$
+  - $\lambda = 1.6e7$, $\mu = 3.4e5$
+- Stable Neo-Hookean (Smith 2018)
+  - $W = \frac{\mu}{2} (\|F\|_F^2 - 3) + \frac{\lambda}{2} (J - 1 - \frac{3 \mu}{4 \lambda})^2 - \frac{\mu}{2} \ln(1 + \|F\|_F^2)$
+  - $\lambda = 1.6e7$, $\mu = 3.4e5$
+- Yeoh (Yeoh 1993)
+  - $W = \sum_i C_{i0} (\bar{I}_1 - 3)^i + \sum_k C_{k1} (J - 1)^{2k}$
+  - $C_{10} = 1.2e6$, $C_{20} = -0.057e6$, $C_{30} = 0.004e6$, $C_{11} = 1.6e7$

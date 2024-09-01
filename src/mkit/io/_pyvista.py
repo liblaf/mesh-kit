@@ -1,24 +1,51 @@
-import pyvista as pv
-import trimesh
+from __future__ import annotations
 
-from mkit._typing import StrPath
-from mkit.io.types import AnyMesh
+from typing import TYPE_CHECKING, Any
 
+from mkit.io.typing import (
+    UnsupportedConversionError,
+    is_meshio,
+    is_polydata,
+    is_trimesh,
+    is_unstructured_grid,
+)
 
-def load_pyvista(filename: StrPath) -> pv.PolyData:
-    raise NotImplementedError  # TODO
-
-
-def as_pyvista(mesh: AnyMesh) -> pv.PolyData:
-    match mesh:
-        case pv.PolyData():
-            return mesh
-        case trimesh.Trimesh():
-            return trimesh_to_pyvista(mesh)
-        case _:
-            raise NotImplementedError(f"unsupported mesh: {mesh}")
+if TYPE_CHECKING:
+    import numpy as np
+    import numpy.typing as npt
+    import pyvista as pv
 
 
-def trimesh_to_pyvista(mesh: trimesh.Trimesh) -> pv.PolyData:
-    mesh_pv: pv.PolyData = pv.wrap(mesh)
-    return mesh_pv
+def as_polydata(mesh: Any) -> pv.PolyData:
+    import pyvista as pv
+
+    if is_polydata(mesh):
+        return mesh
+    if is_trimesh(mesh):
+        return pv.wrap(mesh)  # pyright: ignore [reportReturnType]
+    if is_meshio(mesh):
+        return pv.wrap(mesh)  # pyright: ignore [reportReturnType]
+    raise UnsupportedConversionError(mesh, pv.PolyData)
+
+
+def as_unstructured_grid(mesh: Any) -> pv.UnstructuredGrid:
+    import pyvista as pv
+
+    if is_unstructured_grid(mesh):
+        return mesh
+    raise UnsupportedConversionError(mesh, pv.UnstructuredGrid)
+
+
+def unstructured_grid_tetmesh(
+    points: npt.ArrayLike, tetra: npt.ArrayLike
+) -> pv.UnstructuredGrid:
+    import numpy as np
+    import pyvista as pv
+
+    points = np.asarray(points)
+    tetra = np.asarray(tetra)
+    cells: npt.NDArray[np.integer] = np.hstack(
+        (np.full((len(tetra), 1), 4, dtype=tetra.dtype), tetra)
+    )
+    celltypes: npt.NDArray[np.integer] = np.full((len(tetra),), pv.CellType.TETRA)
+    return pv.UnstructuredGrid(cells.flatten(), celltypes, points)

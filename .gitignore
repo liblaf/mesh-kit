@@ -124,7 +124,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+# .env
 .venv
 env/
 venv/
@@ -175,13 +175,18 @@ poetry.toml
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 
+# pixi environments
 .pixi
+*.egg-info
 
-*.csv
-*.msh
-*.obj
+.benchmarks/
+
 *.pdf
 *.ply
 *.png
-*.stl
+*.pvcc
+*.svg
+*.vtp
 *.vtu
+
+camera.json

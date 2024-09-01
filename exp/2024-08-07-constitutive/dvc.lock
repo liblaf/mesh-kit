@@ -1,0 +1,46 @@
+schema: '2.0'
+stages:
+  plot/curve:
+    cmd: JAX_DEBUG_NANS=False python src/plot/curve.py
+    deps:
+    - path: src/plot/curve.py
+      hash: md5
+      md5: 331feb7a5369583f95214d89b84255c1
+      size: 3288
+    outs:
+    - path: plot/curve/energy.svg
+      hash: md5
+      md5: 8bb54dcea7756cb129a446b2bf362866
+      size: 49419
+    - path: plot/curve/normal-force.svg
+      hash: md5
+      md5: 315579bd7093c00ced7d2eecb9d5bcfd
+      size: 48707
+    - path: plot/curve/shear-force.svg
+      hash: md5
+      md5: 5621dc1df3c2924b798286f073000b56
+      size: 45762
+  plot/tet:
+    cmd: python src/plot/tet.py
+    deps:
+    - path: src/plot/tet.py
+      hash: md5
+      md5: 1a3f9f29488358f163708450fa6e2558
+      size: 924
+    outs:
+    - path: plot/tet/rest.svg
+      hash: md5
+      md5: 03d417b9c868f31346aa0fa6cbeafe07
+      size: 14366
+    - path: plot/tet/shear.svg
+      hash: md5
+      md5: 6e31a5b2387b3582004537a79466195f
+      size: 12776
+    - path: plot/tet/squash.svg
+      hash: md5
+      md5: 1f5fe619bf06a6bbb41e16c0b6d428ef
+      size: 8280
+    - path: plot/tet/stretch.svg
+      hash: md5
+      md5: 704d89579d6256fba76e6411b30fb739
+      size: 3736
