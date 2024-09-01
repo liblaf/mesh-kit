@@ -1,12 +1,11 @@
-import numpy as np
-import numpy.typing as npt
-import pytest
-import pyvista as pv
-
 import mkit.creation
 import mkit.creation.tetmesh
 import mkit.physics
 import mkit.physics.utils
+import numpy as np
+import numpy.typing as npt
+import pytest
+import pyvista as pv
 
 
 def hess_coords_naive(_tetra: npt.ArrayLike) -> npt.NDArray[np.integer]:
@@ -22,7 +21,7 @@ def hess_coords_naive(_tetra: npt.ArrayLike) -> npt.NDArray[np.integer]:
     return coords
 
 
-@pytest.fixture
+@pytest.fixture()
 def tetra() -> npt.NDArray[np.integer]:
     mesh: pv.UnstructuredGrid = mkit.creation.tetmesh.box()
     tetra: npt.NDArray[np.integer] = mesh.cells_dict[pv.CellType.TETRA]

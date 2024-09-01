@@ -6,7 +6,6 @@ import jax.numpy as jnp
 import jax.typing as jxt
 import matplotlib.pyplot as plt
 import numpy as np
-
 from mkit.physics.cell import tetra
 
 E: float = 3e3
