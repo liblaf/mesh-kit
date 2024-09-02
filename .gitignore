@@ -185,6 +185,7 @@ poetry.toml
 *.ply
 *.png
 *.pvcc
+*.stl
 *.svg
 *.vtp
 *.vtu

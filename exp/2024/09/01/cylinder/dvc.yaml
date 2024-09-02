@@ -1,0 +1,31 @@
+stages:
+  gen:
+    matrix:
+      deform: &deform
+        - squash
+        - stretch
+        - twist
+    cmd: >-
+      python src/gen.py
+      --deform ${item.deform}
+      --output data/${item.deform}/input.vtu
+    deps:
+      - src/gen.py
+    outs:
+      - data/${item.deform}/input.vtu
+
+  solve:
+    matrix:
+      deform: *deform
+      material: &material
+        - linear
+    cmd: >-
+      python src/solve.py
+      --input data/${item.deform}/input.vtu
+      --material ${item.material}
+      --output data/${item.deform}/${item.material}.vtu
+    deps:
+      - data/${item.deform}/input.vtu
+      - src/solve.py
+    outs:
+      - data/${item.deform}/${item.material}.vtu

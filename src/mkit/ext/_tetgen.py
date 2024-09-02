@@ -1,23 +1,21 @@
-from typing import Any
+from typing import TYPE_CHECKING
 
 import pyvista as pv
+import tetgen as tg
 
-from mkit.logging import log_time
+import mkit
+from mkit.io import AnyTriMesh
+
+if TYPE_CHECKING:
+    import numpy as np
+    import numpy.typing as npt
 
 
-@log_time
-def tetgen(surface: Any) -> pv.UnstructuredGrid:
-    import meshpy.tet
-
-    import mkit.io
-
-    surface_mesh: pv.PolyData = mkit.io.as_polydata(surface)
-    surface_mesh = surface_mesh.triangulate(progress_bar=True)
-    surface_info = meshpy.tet.MeshInfo()
-    surface_info.set_points(surface_mesh.points)
-    surface_info.set_facets(surface_mesh.regular_faces)
-    tetmesh_info: meshpy.tet.MeshInfo = meshpy.tet.build(surface_info, verbose=True)
-    tetmesh: pv.UnstructuredGrid = mkit.io.unstructured_grid_tetmesh(
-        tetmesh_info.points, tetmesh_info.elements
-    )
-    return tetmesh
+def tetgen(_surface: AnyTriMesh) -> pv.UnstructuredGrid:
+    surface: pv.PolyData = mkit.io.as_polydata(_surface)
+    surface.triangulate(inplace=True, progress_bar=True)
+    tgen: tg.TetGen = tg.TetGen(surface)
+    nodes: npt.NDArray[np.floating]
+    elems: npt.NDArray[np.integer]
+    nodes, elems = tgen.tetrahedralize()
+    return mkit.io.unstructured_grid(nodes, elems)

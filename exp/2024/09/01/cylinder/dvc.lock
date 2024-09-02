@@ -1,0 +1,89 @@
+schema: '2.0'
+stages:
+  gen@twist:
+    cmd: python src/gen.py --deform twist --output data/twist/input.vtu
+    deps:
+    - path: src/gen.py
+      hash: md5
+      md5: 6c89833ce0a5f0d39d0c6ba03f182af7
+      size: 1958
+    outs:
+    - path: data/twist/input.vtu
+      hash: md5
+      md5: 1ad7fdd936477cb96f12483586eab188
+      size: 97587
+  gen@squash:
+    cmd: python src/gen.py --deform squash --output data/squash/input.vtu
+    deps:
+    - path: src/gen.py
+      hash: md5
+      md5: 6c89833ce0a5f0d39d0c6ba03f182af7
+      size: 1958
+    outs:
+    - path: data/squash/input.vtu
+      hash: md5
+      md5: 17e71c9b57365450ec6af31f1b009e43
+      size: 158149
+  gen@stretch:
+    cmd: python src/gen.py --deform stretch --output data/stretch/input.vtu
+    deps:
+    - path: src/gen.py
+      hash: md5
+      md5: 6c89833ce0a5f0d39d0c6ba03f182af7
+      size: 1958
+    outs:
+    - path: data/stretch/input.vtu
+      hash: md5
+      md5: 10ad1fc824ed2311db5d7ff2d68b8682
+      size: 163979
+  solve@twist-linear:
+    cmd: python src/solve.py --input data/twist/input.vtu --material linear --output
+      data/twist/linear.vtu
+    deps:
+    - path: data/twist/input.vtu
+      hash: md5
+      md5: 1ad7fdd936477cb96f12483586eab188
+      size: 97587
+    - path: src/solve.py
+      hash: md5
+      md5: f2de953a9a067af6610ef503365de58a
+      size: 1126
+    outs:
+    - path: data/twist/linear.vtu
+      hash: md5
+      md5: a060f4a5137fbc62b24f1599995bab33
+      size: 220275
+  solve@stretch-linear:
+    cmd: python src/solve.py --input data/stretch/input.vtu --material linear --output
+      data/stretch/linear.vtu
+    deps:
+    - path: data/stretch/input.vtu
+      hash: md5
+      md5: 10ad1fc824ed2311db5d7ff2d68b8682
+      size: 163979
+    - path: src/solve.py
+      hash: md5
+      md5: f2de953a9a067af6610ef503365de58a
+      size: 1126
+    outs:
+    - path: data/stretch/linear.vtu
+      hash: md5
+      md5: 2db5c07a72315188f178593034b31465
+      size: 343267
+  solve@squash-linear:
+    cmd: python src/solve.py --input data/squash/input.vtu --material linear --output
+      data/squash/linear.vtu
+    deps:
+    - path: data/squash/input.vtu
+      hash: md5
+      md5: 17e71c9b57365450ec6af31f1b009e43
+      size: 158149
+    - path: src/solve.py
+      hash: md5
+      md5: f2de953a9a067af6610ef503365de58a
+      size: 1126
+    outs:
+    - path: data/squash/linear.vtu
+      hash: md5
+      md5: a851d38c100894a47f3174ded969f173
+      size: 331700

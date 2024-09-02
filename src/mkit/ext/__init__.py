@@ -1,4 +1,3 @@
-from mkit.ext._tetgen import tetgen
-from mkit.ext._tetwild import tetwild
+import lazy_loader as lazy
 
-__all__ = ["tetgen", "tetwild"]
+__getattr__, __dir__, __all__ = lazy.attach_stub(__name__, __file__)
