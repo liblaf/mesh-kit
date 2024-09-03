@@ -34,6 +34,7 @@ select = ["ALL"]
 "numpy.typing" = "npt"
 "pyvista" = "pv"
 "taichi" = "ti"
+"trimesh" = "tm"
 
 [lint.pydocstyle]
 convention = "google"

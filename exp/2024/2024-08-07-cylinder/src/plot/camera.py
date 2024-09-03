@@ -1,10 +1,11 @@
 import pathlib
 
+import pyvista as pv
+from icecream import ic
+
 import mkit
 import mkit.cli
 import mkit.plot
-import pyvista as pv
-from icecream import ic
 
 
 class Config(mkit.cli.BaseConfig):

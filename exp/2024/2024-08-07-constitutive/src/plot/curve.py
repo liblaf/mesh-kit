@@ -6,8 +6,9 @@ import jax.numpy as jnp
 import jax.typing as jxt
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mkit.creation.tetmesh
 from icecream import ic
+
+import mkit.creation.tetmesh
 from mkit.physics.energy.abc import CellEnergy
 from mkit.physics.preset.elastic import MODELS
 

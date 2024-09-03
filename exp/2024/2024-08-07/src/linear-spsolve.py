@@ -5,10 +5,6 @@ from typing import TYPE_CHECKING, Any
 import jax
 import jax.numpy as jnp
 import jax.typing as jxt
-import mkit.ext
-import mkit.logging
-import mkit.point
-import mkit.sparse
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
@@ -21,11 +17,16 @@ import scipy.sparse
 import scipy.sparse.linalg
 import taichi as ti
 from icecream import ic
+from scipy.optimize import OptimizeResult
+
+import mkit.ext
+import mkit.logging
+import mkit.point
+import mkit.sparse
 from mkit.physics.cell import tetra
 from mkit.physics.energy.abc import CellEnergyFn
 from mkit.physics.energy.elastic import corotated
 from mkit.physics.model import Model
-from scipy.optimize import OptimizeResult
 
 if TYPE_CHECKING:
     import sparse

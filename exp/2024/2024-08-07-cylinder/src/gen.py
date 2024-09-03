@@ -1,12 +1,13 @@
 import pathlib
 from typing import Literal
 
-import mkit.cli
-import mkit.ext
-import mkit.transfer.point_data
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
+
+import mkit.cli
+import mkit.ext
+import mkit.transfer.point_data
 
 
 class Config(mkit.cli.BaseConfig):

@@ -1,9 +1,5 @@
 import dataclasses
 
-import mkit.ext
-import mkit.logging
-import mkit.point
-import mkit.sparse
 import numpy as np
 import pyvista as pv
 import rich
@@ -11,6 +7,11 @@ import rich.traceback
 import taichi as ti
 from icecream import ic
 from omegaconf import OmegaConf
+
+import mkit.ext
+import mkit.logging
+import mkit.point
+import mkit.sparse
 
 ti.init()
 mkit.logging.init()

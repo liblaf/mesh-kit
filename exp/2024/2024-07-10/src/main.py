@@ -2,10 +2,6 @@ import dataclasses
 import functools
 from typing import TYPE_CHECKING
 
-import mkit.ext
-import mkit.logging
-import mkit.point
-import mkit.sparse
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
@@ -17,12 +13,17 @@ import scipy.sparse
 import sparse
 import taichi as ti
 from icecream import ic
+from omegaconf import OmegaConf
+from scipy.optimize import LinearConstraint, OptimizeResult
+
+import mkit.ext
+import mkit.logging
+import mkit.point
+import mkit.sparse
 from mkit.physics.energy import gravity
 from mkit.physics.energy.abc import CellEnergyFn
 from mkit.physics.energy.elastic import corotated
 from mkit.physics.model import Model
-from omegaconf import OmegaConf
-from scipy.optimize import LinearConstraint, OptimizeResult
 
 if TYPE_CHECKING:
     import jax

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     import meshio
     import pytorch3d.structures
     import pyvista as pv
-    import trimesh
+    import trimesh as tm
 
 
 # TODO: Better typing
@@ -34,7 +34,7 @@ def is_pytorch3d(mesh: Any) -> TypeGuard[pytorch3d.structures.Meshes]:
     return is_instance_named(mesh, "pytorch3d.structures.meshes.Meshes")
 
 
-def is_trimesh(mesh: Any) -> TypeGuard[trimesh.Trimesh]:
+def is_trimesh(mesh: Any) -> TypeGuard[tm.Trimesh]:
     return is_instance_named(mesh, "trimesh.base.Trimesh")
 
 

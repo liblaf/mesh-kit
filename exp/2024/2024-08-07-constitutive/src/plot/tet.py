@@ -1,8 +1,9 @@
+import numpy as np
+import pyvista as pv
+
 import mkit
 import mkit.creation
 import mkit.creation.tetmesh
-import numpy as np
-import pyvista as pv
 
 
 def main() -> None:

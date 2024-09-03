@@ -82,8 +82,9 @@ class Problem:
         return hess.reshape((self.n_free * 3, self.n_free * 3)).to_scipy_sparse()
 
     def make_disp(self, x: npt.ArrayLike) -> npt.NDArray[np.floating]:
-        disp: npt.NDArray[np.floating] = self.pin_disp.copy()
+        disp: npt.NDArray[np.floating] = np.empty((self.n_points, 3))
         disp[self.free_mask] = np.reshape(x, (self.n_free, 3))
+        disp[self.pin_mask] = self.pin_disp[self.pin_mask]
         return disp
 
     @property

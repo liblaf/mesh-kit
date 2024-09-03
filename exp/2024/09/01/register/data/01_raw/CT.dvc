@@ -1,0 +1,14 @@
+md5: b047e82e675bd4dd56c4ad941b8bbd4c
+frozen: true
+deps:
+- md5: fe926a438d254777186f6d0681e71262.dir
+  size: 391671352
+  nfiles: 728
+  hash: md5
+  path: /home/liblaf/Documents/data/CT/
+outs:
+- md5: fe926a438d254777186f6d0681e71262.dir
+  size: 391671352
+  nfiles: 728
+  hash: md5
+  path: CT
