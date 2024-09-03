@@ -19,6 +19,10 @@ stages:
       deform: *deform
       material: &material
         - linear
+        - corotated
+        - neo-hookean
+        - st-venant-kirchhoff
+        - stable-neo-hookean
     cmd: >-
       python src/solve.py
       --input data/${item.deform}/input.vtu
@@ -29,3 +33,47 @@ stages:
       - src/solve.py
     outs:
       - data/${item.deform}/${item.material}.vtu
+
+  plot/camera:
+    matrix:
+      deform: *deform
+    cmd: >-
+      python src/plot/camera.py
+      --input data/${item.deform}/
+      --camera plot/${item.deform}/camera.json
+    deps:
+      - data/${item.deform}/
+      - src/plot/camera.py
+    outs:
+      - plot/${item.deform}/camera.json
+
+  plot/input:
+    matrix:
+      deform: *deform
+    cmd: >-
+      python src/plot/input.py
+      --camera plot/${item.deform}/camera.json
+      --fig plot/${item.deform}/input.svg
+      --input data/${item.deform}/input.vtu
+    deps:
+      - data/${item.deform}/input.vtu
+      - plot/${item.deform}/camera.json
+      - src/plot/input.py
+    outs:
+      - plot/${item.deform}/input.svg
+
+  plot/solution:
+    matrix:
+      deform: *deform
+      material: *material
+    cmd: >-
+      python src/plot/solution.py
+      --camera plot/${item.deform}/camera.json
+      --fig plot/${item.deform}/${item.material}.svg
+      --solution data/${item.deform}/${item.material}.vtu
+    deps:
+      - data/${item.deform}/${item.material}.vtu
+      - plot/${item.deform}/camera.json
+      - src/plot/solution.py
+    outs:
+      - plot/${item.deform}/${item.material}.svg

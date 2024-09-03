@@ -24,3 +24,14 @@ def lagrangian_strain(disp: jxt.ArrayLike, points: jxt.ArrayLike) -> jax.Array:
     grad_u: jax.Array = grad_op @ u  # (3, 3)
     E: jax.Array = 0.5 * (grad_u.T + grad_u + grad_u.T @ grad_u)
     return E
+
+
+def cauchy_strain(_F: jxt.ArrayLike) -> jax.Array:
+    """Cauchy strain tensor (right Cauchy-Green deformation tensor).
+
+    Reference:
+        1. <https://en.wikipedia.org/wiki/Finite_strain_theory#Cauchy_strain_tensor_(right_Cauchy%E2%80%93Green_deformation_tensor)>
+    """
+    F: jax.Array = jnp.asarray(_F)  # (3, 3)
+    C: jax.Array = F.T @ F  # (3, 3)
+    return C

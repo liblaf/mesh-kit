@@ -1,16 +1,15 @@
-import pathlib
+from pathlib import Path
 
 import numpy as np
 import pyvista as pv
 
-import mkit.cli
-import mkit.plot
+import mkit
 
 
 class Config(mkit.cli.BaseConfig):
-    camera: pathlib.Path | None = None
-    fig: pathlib.Path
-    solution: pathlib.Path
+    camera: Path | None = None
+    fig: Path
+    solution: Path
 
 
 def main(cfg: Config) -> None:
@@ -24,9 +23,6 @@ def main(cfg: Config) -> None:
     pl.add_mesh(mesh, scalars="energy_density")
     if cfg.camera is not None:
         mkit.plot.load_camera(pl, cfg.camera)
-    else:
-        camera: pv.Camera = pl.camera
-        camera.tight(0.1)
     pl.add_text(
         f"Relative Volume Change: {relative_volume_change:.2f}",
         position=(0, pl.window_size[1] - 1 * 18 * 2),  # pyright: ignore [reportArgumentType]

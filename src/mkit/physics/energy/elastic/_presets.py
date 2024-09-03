@@ -19,4 +19,36 @@ MATERIALS: dict[str, Material] = {
     "linear": Material(
         "linear", "Linear", elastic.linear, {"mu": G, "lambda": lambda_}
     ),
+    "st-venant-kirchhoff": Material(
+        "st-venant-kirchhoff",
+        "Saint Venant-Kirchhoff",
+        elastic.saint_venant_kirchhoff,
+        {"mu": G, "lambda": lambda_},
+    ),
+    "corotated": Material(
+        "corotated",
+        "Corotated (Stomakhin 2012)",
+        elastic.corotated,
+        {"mu": G, "lambda": lambda_},
+    ),
+    "neo-hookean": Material(
+        "neo-hookean",
+        "Neo-Hookean (Macklin 2021)",
+        elastic.neo_hookean,
+        {"mu": G, "lambda": lambda_},
+    ),
+    "stable-neo-hookean": Material(
+        "stable-neo-hookean",
+        "Stable Neo-Hookean (Smith 2018)",
+        elastic.stable_neo_hookean,
+        {"mu": G, "lambda": lambda_},
+    ),
 }
+
+
+def presets() -> dict[str, Material]:
+    return MATERIALS
+
+
+def get_preset(_id: str) -> Material:
+    return MATERIALS[_id]

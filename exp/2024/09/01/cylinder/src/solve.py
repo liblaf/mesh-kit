@@ -8,7 +8,7 @@ from loguru import logger
 
 import mkit
 from mkit.physics import Problem
-from mkit.physics.energy.elastic import MATERIALS, Material
+from mkit.physics.energy import elastic
 
 if TYPE_CHECKING:
     import scipy.optimize
@@ -22,7 +22,7 @@ class Config(mkit.cli.BaseConfig):
 
 def main(cfg: Config) -> None:
     mesh: pv.UnstructuredGrid = pv.read(cfg.input)
-    material: Material = MATERIALS[cfg.material]
+    material: elastic.Material = elastic.get_preset(cfg.material)
     mesh.cell_data.update(material.cell_data)  # pyright: ignore [reportArgumentType]
     problem: Problem = Problem(mesh, material.energy_fn)
     res: scipy.optimize.OptimizeResult = problem.solve()

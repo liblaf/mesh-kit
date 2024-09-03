@@ -24,3 +24,18 @@ def linear(
     E: jax.Array = 0.5 * (grad_u.T + grad_u)  # (3, 3)
     W: jax.Array = 0.5 * lambda_ * jnp.trace(E) ** 2 + mu * jnp.trace(E @ E)
     return W
+
+
+@cell_energy
+def saint_venant_kirchhoff(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike],
+    cell_data: Mapping[str, jxt.ArrayLike],
+    field_data: Mapping[str, jxt.ArrayLike],
+) -> jax.Array:
+    lambda_: jax.Array = jnp.asarray(cell_data["lambda"])
+    mu: jax.Array = jnp.asarray(cell_data["mu"])
+    E: jax.Array = tetra.lagrangian_strain(disp, points)  # (3, 3)
+    W: jax.Array = 0.5 * lambda_ * jnp.trace(E) ** 2 + mu * jnp.trace(E @ E)
+    return W
