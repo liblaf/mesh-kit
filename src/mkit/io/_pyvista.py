@@ -23,9 +23,7 @@ def as_unstructured_grid(mesh: t.AnyTetMesh) -> pv.UnstructuredGrid:
     raise t.UnsupportedConversionError(mesh, pv.UnstructuredGrid)
 
 
-def unstructured_grid(
-    _points: npt.ArrayLike, _tetra: npt.ArrayLike
-) -> pv.UnstructuredGrid:
+def make_tet_mesh(_points: npt.ArrayLike, _tetra: npt.ArrayLike) -> pv.UnstructuredGrid:
     points: npt.NDArray[np.floating] = np.asarray(_points)
     tetra: npt.NDArray[np.integer] = np.asarray(_tetra)
     cells: npt.NDArray[np.integer] = np.hstack(

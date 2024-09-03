@@ -1,9 +1,9 @@
 import pyvista as pv
 
-from mkit.ext import tetwild
+import mkit
 
 
 def cylinder() -> pv.UnstructuredGrid:
     surface: pv.PolyData = pv.Cylinder()
-    tetmesh: pv.UnstructuredGrid = tetwild(surface)
+    tetmesh: pv.UnstructuredGrid = mkit.ext.tetwild(surface)
     return tetmesh

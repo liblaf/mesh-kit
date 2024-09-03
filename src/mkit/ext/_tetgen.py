@@ -18,4 +18,4 @@ def tetgen(_surface: AnyTriMesh) -> pv.UnstructuredGrid:
     nodes: npt.NDArray[np.floating]
     elems: npt.NDArray[np.integer]
     nodes, elems = tgen.tetrahedralize()
-    return mkit.io.unstructured_grid(nodes, elems)
+    return mkit.io.make_tet_mesh(nodes, elems)

@@ -1,11 +1,11 @@
 import numpy as np
 import pyvista as pv
 
-from mkit.io import unstructured_grid
+import mkit
 
 
 def tetrahedron() -> pv.UnstructuredGrid:
-    mesh: pv.UnstructuredGrid = unstructured_grid(
+    mesh: pv.UnstructuredGrid = mkit.io.make_tet_mesh(
         [
             [1, 0, 0],
             [-1 / 3, -np.sqrt(2 / 3), -np.sqrt(2) / 3],

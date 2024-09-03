@@ -10,8 +10,8 @@ stages:
     outs:
     - path: data/twist/input.vtu
       hash: md5
-      md5: 278149ca9505da07c4b9cdc7769dbd2c
-      size: 102121
+      md5: cb2a6a4157811dc1931183b89e245c98
+      size: 96437
   gen@squash:
     cmd: python src/gen.py --deform squash --output data/squash/input.vtu
     deps:
@@ -22,8 +22,8 @@ stages:
     outs:
     - path: data/squash/input.vtu
       hash: md5
-      md5: e738e68b35c3055d224a0af4ebbffce8
-      size: 167794
+      md5: 7af57029a480d4ca1e7a077a956a3d07
+      size: 154419
   gen@stretch:
     cmd: python src/gen.py --deform stretch --output data/stretch/input.vtu
     deps:
@@ -34,16 +34,16 @@ stages:
     outs:
     - path: data/stretch/input.vtu
       hash: md5
-      md5: 8da8fab5ef323d5f9b97987cb2c5d502
-      size: 171146
+      md5: a36f70e1b5409d28e98de9bf90624230
+      size: 149764
   solve@twist-linear:
     cmd: python src/solve.py --input data/twist/input.vtu --material linear --output
       data/twist/linear.vtu
     deps:
     - path: data/twist/input.vtu
       hash: md5
-      md5: 278149ca9505da07c4b9cdc7769dbd2c
-      size: 102121
+      md5: cb2a6a4157811dc1931183b89e245c98
+      size: 96437
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -51,16 +51,16 @@ stages:
     outs:
     - path: data/twist/linear.vtu
       hash: md5
-      md5: b3f7d55e60fe11ca6349198833feba47
-      size: 228583
+      md5: d675b5fc7880f7e42afc2ec2052f12a5
+      size: 217315
   solve@stretch-linear:
     cmd: python src/solve.py --input data/stretch/input.vtu --material linear --output
       data/stretch/linear.vtu
     deps:
     - path: data/stretch/input.vtu
       hash: md5
-      md5: 8da8fab5ef323d5f9b97987cb2c5d502
-      size: 171146
+      md5: a36f70e1b5409d28e98de9bf90624230
+      size: 149764
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -68,16 +68,16 @@ stages:
     outs:
     - path: data/stretch/linear.vtu
       hash: md5
-      md5: 42c22776bf5948d092c6667c672e7b32
-      size: 356053
+      md5: 79e7bab75bc145db93ebdd3aee705fff
+      size: 315550
   solve@squash-linear:
     cmd: python src/solve.py --input data/squash/input.vtu --material linear --output
       data/squash/linear.vtu
     deps:
     - path: data/squash/input.vtu
       hash: md5
-      md5: e738e68b35c3055d224a0af4ebbffce8
-      size: 167794
+      md5: 7af57029a480d4ca1e7a077a956a3d07
+      size: 154419
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -85,16 +85,16 @@ stages:
     outs:
     - path: data/squash/linear.vtu
       hash: md5
-      md5: e5abcf896784f55d3c63a08f67bd7345
-      size: 351295
+      md5: 7fd46347ed167d63d271527e20e63aa2
+      size: 324422
   solve@twist-stable-neo-hookean:
     cmd: python src/solve.py --input data/twist/input.vtu --material stable-neo-hookean
       --output data/twist/stable-neo-hookean.vtu
     deps:
     - path: data/twist/input.vtu
       hash: md5
-      md5: 278149ca9505da07c4b9cdc7769dbd2c
-      size: 102121
+      md5: cb2a6a4157811dc1931183b89e245c98
+      size: 96437
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -102,16 +102,16 @@ stages:
     outs:
     - path: data/twist/stable-neo-hookean.vtu
       hash: md5
-      md5: da67b040665c8fe6ceda5f625e005cd9
-      size: 225616
+      md5: de9d69530594f485132278817fa4d56d
+      size: 214647
   solve@twist-neo-hookean:
     cmd: python src/solve.py --input data/twist/input.vtu --material neo-hookean --output
       data/twist/neo-hookean.vtu
     deps:
     - path: data/twist/input.vtu
       hash: md5
-      md5: 278149ca9505da07c4b9cdc7769dbd2c
-      size: 102121
+      md5: cb2a6a4157811dc1931183b89e245c98
+      size: 96437
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -119,16 +119,16 @@ stages:
     outs:
     - path: data/twist/neo-hookean.vtu
       hash: md5
-      md5: 8ad20ec6c163b160e7b13ef131f0d794
-      size: 225616
+      md5: 0daeee44d181d4af75c3cf0328c3c6ea
+      size: 214645
   solve@stretch-st-venant-kirchhoff:
     cmd: python src/solve.py --input data/stretch/input.vtu --material st-venant-kirchhoff
       --output data/stretch/st-venant-kirchhoff.vtu
     deps:
     - path: data/stretch/input.vtu
       hash: md5
-      md5: 8da8fab5ef323d5f9b97987cb2c5d502
-      size: 171146
+      md5: a36f70e1b5409d28e98de9bf90624230
+      size: 149764
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -136,16 +136,16 @@ stages:
     outs:
     - path: data/stretch/st-venant-kirchhoff.vtu
       hash: md5
-      md5: 28773cff14f7421bd0f7df090e8192eb
-      size: 354968
+      md5: b955199346d4e9fe710d46528bbd586e
+      size: 314555
   solve@squash-st-venant-kirchhoff:
     cmd: python src/solve.py --input data/squash/input.vtu --material st-venant-kirchhoff
       --output data/squash/st-venant-kirchhoff.vtu
     deps:
     - path: data/squash/input.vtu
       hash: md5
-      md5: e738e68b35c3055d224a0af4ebbffce8
-      size: 167794
+      md5: 7af57029a480d4ca1e7a077a956a3d07
+      size: 154419
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -153,16 +153,16 @@ stages:
     outs:
     - path: data/squash/st-venant-kirchhoff.vtu
       hash: md5
-      md5: a400b82cea01e1d18be98e84febd3a69
-      size: 352225
+      md5: 3c73f2bb7e56fb42063cca33565ab606
+      size: 325317
   solve@squash-stable-neo-hookean:
     cmd: python src/solve.py --input data/squash/input.vtu --material stable-neo-hookean
       --output data/squash/stable-neo-hookean.vtu
     deps:
     - path: data/squash/input.vtu
       hash: md5
-      md5: e738e68b35c3055d224a0af4ebbffce8
-      size: 167794
+      md5: 7af57029a480d4ca1e7a077a956a3d07
+      size: 154419
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -170,16 +170,16 @@ stages:
     outs:
     - path: data/squash/stable-neo-hookean.vtu
       hash: md5
-      md5: 1778e4783781f3071bd1f0a9239a0b0c
-      size: 350776
+      md5: 7e172a4bedb8efbe5e54b8f7b59f35ad
+      size: 324178
   solve@stretch-corotated:
     cmd: python src/solve.py --input data/stretch/input.vtu --material corotated --output
       data/stretch/corotated.vtu
     deps:
     - path: data/stretch/input.vtu
       hash: md5
-      md5: 8da8fab5ef323d5f9b97987cb2c5d502
-      size: 171146
+      md5: a36f70e1b5409d28e98de9bf90624230
+      size: 149764
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -187,16 +187,16 @@ stages:
     outs:
     - path: data/stretch/corotated.vtu
       hash: md5
-      md5: 92d4ed0941d53d9b12fa98372b9c1911
-      size: 356883
+      md5: 94c376f956f01f6c586c8f55704ede44
+      size: 316278
   solve@squash-corotated:
     cmd: python src/solve.py --input data/squash/input.vtu --material corotated --output
       data/squash/corotated.vtu
     deps:
     - path: data/squash/input.vtu
       hash: md5
-      md5: e738e68b35c3055d224a0af4ebbffce8
-      size: 167794
+      md5: 7af57029a480d4ca1e7a077a956a3d07
+      size: 154419
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -204,16 +204,16 @@ stages:
     outs:
     - path: data/squash/corotated.vtu
       hash: md5
-      md5: 16879e19df67d97f8018821c9448d3ef
-      size: 352045
+      md5: 42e7b03c6287c193b4077597a5577db7
+      size: 325297
   solve@squash-neo-hookean:
     cmd: python src/solve.py --input data/squash/input.vtu --material neo-hookean
       --output data/squash/neo-hookean.vtu
     deps:
     - path: data/squash/input.vtu
       hash: md5
-      md5: e738e68b35c3055d224a0af4ebbffce8
-      size: 167794
+      md5: 7af57029a480d4ca1e7a077a956a3d07
+      size: 154419
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -221,16 +221,16 @@ stages:
     outs:
     - path: data/squash/neo-hookean.vtu
       hash: md5
-      md5: 37e7f5ecf16eae6d988ae61e6ff3938d
-      size: 350776
+      md5: a6019a453cbeb1b2598259edc139f430
+      size: 324178
   solve@stretch-stable-neo-hookean:
     cmd: python src/solve.py --input data/stretch/input.vtu --material stable-neo-hookean
       --output data/stretch/stable-neo-hookean.vtu
     deps:
     - path: data/stretch/input.vtu
       hash: md5
-      md5: 8da8fab5ef323d5f9b97987cb2c5d502
-      size: 171146
+      md5: a36f70e1b5409d28e98de9bf90624230
+      size: 149764
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -238,16 +238,16 @@ stages:
     outs:
     - path: data/stretch/stable-neo-hookean.vtu
       hash: md5
-      md5: 20970374bdf8208a35c8891d0324d312
-      size: 354877
+      md5: 97540fbfb640e0687eda451c9cf2802b
+      size: 314368
   solve@twist-st-venant-kirchhoff:
     cmd: python src/solve.py --input data/twist/input.vtu --material st-venant-kirchhoff
       --output data/twist/st-venant-kirchhoff.vtu
     deps:
     - path: data/twist/input.vtu
       hash: md5
-      md5: 278149ca9505da07c4b9cdc7769dbd2c
-      size: 102121
+      md5: cb2a6a4157811dc1931183b89e245c98
+      size: 96437
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -255,16 +255,16 @@ stages:
     outs:
     - path: data/twist/st-venant-kirchhoff.vtu
       hash: md5
-      md5: cb10f9fa54d4b3192d44efdb846765ce
-      size: 228352
+      md5: 88d90cb12b5dee3106aa4d327c8e3a0c
+      size: 217263
   solve@stretch-neo-hookean:
     cmd: python src/solve.py --input data/stretch/input.vtu --material neo-hookean
       --output data/stretch/neo-hookean.vtu
     deps:
     - path: data/stretch/input.vtu
       hash: md5
-      md5: 8da8fab5ef323d5f9b97987cb2c5d502
-      size: 171146
+      md5: a36f70e1b5409d28e98de9bf90624230
+      size: 149764
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -272,16 +272,16 @@ stages:
     outs:
     - path: data/stretch/neo-hookean.vtu
       hash: md5
-      md5: cbbef108400c6ce2ee5e759b26ecf4fd
-      size: 354879
+      md5: 51e8072ad8c0366f997c6ab71cd80db9
+      size: 314368
   solve@twist-corotated:
     cmd: python src/solve.py --input data/twist/input.vtu --material corotated --output
       data/twist/corotated.vtu
     deps:
     - path: data/twist/input.vtu
       hash: md5
-      md5: 278149ca9505da07c4b9cdc7769dbd2c
-      size: 102121
+      md5: cb2a6a4157811dc1931183b89e245c98
+      size: 96437
     - path: src/solve.py
       hash: md5
       md5: b17a80bb04391da931e8cac77dc322eb
@@ -289,15 +289,15 @@ stages:
     outs:
     - path: data/twist/corotated.vtu
       hash: md5
-      md5: a232876da56c490d2314ec2cdc4c7ae4
-      size: 228822
+      md5: 2d59e52087258e1666a50706592774b7
+      size: 217679
   plot/camera@stretch:
     cmd: python src/plot/camera.py --input data/stretch/ --camera plot/stretch/camera.json
     deps:
     - path: data/stretch/
       hash: md5
-      md5: 332589eb27a90181b99d434c78222a08.dir
-      size: 1948806
+      md5: 000196092f1e7b756cdc56174e4e516b.dir
+      size: 1724883
       nfiles: 6
     - path: src/plot/camera.py
       hash: md5
@@ -306,15 +306,15 @@ stages:
     outs:
     - path: plot/stretch/camera.json
       hash: md5
-      md5: 73d97ad5dbda3455f2e588543da1da17
-      size: 240
+      md5: 7662da05fc39ac606ab260f4a53c7cca
+      size: 263
   plot/camera@twist:
     cmd: python src/plot/camera.py --input data/twist/ --camera plot/twist/camera.json
     deps:
     - path: data/twist/
       hash: md5
-      md5: d225df1eaa1c041c0574b3e185300d39.dir
-      size: 1239110
+      md5: da2910a5e6eeb210a4307e3cfb7af3e2.dir
+      size: 1177986
       nfiles: 6
     - path: src/plot/camera.py
       hash: md5
@@ -323,15 +323,15 @@ stages:
     outs:
     - path: plot/twist/camera.json
       hash: md5
-      md5: 86438a40aa882d7661fb2b552fb96c91
-      size: 256
+      md5: 9f3b8bb3b5380f5d4ac613061aea2975
+      size: 275
   plot/camera@squash:
     cmd: python src/plot/camera.py --input data/squash/ --camera plot/squash/camera.json
     deps:
     - path: data/squash/
       hash: md5
-      md5: 7681312c4f31475054b6aea6bb33d713.dir
-      size: 1924911
+      md5: 982d12d7adc837edb48bf17b8363f33f.dir
+      size: 1777811
       nfiles: 6
     - path: src/plot/camera.py
       hash: md5
@@ -340,20 +340,20 @@ stages:
     outs:
     - path: plot/squash/camera.json
       hash: md5
-      md5: 0881bbb822e4c15ef78565c5759dba49
-      size: 257
+      md5: 19e71420598c9f5f685df4244d326a6b
+      size: 258
   plot/solution@stretch-st-venant-kirchhoff:
     cmd: python src/plot/solution.py --camera plot/stretch/camera.json --fig plot/stretch/st-venant-kirchhoff.svg
       --solution data/stretch/st-venant-kirchhoff.vtu
     deps:
     - path: data/stretch/st-venant-kirchhoff.vtu
       hash: md5
-      md5: 28773cff14f7421bd0f7df090e8192eb
-      size: 354968
+      md5: b955199346d4e9fe710d46528bbd586e
+      size: 314555
     - path: plot/stretch/camera.json
       hash: md5
-      md5: 73d97ad5dbda3455f2e588543da1da17
-      size: 240
+      md5: 7662da05fc39ac606ab260f4a53c7cca
+      size: 263
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -361,20 +361,20 @@ stages:
     outs:
     - path: plot/stretch/st-venant-kirchhoff.svg
       hash: md5
-      md5: d34e9a45b9ec3d5f5e05cb782cdb0ecb
-      size: 149017
+      md5: 0c3a53f6cb4028cd46825f60aaf4b094
+      size: 146657
   plot/solution@twist-neo-hookean:
     cmd: python src/plot/solution.py --camera plot/twist/camera.json --fig plot/twist/neo-hookean.svg
       --solution data/twist/neo-hookean.vtu
     deps:
     - path: data/twist/neo-hookean.vtu
       hash: md5
-      md5: 8ad20ec6c163b160e7b13ef131f0d794
-      size: 225616
+      md5: 0daeee44d181d4af75c3cf0328c3c6ea
+      size: 214645
     - path: plot/twist/camera.json
       hash: md5
-      md5: 86438a40aa882d7661fb2b552fb96c91
-      size: 256
+      md5: 9f3b8bb3b5380f5d4ac613061aea2975
+      size: 275
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -382,20 +382,20 @@ stages:
     outs:
     - path: plot/twist/neo-hookean.svg
       hash: md5
-      md5: a98229d2ebcfccbe67af09600e1f358a
-      size: 120790
+      md5: e9f03e61b053bc22aaa1a1b672664d15
+      size: 117286
   plot/solution@squash-st-venant-kirchhoff:
     cmd: python src/plot/solution.py --camera plot/squash/camera.json --fig plot/squash/st-venant-kirchhoff.svg
       --solution data/squash/st-venant-kirchhoff.vtu
     deps:
     - path: data/squash/st-venant-kirchhoff.vtu
       hash: md5
-      md5: a400b82cea01e1d18be98e84febd3a69
-      size: 352225
+      md5: 3c73f2bb7e56fb42063cca33565ab606
+      size: 325317
     - path: plot/squash/camera.json
       hash: md5
-      md5: 0881bbb822e4c15ef78565c5759dba49
-      size: 257
+      md5: 19e71420598c9f5f685df4244d326a6b
+      size: 258
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -403,20 +403,20 @@ stages:
     outs:
     - path: plot/squash/st-venant-kirchhoff.svg
       hash: md5
-      md5: 4eda92d88830b1530a15088a38c7f502
-      size: 86680
+      md5: a855f2b6b7a5454d0ec16ad64ccb068c
+      size: 80776
   plot/solution@squash-neo-hookean:
     cmd: python src/plot/solution.py --camera plot/squash/camera.json --fig plot/squash/neo-hookean.svg
       --solution data/squash/neo-hookean.vtu
     deps:
     - path: data/squash/neo-hookean.vtu
       hash: md5
-      md5: 37e7f5ecf16eae6d988ae61e6ff3938d
-      size: 350776
+      md5: a6019a453cbeb1b2598259edc139f430
+      size: 324178
     - path: plot/squash/camera.json
       hash: md5
-      md5: 0881bbb822e4c15ef78565c5759dba49
-      size: 257
+      md5: 19e71420598c9f5f685df4244d326a6b
+      size: 258
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -424,20 +424,20 @@ stages:
     outs:
     - path: plot/squash/neo-hookean.svg
       hash: md5
-      md5: 642df1cc1ce0d07a795ac7dd8d3a44a8
-      size: 84527
+      md5: 21591d2e9304651dc32e19c4abcd662a
+      size: 76622
   plot/solution@squash-corotated:
     cmd: python src/plot/solution.py --camera plot/squash/camera.json --fig plot/squash/corotated.svg
       --solution data/squash/corotated.vtu
     deps:
     - path: data/squash/corotated.vtu
       hash: md5
-      md5: 16879e19df67d97f8018821c9448d3ef
-      size: 352045
+      md5: 42e7b03c6287c193b4077597a5577db7
+      size: 325297
     - path: plot/squash/camera.json
       hash: md5
-      md5: 0881bbb822e4c15ef78565c5759dba49
-      size: 257
+      md5: 19e71420598c9f5f685df4244d326a6b
+      size: 258
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -445,20 +445,20 @@ stages:
     outs:
     - path: plot/squash/corotated.svg
       hash: md5
-      md5: a996ac48415cee623ba54141c1e13233
-      size: 66137
+      md5: e38bab1f3ae4cb01f8c32091bbabf2ce
+      size: 64376
   plot/solution@twist-st-venant-kirchhoff:
     cmd: python src/plot/solution.py --camera plot/twist/camera.json --fig plot/twist/st-venant-kirchhoff.svg
       --solution data/twist/st-venant-kirchhoff.vtu
     deps:
     - path: data/twist/st-venant-kirchhoff.vtu
       hash: md5
-      md5: cb10f9fa54d4b3192d44efdb846765ce
-      size: 228352
+      md5: 88d90cb12b5dee3106aa4d327c8e3a0c
+      size: 217263
     - path: plot/twist/camera.json
       hash: md5
-      md5: 86438a40aa882d7661fb2b552fb96c91
-      size: 256
+      md5: 9f3b8bb3b5380f5d4ac613061aea2975
+      size: 275
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -466,20 +466,20 @@ stages:
     outs:
     - path: plot/twist/st-venant-kirchhoff.svg
       hash: md5
-      md5: 47cf6d9d412e1384a5a353831311ea0b
-      size: 97332
+      md5: ec0ac83d5f132648e966b686d2054923
+      size: 97824
   plot/solution@twist-stable-neo-hookean:
     cmd: python src/plot/solution.py --camera plot/twist/camera.json --fig plot/twist/stable-neo-hookean.svg
       --solution data/twist/stable-neo-hookean.vtu
     deps:
     - path: data/twist/stable-neo-hookean.vtu
       hash: md5
-      md5: da67b040665c8fe6ceda5f625e005cd9
-      size: 225616
+      md5: de9d69530594f485132278817fa4d56d
+      size: 214647
     - path: plot/twist/camera.json
       hash: md5
-      md5: 86438a40aa882d7661fb2b552fb96c91
-      size: 256
+      md5: 9f3b8bb3b5380f5d4ac613061aea2975
+      size: 275
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -487,20 +487,20 @@ stages:
     outs:
     - path: plot/twist/stable-neo-hookean.svg
       hash: md5
-      md5: ed97019ba9fc06f3959dea52dab12811
-      size: 120790
+      md5: 4f08152c9883e0f8dcc9c03382aed4f1
+      size: 117286
   plot/solution@twist-linear:
     cmd: python src/plot/solution.py --camera plot/twist/camera.json --fig plot/twist/linear.svg
       --solution data/twist/linear.vtu
     deps:
     - path: data/twist/linear.vtu
       hash: md5
-      md5: b3f7d55e60fe11ca6349198833feba47
-      size: 228583
+      md5: d675b5fc7880f7e42afc2ec2052f12a5
+      size: 217315
     - path: plot/twist/camera.json
       hash: md5
-      md5: 86438a40aa882d7661fb2b552fb96c91
-      size: 256
+      md5: 9f3b8bb3b5380f5d4ac613061aea2975
+      size: 275
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -508,20 +508,20 @@ stages:
     outs:
     - path: plot/twist/linear.svg
       hash: md5
-      md5: d7ac51c0025e7f06dbe6d01c2dc6ac58
-      size: 104973
+      md5: 62f115a7eda9dcc0493831adaa5b299b
+      size: 103625
   plot/solution@stretch-linear:
     cmd: python src/plot/solution.py --camera plot/stretch/camera.json --fig plot/stretch/linear.svg
       --solution data/stretch/linear.vtu
     deps:
     - path: data/stretch/linear.vtu
       hash: md5
-      md5: 42c22776bf5948d092c6667c672e7b32
-      size: 356053
+      md5: 79e7bab75bc145db93ebdd3aee705fff
+      size: 315550
     - path: plot/stretch/camera.json
       hash: md5
-      md5: 73d97ad5dbda3455f2e588543da1da17
-      size: 240
+      md5: 7662da05fc39ac606ab260f4a53c7cca
+      size: 263
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -529,20 +529,20 @@ stages:
     outs:
     - path: plot/stretch/linear.svg
       hash: md5
-      md5: ef52ddd59ce799501083cb56976d2825
-      size: 159985
+      md5: 5468f4c7d43cc6a54665cc06ce281e23
+      size: 155441
   plot/solution@squash-stable-neo-hookean:
     cmd: python src/plot/solution.py --camera plot/squash/camera.json --fig plot/squash/stable-neo-hookean.svg
       --solution data/squash/stable-neo-hookean.vtu
     deps:
     - path: data/squash/stable-neo-hookean.vtu
       hash: md5
-      md5: 1778e4783781f3071bd1f0a9239a0b0c
-      size: 350776
+      md5: 7e172a4bedb8efbe5e54b8f7b59f35ad
+      size: 324178
     - path: plot/squash/camera.json
       hash: md5
-      md5: 0881bbb822e4c15ef78565c5759dba49
-      size: 257
+      md5: 19e71420598c9f5f685df4244d326a6b
+      size: 258
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -550,20 +550,20 @@ stages:
     outs:
     - path: plot/squash/stable-neo-hookean.svg
       hash: md5
-      md5: 46d10e2af67a9a94c846399a46959a8a
-      size: 84527
+      md5: e6e6d62f767fef18e9a5f679e88d21ab
+      size: 76614
   plot/solution@squash-linear:
     cmd: python src/plot/solution.py --camera plot/squash/camera.json --fig plot/squash/linear.svg
       --solution data/squash/linear.vtu
     deps:
     - path: data/squash/linear.vtu
       hash: md5
-      md5: e5abcf896784f55d3c63a08f67bd7345
-      size: 351295
+      md5: 7fd46347ed167d63d271527e20e63aa2
+      size: 324422
     - path: plot/squash/camera.json
       hash: md5
-      md5: 0881bbb822e4c15ef78565c5759dba49
-      size: 257
+      md5: 19e71420598c9f5f685df4244d326a6b
+      size: 258
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -571,20 +571,20 @@ stages:
     outs:
     - path: plot/squash/linear.svg
       hash: md5
-      md5: dae3369328ee584e46a526a89be8d203
-      size: 84889
+      md5: b098f8a98049befdda24ae5553b03da4
+      size: 86033
   plot/solution@stretch-stable-neo-hookean:
     cmd: python src/plot/solution.py --camera plot/stretch/camera.json --fig plot/stretch/stable-neo-hookean.svg
       --solution data/stretch/stable-neo-hookean.vtu
     deps:
     - path: data/stretch/stable-neo-hookean.vtu
       hash: md5
-      md5: 20970374bdf8208a35c8891d0324d312
-      size: 354877
+      md5: 97540fbfb640e0687eda451c9cf2802b
+      size: 314368
     - path: plot/stretch/camera.json
       hash: md5
-      md5: 73d97ad5dbda3455f2e588543da1da17
-      size: 240
+      md5: 7662da05fc39ac606ab260f4a53c7cca
+      size: 263
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -592,20 +592,20 @@ stages:
     outs:
     - path: plot/stretch/stable-neo-hookean.svg
       hash: md5
-      md5: 3bb3c02674f5f577c084c848d18f4e1e
-      size: 154766
+      md5: 5f48390c46c220185ee53ef8e7c583f4
+      size: 131426
   plot/solution@twist-corotated:
     cmd: python src/plot/solution.py --camera plot/twist/camera.json --fig plot/twist/corotated.svg
       --solution data/twist/corotated.vtu
     deps:
     - path: data/twist/corotated.vtu
       hash: md5
-      md5: a232876da56c490d2314ec2cdc4c7ae4
-      size: 228822
+      md5: 2d59e52087258e1666a50706592774b7
+      size: 217679
     - path: plot/twist/camera.json
       hash: md5
-      md5: 86438a40aa882d7661fb2b552fb96c91
-      size: 256
+      md5: 9f3b8bb3b5380f5d4ac613061aea2975
+      size: 275
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -613,20 +613,20 @@ stages:
     outs:
     - path: plot/twist/corotated.svg
       hash: md5
-      md5: 58b8b051bee9d491384d0b62aff6dcf4
-      size: 116883
+      md5: 48d17f5b2ee0b7273bca341fa175f6fa
+      size: 111968
   plot/solution@stretch-neo-hookean:
     cmd: python src/plot/solution.py --camera plot/stretch/camera.json --fig plot/stretch/neo-hookean.svg
       --solution data/stretch/neo-hookean.vtu
     deps:
     - path: data/stretch/neo-hookean.vtu
       hash: md5
-      md5: cbbef108400c6ce2ee5e759b26ecf4fd
-      size: 354879
+      md5: 51e8072ad8c0366f997c6ab71cd80db9
+      size: 314368
     - path: plot/stretch/camera.json
       hash: md5
-      md5: 73d97ad5dbda3455f2e588543da1da17
-      size: 240
+      md5: 7662da05fc39ac606ab260f4a53c7cca
+      size: 263
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -634,20 +634,20 @@ stages:
     outs:
     - path: plot/stretch/neo-hookean.svg
       hash: md5
-      md5: 806d89255caf6f1ebd882f3220b30910
-      size: 154766
+      md5: 24669341a1017da6a3f06e769889878c
+      size: 131410
   plot/solution@stretch-corotated:
     cmd: python src/plot/solution.py --camera plot/stretch/camera.json --fig plot/stretch/corotated.svg
       --solution data/stretch/corotated.vtu
     deps:
     - path: data/stretch/corotated.vtu
       hash: md5
-      md5: 92d4ed0941d53d9b12fa98372b9c1911
-      size: 356883
+      md5: 94c376f956f01f6c586c8f55704ede44
+      size: 316278
     - path: plot/stretch/camera.json
       hash: md5
-      md5: 73d97ad5dbda3455f2e588543da1da17
-      size: 240
+      md5: 7662da05fc39ac606ab260f4a53c7cca
+      size: 263
     - path: src/plot/solution.py
       hash: md5
       md5: 9712a73259ae01e2a6f385ee23bd48f2
@@ -655,20 +655,20 @@ stages:
     outs:
     - path: plot/stretch/corotated.svg
       hash: md5
-      md5: 26e763012c99cedd9c2234f5103c772e
-      size: 189844
+      md5: 2dbebc5b8d870fe818af620a8af7f937
+      size: 180872
   plot/input@stretch:
     cmd: python src/plot/input.py --camera plot/stretch/camera.json --fig plot/stretch/input.svg
       --input data/stretch/input.vtu
     deps:
     - path: data/stretch/input.vtu
       hash: md5
-      md5: 8da8fab5ef323d5f9b97987cb2c5d502
-      size: 171146
+      md5: a36f70e1b5409d28e98de9bf90624230
+      size: 149764
     - path: plot/stretch/camera.json
       hash: md5
-      md5: 73d97ad5dbda3455f2e588543da1da17
-      size: 240
+      md5: 7662da05fc39ac606ab260f4a53c7cca
+      size: 263
     - path: src/plot/input.py
       hash: md5
       md5: 0cd9492a360a7f55f4d6734a1fffdb8e
@@ -676,20 +676,20 @@ stages:
     outs:
     - path: plot/stretch/input.svg
       hash: md5
-      md5: 4e7d0672b871efd076d428abbb3f8832
-      size: 65877
+      md5: a64aa3ab5a208c2b247e115f9b785b80
+      size: 64993
   plot/input@squash:
     cmd: python src/plot/input.py --camera plot/squash/camera.json --fig plot/squash/input.svg
       --input data/squash/input.vtu
     deps:
     - path: data/squash/input.vtu
       hash: md5
-      md5: e738e68b35c3055d224a0af4ebbffce8
-      size: 167794
+      md5: 7af57029a480d4ca1e7a077a956a3d07
+      size: 154419
     - path: plot/squash/camera.json
       hash: md5
-      md5: 0881bbb822e4c15ef78565c5759dba49
-      size: 257
+      md5: 19e71420598c9f5f685df4244d326a6b
+      size: 258
     - path: src/plot/input.py
       hash: md5
       md5: 0cd9492a360a7f55f4d6734a1fffdb8e
@@ -697,20 +697,20 @@ stages:
     outs:
     - path: plot/squash/input.svg
       hash: md5
-      md5: 277dae927c69cc107a59f385888d02b9
-      size: 75221
+      md5: 84f923b46c1d43e2127df05b64463c19
+      size: 73201
   plot/input@twist:
     cmd: python src/plot/input.py --camera plot/twist/camera.json --fig plot/twist/input.svg
       --input data/twist/input.vtu
     deps:
     - path: data/twist/input.vtu
       hash: md5
-      md5: 278149ca9505da07c4b9cdc7769dbd2c
-      size: 102121
+      md5: cb2a6a4157811dc1931183b89e245c98
+      size: 96437
     - path: plot/twist/camera.json
       hash: md5
-      md5: 86438a40aa882d7661fb2b552fb96c91
-      size: 256
+      md5: 9f3b8bb3b5380f5d4ac613061aea2975
+      size: 275
     - path: src/plot/input.py
       hash: md5
       md5: 0cd9492a360a7f55f4d6734a1fffdb8e
@@ -718,5 +718,5 @@ stages:
     outs:
     - path: plot/twist/input.svg
       hash: md5
-      md5: 31843aae0be709e77b06eabd37cf13b8
-      size: 35077
+      md5: 59b2ef9ad741bae3a8f636e30e287a71
+      size: 34641
