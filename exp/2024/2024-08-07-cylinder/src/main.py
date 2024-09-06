@@ -3,16 +3,15 @@ import pathlib
 from typing import TYPE_CHECKING, Any
 
 import jax
+import mkit.cli
+import mkit.logging
+import mkit.sparse
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
 import scipy.optimize
 import scipy.sparse
 from loguru import logger
-
-import mkit.cli
-import mkit.logging
-import mkit.sparse
 from mkit.physics.energy.abc import CellEnergy
 from mkit.physics.model import Model
 from mkit.physics.preset.elastic import MODELS, Elastic

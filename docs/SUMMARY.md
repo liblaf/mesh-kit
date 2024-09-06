@@ -1,5 +1,6 @@
 <!-- prettier-ignore-start -->
-- */
-- *.md
+
+- \*/
+- \*.md
 - [API](api/)
 <!-- prettier-ignore-end -->

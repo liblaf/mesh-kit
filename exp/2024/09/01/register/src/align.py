@@ -1,11 +1,10 @@
 from pathlib import Path
 
+import mkit
 import numpy as np
 import pyvista as pv
 import trimesh as tm
 from icecream import ic
-
-import mkit
 from mkit.ext import ICTFaceKit
 
 

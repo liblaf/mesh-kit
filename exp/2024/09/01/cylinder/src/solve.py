@@ -1,12 +1,11 @@
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import mkit
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
 from loguru import logger
-
-import mkit
 from mkit.physics import Problem
 from mkit.physics.energy import elastic
 
