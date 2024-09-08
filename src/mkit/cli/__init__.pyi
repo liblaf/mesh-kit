@@ -1,4 +1,4 @@
-from ._config import BaseConfig
+from ._config import CLIBaseConfig
 from ._run import run
 
-__all__ = ["BaseConfig", "run"]
+__all__ = ["CLIBaseConfig", "run"]

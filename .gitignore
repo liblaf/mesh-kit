@@ -179,15 +179,77 @@ poetry.toml
 .pixi
 *.egg-info
 
+# pytest-benchmark
 .benchmarks/
 
-*.pdf
+# numpy
+*.npy
+*.npz
+*.txt
+
+# https://docs.pyvista.org/api/readers/_autosummary/pyvista.get_reader
+*.bmp
+*.cas
+*.case
+*.cgns
+*.cube
+*.dat
+*.dcm
+*.dem
+*.facet
+*.foam
+*.g
+*.gif
+*.glb
+*.gltf
+*.hdf
+*.img
+*.inp
+*.jpg
+*.jpeg
+*.hdr
+*.mha
+*.mhd
+*.nii
+*.nii.gz
+*.nhdr
+*.nrrd
+*.obj
+*.p3d
 *.ply
 *.png
-*.pvcc
+*.pnm
+*.pts
+*.pvd
+*.pvti
+*.pvtk
+*.pvtr
+*.pvtu
+*.res
+*.segy
+*.sgy
+*.slc
 *.stl
-*.svg
+*.tif
+*.tiff
+*.tri
+*.vrt
+*.vti
+*.vtk
+*.vtm
+*.vtmb
 *.vtp
+*.vtr
+*.vts
 *.vtu
+*.xdmf
+*.vtpd
 
+# image
+*.pdf
+*.png
+*.svg
+
+# 3D
+*.camera.json
 camera.json

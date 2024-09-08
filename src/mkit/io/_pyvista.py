@@ -11,8 +11,10 @@ import mkit.io._typing as t
 if TYPE_CHECKING:
     import trimesh as tm
 
+    from mkit.typing import AnyMesh, AnySurfaceMesh
 
-def as_polydata(mesh: t.AnyTriMesh) -> pv.PolyData:
+
+def as_polydata(mesh: AnySurfaceMesh) -> pv.PolyData:
     if t.is_polydata(mesh):
         return mesh
     if t.is_meshio(mesh):
@@ -22,7 +24,7 @@ def as_polydata(mesh: t.AnyTriMesh) -> pv.PolyData:
     raise t.UnsupportedConversionError(mesh, pv.PolyData)
 
 
-def as_unstructured_grid(mesh: t.AnyTetMesh) -> pv.UnstructuredGrid:
+def as_unstructured_grid(mesh: AnyMesh) -> pv.UnstructuredGrid:
     if t.is_unstructured_grid(mesh):
         return mesh
     if t.is_meshio(mesh):

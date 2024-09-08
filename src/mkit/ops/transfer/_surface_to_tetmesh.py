@@ -5,8 +5,8 @@ import numpy.typing as npt
 import pyvista as pv
 
 import mkit
-from mkit.io import AnyTetMesh, AnyTriMesh
 from mkit.ops.transfer import surface_to_surface
+from mkit.typing import AnyTetMesh, AnyTriMesh
 
 
 def surface_to_tetmesh(

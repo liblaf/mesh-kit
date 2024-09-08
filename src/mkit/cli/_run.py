@@ -8,7 +8,7 @@ from loguru import logger
 
 import mkit
 
-_C = TypeVar("_C", bound=mkit.cli.BaseConfig)
+_C = TypeVar("_C", bound=mkit.cli.CLIBaseConfig)
 _T = TypeVar("_T")
 
 

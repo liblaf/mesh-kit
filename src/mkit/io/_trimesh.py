@@ -1,9 +1,10 @@
 import trimesh as tm
 
 import mkit.io._typing as t
+from mkit.typing import AnySurfaceMesh
 
 
-def as_trimesh(mesh: t.AnyTriMesh) -> tm.Trimesh:
+def as_trimesh(mesh: AnySurfaceMesh) -> tm.Trimesh:
     if t.is_trimesh(mesh):
         return mesh
     if t.is_meshio(mesh):

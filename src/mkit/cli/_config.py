@@ -5,7 +5,7 @@ import confz
 from loguru import logger
 
 
-class BaseConfig(confz.BaseConfig):
+class CLIBaseConfig(confz.BaseConfig):
     log_level: int | str = "INFO"
     log_file: Path | None = None
     CONFIG_SOURCES: ClassVar = [confz.FileSource("params.yaml"), confz.CLArgSource()]

@@ -54,11 +54,6 @@ theme:
         icon: material/brightness-4
         name: dark mode
 
-watch:
-  - docs
-  - scripts/gen-ref-pages.py
-  - src/mkit
-
 plugins:
   # Built-in plugins
   # - optimize # Sponsors only
@@ -67,7 +62,7 @@ plugins:
   # External plugins, schema provided by us
   - gen-files:
       scripts:
-        - scripts/gen-ref-pages.py
+        - tools/gen-ref-pages.py
   - git-committers:
       enabled: !ENV [CI, false]
       repository: liblaf/mesh-kit
@@ -108,3 +103,8 @@ plugins:
             show_signature_annotations: true
             separate_signature: true
             signature_crossrefs: true
+
+watch:
+  - docs
+  - src/mkit
+  - tools/gen-ref-pages.py

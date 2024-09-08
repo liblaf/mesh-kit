@@ -4,14 +4,14 @@ import pyvista as pv
 import tetgen as tg
 
 import mkit
-from mkit.io import AnyTriMesh
+from mkit.typing import AnySurfaceMesh
 
 if TYPE_CHECKING:
     import numpy as np
     import numpy.typing as npt
 
 
-def tetgen(_surface: AnyTriMesh) -> pv.UnstructuredGrid:
+def tetgen(_surface: AnySurfaceMesh) -> pv.UnstructuredGrid:
     surface: pv.PolyData = mkit.io.as_polydata(_surface)
     surface.triangulate(inplace=True, progress_bar=True)
     tgen: tg.TetGen = tg.TetGen(surface)

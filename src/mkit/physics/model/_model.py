@@ -11,9 +11,9 @@ import sparse
 from jax.numpy import newaxis
 
 import mkit
-from mkit.io import AnyTetMesh
 from mkit.physics.energy import CellEnergy, EnergyFn
 from mkit.physics.model._hess import hess_coords
+from mkit.typing import AnyTetMesh
 
 
 class Model:

@@ -1,5 +1,3 @@
-<!-- prettier-ignore-start -->
 - */
 - *.md
-- [API](api/)
-<!-- prettier-ignore-end -->
+- [API Reference](api/)

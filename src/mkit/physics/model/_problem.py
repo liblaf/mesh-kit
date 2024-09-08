@@ -8,9 +8,9 @@ import scipy.optimize
 import scipy.sparse
 
 import mkit
-from mkit.io import AnyTetMesh
 from mkit.physics import Model
 from mkit.physics.energy import CellEnergy, EnergyFn
+from mkit.typing import AnyTetMesh
 
 if TYPE_CHECKING:
     import sparse
