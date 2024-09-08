@@ -2,24 +2,33 @@
 
 site_name: Mesh Kit
 site_url: https://liblaf.github.io/mesh-kit/
+repo_name: liblaf/mesh-kit
 repo_url: https://github.com/liblaf/mesh-kit
 site_author: liblaf
+edit_uri: edit/main/docs/
 
 theme:
   name: material
   features:
+    - announce.dismiss
     - content.action.edit
     - content.action.view
     - content.code.annotate
     - content.code.copy
     - content.code.select
-    - header.autohide
-    - navigation.footer
+    - content.footnote.tooltips
+    - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    # - navigation.footer
+    # - navigation.indexes
     - navigation.instant
     - navigation.instant.prefetch
     - navigation.instant.progress
     - navigation.path
     - navigation.prune
+    # - navigation.sections
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.top
@@ -28,6 +37,7 @@ theme:
     - search.share
     - search.suggest
     - toc.follow
+    # - toc.integrate
   palette:
     - media: "(prefers-color-scheme)"
       toggle:
@@ -53,11 +63,11 @@ plugins:
   # Built-in plugins
   # - optimize # Sponsors only
   - search
+  - social
   # External plugins, schema provided by us
   - gen-files:
       scripts:
         - scripts/gen-ref-pages.py
-  - git-authors
   - git-committers:
       enabled: !ENV [CI, false]
       repository: liblaf/mesh-kit
@@ -74,24 +84,27 @@ plugins:
         python:
           import:
             - https://docs.python.org/3/objects.inv
+            - https://docs.pyvista.org/objects.inv
             - https://docs.scipy.org/doc/scipy/objects.inv
             - https://numpy.org/doc/stable/objects.inv
             - https://pytorch.org/docs/stable/objects.inv
             - https://pytorch3d.readthedocs.io/en/latest/objects.inv
             - https://trimesh.org/objects.inv
           options:
+            # General
+            show_inheritance_diagram: true
             # Headings
             show_symbol_type_heading: true
             show_symbol_type_toc: true
             # Members
             inherited_members: true
             filters:
-              - "!__all__"
               - "!^_[^_]"
+            summary: true
             # Docstrings
-            group_by_category: true
             docstring_section_style: list
-            # Signatures
             show_if_no_docstring: true
+            # Signatures
             show_signature_annotations: true
+            separate_signature: true
             signature_crossrefs: true
