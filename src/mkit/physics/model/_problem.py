@@ -52,7 +52,7 @@ class Problem:
                 method="trust-constr",
                 jac=self.jac,
                 hess=self.hess,
-                options={"disp": True},
+                options={"disp": True, "verbose": 2},
             )
         except Exception as e:
             res = scipy.optimize.OptimizeResult()
