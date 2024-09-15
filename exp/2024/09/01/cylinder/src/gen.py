@@ -1,11 +1,10 @@
 from pathlib import Path
 from typing import Literal
 
+import mkit
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
-
-import mkit
 
 
 class Config(mkit.cli.BaseConfig):

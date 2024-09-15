@@ -4,10 +4,9 @@ import shutil
 from pathlib import Path
 from typing import Literal
 
+import mkit
 import pydantic
 import pydicom
-
-import mkit
 
 
 class CLIConfig(mkit.cli.CLIBaseConfig):

@@ -1,16 +1,14 @@
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import numpy as np
-import pyvista as pv
-
 import mkit
 import mkit.typing.numpy as nt
+import numpy as np
+import pyvista as pv
 from mkit.typing import StrPath
 
 if TYPE_CHECKING:
     import open3d as o3d
-
     from mkit.ops.registration._global._result import GlobalRegistrationResult
 
 

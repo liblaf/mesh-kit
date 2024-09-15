@@ -1,13 +1,11 @@
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import numpy as np
-
 import mkit
+import numpy as np
 
 if TYPE_CHECKING:
     import pyvista as pv
-
     from mkit.ops.registration.rigid._result import RigidRegistrationResult
 
 

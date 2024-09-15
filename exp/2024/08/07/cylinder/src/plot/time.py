@@ -1,7 +1,6 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pyvista as pv
-
 from mkit.physics.preset.elastic import MODELS
 
 
