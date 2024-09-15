@@ -3,10 +3,9 @@ from typing import TYPE_CHECKING
 import jax
 import jax.numpy as jnp
 import jax.typing as jxt
+import mkit.ext
 import numpy as np
 import pytest
-
-import mkit.ext
 from mkit.physics.energy import elastic
 from mkit.physics.model import Model
 

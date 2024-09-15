@@ -1,8 +1,7 @@
 from pathlib import Path
 
-import pyvista as pv
-
 import mkit
+import pyvista as pv
 
 
 class Config(mkit.cli.BaseConfig):

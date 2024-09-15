@@ -1,12 +1,11 @@
 from pathlib import Path
 from typing import Any
 
+import mkit
 import numpy as np
 import pyvista as pv
 import trimesh as tm
 from icecream import ic
-
-import mkit
 
 
 class CLIConfig(mkit.cli.CLIBaseConfig):

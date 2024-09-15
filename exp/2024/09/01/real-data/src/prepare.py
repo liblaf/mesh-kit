@@ -1,10 +1,9 @@
 from pathlib import Path
 
+import mkit
 import numpy as np
 import pyvista as pv
 from icecream import ic
-
-import mkit
 from mkit.typing import StrPath
 
 

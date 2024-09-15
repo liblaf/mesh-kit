@@ -1,15 +1,14 @@
 from collections.abc import Mapping
 from typing import Any
 
+import mkit
+import mkit.typing as t
+import mkit.typing.numpy as n
 import numpy as np
 import numpy.typing as npt
 import pyvista as pv
 import trimesh as tm
 from icecream import ic
-
-import mkit
-import mkit.typing as t
-import mkit.typing.numpy as n
 from mkit.ext import ICTFaceKit
 
 

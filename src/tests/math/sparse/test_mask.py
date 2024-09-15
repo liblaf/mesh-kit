@@ -5,7 +5,6 @@ import numpy as np
 import numpy.typing as npt
 import pytest
 import sparse
-
 from mkit.math.sparse import mask as sparse_mask
 
 if TYPE_CHECKING:
