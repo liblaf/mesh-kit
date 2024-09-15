@@ -1,10 +1,11 @@
 import jax
 import jax.numpy as jnp
-import jax.typing as jxt
+
+import mkit.typing.jax as jt
 
 
-def invariants(_A: jxt.ArrayLike) -> tuple[jax.Array, jax.Array, jax.Array]:
-    A: jax.Array = jnp.asarray(_A)
+def invariants(A: jt.DNNLike) -> tuple[jt.D, jt.D, jt.D]:
+    A: jax.Array = jnp.asarray(A)
     I1: jax.Array = jnp.trace(A)
     I2: jax.Array = 0.5 * (jnp.trace(A) ** 2 - jnp.trace(A @ A))
     I3: jax.Array = jnp.linalg.det(A)

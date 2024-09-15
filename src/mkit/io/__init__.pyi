@@ -1,23 +1,21 @@
-from ._pyvista import as_polydata, as_unstructured_grid, make_tet_mesh
-from ._trimesh import as_trimesh
+from . import open3d, pyvista, trimesh
 from ._typing import (
     UnsupportedConversionError,
     is_meshio,
-    is_polydata,
+    is_poly_data,
     is_pytorch3d,
     is_trimesh,
     is_unstructured_grid,
 )
 
 __all__ = [
-    "as_polydata",
-    "as_trimesh",
-    "as_unstructured_grid",
+    "UnsupportedConversionError",
     "is_meshio",
-    "is_polydata",
+    "is_poly_data",
     "is_pytorch3d",
     "is_trimesh",
     "is_unstructured_grid",
-    "make_tet_mesh",
-    "UnsupportedConversionError",
+    "open3d",
+    "pyvista",
+    "trimesh",
 ]

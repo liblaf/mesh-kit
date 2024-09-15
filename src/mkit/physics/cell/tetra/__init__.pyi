@@ -7,9 +7,9 @@ from ._strain import (
 from ._volume import volume
 
 __all__ = [
-    "grad_op",
     "cauchy_strain",
     "deformation_gradient",
+    "grad_op",
     "lagrangian_strain",
     "volume",
 ]

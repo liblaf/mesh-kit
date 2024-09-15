@@ -5,7 +5,7 @@ import mkit
 from mkit.typing import AnySurfaceMesh
 
 
-def tetwild(_surface: AnySurfaceMesh) -> pv.UnstructuredGrid:
-    surface: pv.PolyData = mkit.io.as_polydata(_surface)
+def tetwild(surface: AnySurfaceMesh) -> pv.UnstructuredGrid:
+    surface: pv.PolyData = mkit.io.pyvista.as_poly_data(surface)
     tetmesh: pv.UnstructuredGrid = pytetwild.tetrahedralize_pv(surface)
     return tetmesh

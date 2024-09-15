@@ -3,7 +3,6 @@ from pathlib import Path
 import numpy as np
 import pyvista as pv
 from icecream import ic
-from sympy import inverse_laplace_transform
 
 import mkit
 from mkit.typing import StrPath

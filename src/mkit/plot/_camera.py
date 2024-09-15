@@ -1,12 +1,11 @@
-from pathlib import Path
-
-import confz
+import pydantic
 import pyvista as pv
 
+import mkit
 from mkit.typing import StrPath
 
 
-class Camera(confz.BaseConfig):
+class CameraParams(pydantic.BaseModel):
     focal_point: list[float]
     position: list[float]
     up: list[float]
@@ -16,8 +15,8 @@ class Camera(confz.BaseConfig):
     parallel_scale: float
 
 
-def load_camera(pl: pv.Plotter, file: StrPath) -> None:
-    data = Camera(config_sources=[confz.FileSource(file)])
+def load_camera(pl: pv.Plotter, fpath: StrPath) -> None:
+    data: CameraParams = mkit.utils.load_pydantic(CameraParams, fpath)
     camera: pv.Camera = pl.camera
     camera.focal_point = data.focal_point
     camera.parallel_projection = data.parallel_projection
@@ -28,16 +27,15 @@ def load_camera(pl: pv.Plotter, file: StrPath) -> None:
     pl.window_size = data.window_size
 
 
-def save_camera(_file: StrPath, pl: pv.Plotter) -> None:
-    file: Path = Path(_file)
+def save_camera(fpath: StrPath, pl: pv.Plotter) -> None:
     camera: pv.Camera = pl.camera
-    data = Camera(
-        focal_point=camera.focal_point,
+    data = CameraParams(
+        focal_point=camera.focal_point,  # pyright: ignore [reportArgumentType]
         parallel_projection=camera.parallel_projection,
         parallel_scale=camera.parallel_scale,
-        position=camera.position,
-        up=camera.up,
+        position=camera.position,  # pyright: ignore [reportArgumentType]
+        up=camera.up,  # pyright: ignore [reportArgumentType]
         view_angle=camera.view_angle,
         window_size=pl.window_size,
     )
-    file.write_text(data.model_dump_json())
+    mkit.utils.save_pydantic(data, fpath)

@@ -1,24 +1,23 @@
 {
-	"files.exclude": {
-		"**/__pycache__/": true,
-		"**/.pixi/": true,
-		"**/.pytest_cache/": true,
-		"**/*.benchmarks/": true,
-		"**/*.cache/": true,
-		"**/*.egg-info/": true,
-		"**/*.ruff_cache/": true
-	},
-	"python.analysis.diagnosticMode": "workspace",
-	"python.analysis.include": ["src"],
-	"python.testing.pytestArgs": ["src/tests/"],
-	"python.testing.pytestEnabled": true,
-	"python.testing.unittestEnabled": false,
-	"yaml.customTags": [
-		"!ENV scalar",
-		"!ENV sequence",
-		"!relative scalar",
-		"tag:yaml.org,2002:python/name:material.extensions.emoji.to_svg",
-		"tag:yaml.org,2002:python/name:material.extensions.emoji.twemoji",
-		"tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format"
-	]
+  "files.exclude": {
+    "**/__pycache__/": true,
+    "**/.pixi/": true,
+    "**/.pytest_cache/": true,
+    "**/*.benchmarks/": true,
+    "**/*.cache/": true,
+    "**/*.egg-info/": true,
+    "**/*.ruff_cache/": true
+  },
+  "python.analysis.diagnosticMode": "workspace",
+  "python.testing.pytestArgs": ["src/tests/"],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "yaml.customTags": [
+    "!ENV scalar",
+    "!ENV sequence",
+    "!relative scalar",
+    "tag:yaml.org,2002:python/name:material.extensions.emoji.to_svg",
+    "tag:yaml.org,2002:python/name:material.extensions.emoji.twemoji",
+    "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format"
+  ]
 }

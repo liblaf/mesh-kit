@@ -12,20 +12,29 @@ from ._geometry import (
 from ._types import (
     StrPath,
 )
-from ._utils import fullname, is_instance_named
+from ._utils import (
+    full_name,
+    full_name_parts,
+    is_instance_named,
+    is_instance_named_partial,
+    is_subsequence,
+)
 
 __all__ = [
-    "jax",
-    "fullname",
-    "is_instance_named",
-    "StrPath",
     "AnyMesh",
+    "AnyPointCloud",
+    "AnyPointSet",
     "AnyQuadMesh",
-    "numpy",
     "AnySurfaceMesh",
     "AnyTetMesh",
     "AnyTriMesh",
     "AnyVolumeMesh",
-    "AnyPointSet",
-    "AnyPointCloud",
+    "StrPath",
+    "full_name",
+    "full_name_parts",
+    "is_instance_named",
+    "is_instance_named_partial",
+    "is_subsequence",
+    "jax",
+    "numpy",
 ]

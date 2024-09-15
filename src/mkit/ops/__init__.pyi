@@ -1,3 +1,3 @@
-from . import point, transfer, transform
+from . import point, registration, transfer, transform
 
-__all__ = ["point", "transfer", "transform"]
+__all__ = ["point", "registration", "transfer", "transform"]

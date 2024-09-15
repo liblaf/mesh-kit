@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     import pyvista as pv
 
 
-def E_nu_to_lambda_mu(E: float, nu: float) -> tuple[float, float]:  # noqa: N802, N803
+def E_nu_to_lambda_mu(E: float, nu: float) -> tuple[float, float]:
     lambda_: float = E * nu / ((1 + nu) * (1 - 2 * nu))
     mu: float = E / (2 * (1 + nu))
     return lambda_, mu

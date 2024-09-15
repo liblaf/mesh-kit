@@ -5,7 +5,7 @@ import mkit
 
 
 def tetrahedron() -> pv.UnstructuredGrid:
-    mesh: pv.UnstructuredGrid = mkit.io.make_tet_mesh(
+    mesh: pv.UnstructuredGrid = mkit.io.pyvista.make_tet_mesh(
         [
             [1, 0, 0],
             [-1 / 3, -np.sqrt(2 / 3), -np.sqrt(2) / 3],

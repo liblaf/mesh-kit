@@ -1,8 +1,9 @@
 from typing import NamedTuple
 
 import numpy as np
-import numpy.typing as npt
 from loguru import logger
+
+import mkit.typing.numpy as nt
 
 """
 ### Face Model Topology
@@ -70,16 +71,16 @@ GEOMETRIES: list[Geometry] = [
 ]
 
 
-def vertex_indices(name: str) -> npt.NDArray[np.integer]:
-    logger.warning("Vertex indices may be unreliable!", name)
-    for g in GEOMETRIES:
-        if g.name == name:
-            return np.r_[g.vertex_indices]
-    raise KeyError(name)
+def vertex_indices(*name: str) -> nt.IN:
+    logger.warning("Vertex indices is not reliable!")
+    indices: nt.IN = np.concatenate([
+        np.r_[g.vertex_indices] for g in GEOMETRIES if g.name in name
+    ])
+    return indices
 
 
-def polygon_indices(name: str) -> npt.NDArray[np.integer]:
-    for g in GEOMETRIES:
-        if g.name == name:
-            return np.r_[g.polygon_indices]
-    raise KeyError(name)
+def polygon_indices(*name: str) -> nt.IN:
+    indices: nt.IN = np.concatenate([
+        np.r_[g.polygon_indices] for g in GEOMETRIES if g.name in name
+    ])
+    return indices

@@ -1,14 +1,26 @@
 from pathlib import Path
-from typing import ClassVar
 
-import confz
-from loguru import logger
+import pydantic_settings as ps
 
 
-class CLIBaseConfig(confz.BaseConfig):
+class BaseConfig(ps.BaseSettings):
+    model_config = ps.SettingsConfigDict(cli_parse_args=True, yaml_file="params.yaml")
     log_level: int | str = "INFO"
     log_file: Path | None = None
-    CONFIG_SOURCES: ClassVar = [confz.FileSource("params.yaml"), confz.CLArgSource()]
 
-    def __post_init__(self) -> None:
-        logger.info("{}", self)
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[ps.BaseSettings],
+        init_settings: ps.PydanticBaseSettingsSource,
+        env_settings: ps.PydanticBaseSettingsSource,
+        dotenv_settings: ps.PydanticBaseSettingsSource,
+        file_secret_settings: ps.PydanticBaseSettingsSource,
+    ) -> tuple[ps.PydanticBaseSettingsSource, ...]:
+        return (
+            init_settings,
+            env_settings,
+            ps.YamlConfigSettingsSource(settings_cls),
+            dotenv_settings,
+            file_secret_settings,
+        )

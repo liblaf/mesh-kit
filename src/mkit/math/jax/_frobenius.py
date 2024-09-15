@@ -2,9 +2,11 @@ import jax
 import jax.numpy as jnp
 import jax.typing as jxt
 
+import mkit.typing.jax as jt
 
-def frobenius_norm_square(_x: jxt.ArrayLike) -> jax.Array:
-    x: jax.Array = jnp.asarray(_x)
+
+def frobenius_norm_square(x: jxt.ArrayLike) -> jt.D:
+    x: jax.Array = jnp.asarray(x)
     return jnp.sum(x**2)
 
 

@@ -1,6 +1,8 @@
 {
   "typeCheckingMode": "standard",
+  "include": ["src"],
 
   "reportAssignmentType": "none",
-  "reportPrivateImportUsage": "none"
+  "reportPrivateImportUsage": "none",
+  "reportRedeclaration": "none"
 }

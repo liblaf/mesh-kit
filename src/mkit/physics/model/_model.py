@@ -21,7 +21,7 @@ class Model:
     energy_fn: CellEnergy
 
     def __init__(self, mesh: AnyTetMesh, energy_fn: CellEnergy | EnergyFn) -> None:
-        self.mesh = mkit.io.as_unstructured_grid(mesh)
+        self.mesh = mkit.io.pyvista.as_unstructured_grid(mesh)
         self.energy_fn = CellEnergy(energy_fn)
 
     def energy(self, disp: jxt.ArrayLike) -> jax.Array:
