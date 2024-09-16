@@ -1,6 +1,9 @@
 import numpy as np
 import numpy.typing as npt
 
+BN = npt.NDArray[np.bool]
+BNLike = npt.ArrayLike
+
 D33 = npt.NDArray[np.floating]
 D44 = npt.NDArray[np.floating]
 D44Like = npt.ArrayLike

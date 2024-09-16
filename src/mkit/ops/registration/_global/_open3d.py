@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 def fgr_based_on_feature_matching(
     source: Any,
     target: Any,
+    *,
     normal_radius: float = 0.04,
     normal_max_nn: int = 30,
     feature_radius: float = 0.10,

@@ -21,6 +21,9 @@ def main(cfg: Config) -> None:
     target: pv.PolyData = mkit.ext.sculptor.get_template_skull()
     source.save("data/source.vtp")
     target.save("data/target.vtp")
+    bodies: pv.MultiBlock = target.split_bodies(progress_bar=True).as_polydata_blocks()
+    target = bodies[1]
+    ic(target)
     result: RigidRegistrationResult = mkit.ops.registration.rigid_registration(
         source, target
     )

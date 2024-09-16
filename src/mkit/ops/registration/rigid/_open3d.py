@@ -15,6 +15,7 @@ def icp_open3d(
     init: nt.D44Like | None = None,
     distance_threshold: float = 0.01,
 ) -> RigidRegistrationResult:
+    raise NotImplementedError
     source: o3d.geometry.PointCloud = mkit.io.open3d.as_point_cloud(source)
     target: o3d.geometry.PointCloud = mkit.io.open3d.as_point_cloud(target)
     if init is not None:
