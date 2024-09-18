@@ -13,6 +13,7 @@ def main(cfg: Config) -> None:
     source: pv.PolyData = mkit.io.pyvista.read_poly_data("data/registration/face.obj")
     target: pv.PolyData = mkit.ext.sculptor.get_template_face()
     target = transfer_cell_data(source, target)
+    target.field_data["GroupNames"] = source.field_data["GroupNames"]
     target.save("data/transfer/face.vtp")
 
 

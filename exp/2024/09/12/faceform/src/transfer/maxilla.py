@@ -15,6 +15,7 @@ def main(cfg: Config) -> None:
     )
     target: pv.PolyData = mkit.ext.sculptor.get_template_maxilla()
     target = transfer_cell_data(source, target)
+    target.field_data["GroupNames"] = source.field_data["GroupNames"]
     target.save("data/transfer/maxilla.vtp")
 
 
