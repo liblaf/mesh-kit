@@ -1,3 +1,3 @@
-from ._sample import mask_points, sample_points
+from ._sample import downsample_mesh, mask_points, sample_points
 
-__all__ = ["sample_points", "mask_points"]
+__all__ = ["downsample_mesh", "mask_points", "sample_points"]

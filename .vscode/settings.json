@@ -1,4 +1,7 @@
 {
+  "files.associations": {
+    "*.wrap": "json"
+  },
   "files.exclude": {
     "**/__pycache__/": true,
     "**/.pixi/": true,

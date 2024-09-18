@@ -1,6 +1,7 @@
 from typing import Any
 
 import trimesh as tm
+from loguru import logger
 
 import mkit
 import mkit.typing.numpy as nt
@@ -36,6 +37,8 @@ def icp_trimesh(
 
 
 def _preprocess(mesh: Any, weight: nt.DN3Like | None = None) -> tm.Trimesh:
+    if weight is not None:
+        logger.warning("Weight is not supported, using mask instead.")
     mesh: tm.Trimesh = mkit.io.trimesh.as_trimesh(
         mkit.ops.registration.preprocess.mask_points(mesh, weight)
     )

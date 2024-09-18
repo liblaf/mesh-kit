@@ -56,12 +56,18 @@ def read_obj(fpath: StrPath) -> pv.PolyData:
     group_dup: list[str] = []
     for line in mkit.utils.strip_comments(fpath.read_text()):
         if line.startswith("g"):
-            name: str
-            _, name = line.split()
-            group_dup.append(name)
-    group_uniq: list[str] = list(set(group_dup))
+            words: list[str] = line.split()
+            if len(words) >= 2:
+                group_dup.append(words[1])
+            else:
+                group_dup.append(str(len(group_dup)))
+    mesh: pv.PolyData
+    if not group_dup:
+        mesh = pv.read(fpath)
+        return mesh
+    group_uniq: list[str] = list(dict.fromkeys(group_dup))
     dup_to_uniq: dict[str, int] = {name: i for i, name in enumerate(group_uniq)}
-    mesh: pv.PolyData = pv.read(fpath)
+    mesh = pv.read(fpath)
     group_id: nt.IN = mkit.math.numpy.cast(mesh.cell_data["GroupIds"], int)
     group_id = np.asarray([dup_to_uniq[group_dup[i]] for i in group_id])
     mesh.cell_data["GroupIds"] = group_id

@@ -54,9 +54,10 @@ def rigid_registration(
             mkit.ops.registration.global_registration(source, target)
         )
         init = global_result.transform
-    source: pv.PolyData = mkit.io.pyvista.as_poly_data(source)
+    source: pv.PolyData = mkit.ops.registration.preprocess.downsample_mesh(source)
     init: nt.D44 = np.asarray(init)
     source = source.transform(init, inplace=False, progress_bar=True)
+    target: pv.PolyData = mkit.ops.registration.preprocess.downsample_mesh(target)
     fn = _METHODS[method]
     result = fn(
         source,

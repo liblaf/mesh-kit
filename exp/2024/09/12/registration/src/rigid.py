@@ -8,7 +8,7 @@ import mkit
 if TYPE_CHECKING:
     import pyvista as pv
 
-    from mkit.ops.registration.rigid._result import RigidRegistrationResult
+    from mkit.ops.registration import RigidRegistrationResult
 
 
 class Config(mkit.cli.BaseConfig):
@@ -23,7 +23,6 @@ def main(cfg: Config) -> None:
     target.save("data/target.vtp")
     bodies: pv.MultiBlock = target.split_bodies(progress_bar=True).as_polydata_blocks()
     target = bodies[1]
-    ic(target)
     result: RigidRegistrationResult = mkit.ops.registration.rigid_registration(
         source, target
     )
