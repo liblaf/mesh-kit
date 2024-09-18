@@ -45,9 +45,12 @@ def is_point_cloud(mesh: pv.PolyData) -> bool:
 
 def read_poly_data(fpath: StrPath) -> pv.PolyData:
     fpath: Path = Path(fpath)
-    if fpath.suffix == ".obj":
-        return read_obj(fpath)
-    mesh: pv.PolyData = pv.read(fpath)
+    mesh: pv.PolyData
+    if fpath.suffix == ".obj":  # noqa: SIM108
+        mesh = read_obj(fpath)
+    else:
+        mesh = pv.read(fpath)
+    mesh.clean(inplace=True, progress_bar=True)
     return mesh
 
 

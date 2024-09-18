@@ -5565,10 +5565,11 @@ packages:
   name: mesh-kit
   version: 0.0.1
   path: .
-  sha256: 8e4cc5f138130c3894031c6ca6f7deb3ff48388f654e6686f5a120b16f937b60
+  sha256: d5e2705962b78c3885ac647eb9b206ebdb0c142be1e445ea0810fdc8b5579f6b
   requires_dist:
   - confz>=2.0.1,<3
   - dvclive>=3.48.0,<4
+  - fast-simplification>=0.1.9,<0.2
   - lazy-loader>=0.4,<0.5
   - loguru>=0.7.2,<0.8
   - matplotlib>=3.9.2,<4
@@ -5587,7 +5588,6 @@ packages:
   - toml>=0.10.2,<0.11
   - trimesh[all]>=4.4.7,<5
   - ubelt>=1.3.6,<2
-  - fast-simplification>=0.1.9,<0.2
   - jax>=0.4.31,<0.5 ; extra == 'cpu'
   - pytorch3d @ https://github.com/MiroPsota/torch_packages_builder/releases/download/pytorch3d-0.7.7/pytorch3d-0.7.7+pt2.3.1cu121-cp311-cp311-linux_x86_64.whl ; extra == 'cpu'
   - jax[cuda12]>=0.4.31,<0.5 ; extra == 'cuda12'

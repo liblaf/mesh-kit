@@ -2,20 +2,19 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
-import trimesh as tm
+import trimesh.transformations as tt
 
-import mkit
+import mkit.ops.registration as reg
+import mkit.ops.registration.preprocess as pre
 import mkit.typing.numpy as nt
-from mkit.ops.registration import RigidRegistrationResult
 
 if TYPE_CHECKING:
     import pyvista as pv
 
-    from mkit.ops.registration import GlobalRegistrationResult
 
 _METHODS: dict[str, Callable] = {
-    "open3d": mkit.ops.registration.rigid.icp_open3d,
-    "trimesh": mkit.ops.registration.rigid.icp_trimesh,
+    "open3d": reg.rigid.icp_open3d,
+    "trimesh": reg.rigid.icp_trimesh,
 }
 
 
@@ -24,6 +23,7 @@ def rigid_registration(
     target: Any,
     *,
     init: nt.D44Like | None = None,
+    init_global: nt.D44Like | None = None,
     inverse: bool = False,
     method: Literal["open3d", "trimesh"] = "trimesh",
     reflection: bool = False,
@@ -32,13 +32,18 @@ def rigid_registration(
     target_weight: nt.DN3Like | None = None,
     translation: bool = True,
     **kwargs,
-) -> RigidRegistrationResult:
-    result: RigidRegistrationResult
+) -> reg.RigidRegistrationResult:
+    result: reg.RigidRegistrationResult
     if inverse:
+        if init is not None:
+            init = tt.inverse_matrix(init)
+        if init_global is not None:
+            init_global = tt.inverse_matrix(init_global)
         result = rigid_registration(
             target,
             source,
             init=init,
+            init_global=init_global,
             method=method,
             reflection=reflection,
             scale=scale,
@@ -47,17 +52,17 @@ def rigid_registration(
             translation=translation,
             **kwargs,
         )
-        result.transform = tm.transformations.inverse_matrix(result.transform)
+        result.transform = tt.inverse_matrix(result.transform)
         return result
     if init is None:
-        global_result: GlobalRegistrationResult = (
-            mkit.ops.registration.global_registration(source, target)
+        global_result: reg.GlobalRegistrationResult = reg.global_registration(
+            source, target, init=init_global
         )
         init = global_result.transform
-    source: pv.PolyData = mkit.ops.registration.preprocess.downsample_mesh(source)
+    source: pv.PolyData = pre.downsample_mesh(source)
     init: nt.D44 = np.asarray(init)
     source = source.transform(init, inplace=False, progress_bar=True)
-    target: pv.PolyData = mkit.ops.registration.preprocess.downsample_mesh(target)
+    target: pv.PolyData = pre.downsample_mesh(target)
     fn = _METHODS[method]
     result = fn(
         source,
@@ -69,5 +74,5 @@ def rigid_registration(
         translation=translation,
         **kwargs,
     )
-    result.transform = tm.transformations.concatenate_matrices(result.transform, init)
+    result.transform = tt.concatenate_matrices(result.transform, init)
     return result

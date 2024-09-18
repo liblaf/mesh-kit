@@ -5,8 +5,10 @@ BN = npt.NDArray[np.bool]
 BNLike = npt.ArrayLike
 
 D33 = npt.NDArray[np.floating]
+D3Like = npt.ArrayLike
 D44 = npt.NDArray[np.floating]
 D44Like = npt.ArrayLike
+D4Like = npt.ArrayLike
 DN = npt.NDArray[np.floating]
 DN3 = npt.NDArray[np.floating]
 DN3Like = npt.ArrayLike

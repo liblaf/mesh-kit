@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class Config(mkit.cli.BaseConfig):
     template: Path = Path(
-        "~/.local/opt/Wrap/Gallery/TexturingXYZ/XYZ_ReadyToSculpt_eyesOpen_PolyGroups_GEO.obj"
+        "~/.local/opt/Wrap/Gallery/TexturingXYZ/XYZ_ReadyToSculpt_eyesClosed_PolyGroups_GEO.obj"
     ).expanduser()
 
 

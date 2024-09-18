@@ -10,7 +10,7 @@ import pydicom
 import mkit
 
 
-class CLIConfig(mkit.cli.CLIBaseConfig):
+class CLIConfig(mkit.cli.BaseConfig):
     raw: Path
     output: Path
 
@@ -63,7 +63,7 @@ def process_acquisition(dirfile_fpath: Path, output_dir: Path) -> Acquisition:
     return meta
 
 
-@mkit.cli.auto_run
+@mkit.cli.auto_run()
 def main(cfg: CLIConfig) -> None:
     patients: dict[str, list[Acquisition]] = collections.defaultdict(list)
     with concurrent.futures.ThreadPoolExecutor() as executor:

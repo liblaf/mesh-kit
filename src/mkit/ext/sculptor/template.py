@@ -20,3 +20,17 @@ def get_template_skull() -> pv.PolyData:
     )
     mesh: pv.PolyData = pv.read(fpath)
     return mesh
+
+
+def get_template_maxilla() -> pv.PolyData:
+    skull: pv.PolyData = get_template_skull()
+    bodies: pv.MultiBlock = skull.split_bodies(progress_bar=True).as_polydata_blocks()
+    maxilla: pv.PolyData = bodies[0]
+    return maxilla
+
+
+def get_template_mandible() -> pv.PolyData:
+    skull: pv.PolyData = get_template_skull()
+    bodies: pv.MultiBlock = skull.split_bodies(progress_bar=True).as_polydata_blocks()
+    mandible: pv.PolyData = bodies[1]
+    return mandible
