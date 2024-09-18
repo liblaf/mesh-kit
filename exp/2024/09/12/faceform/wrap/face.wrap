@@ -99,7 +99,7 @@
             "nodeType": "LoadGeom",
             "params": {
                 "fileName": {
-                    "value": "/home/liblaf/github/liblaf/mesh-kit/exp/2024/09/12/faceform/data/face.obj"
+                    "value": "/home/liblaf/github/liblaf/mesh-kit/exp/2024/09/12/faceform/data/template/face.obj"
                 },
                 "rotation": {
                     "value": {
