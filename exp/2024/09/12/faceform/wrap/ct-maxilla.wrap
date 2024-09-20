@@ -1,0 +1,327 @@
+{
+    "commonDir": "",
+    "formatVersion": 64,
+    "nodes": {
+        "FastWrapping": {
+            "color": {
+                "a": 0,
+                "b": 0,
+                "g": 0,
+                "r": 0
+            },
+            "hasColor": false,
+            "isAlwaysVisible": false,
+            "nodeId": 4,
+            "nodeType": "FastWrapping",
+            "params": {
+                "autocompute": {
+                    "value": false
+                },
+                "geomFixed": {
+                    "connectedNodeId": 1
+                },
+                "geomFloating": {
+                    "connectedNodeId": 2
+                },
+                "globalControlPointsWeightFinal": {
+                    "value": 10
+                },
+                "globalControlPointsWeightInitial": {
+                    "value": 10
+                },
+                "globalPoint2PlaneFittingWeight": {
+                    "value": 1
+                },
+                "globalPoint2PointFittingWeight": {
+                    "value": 0.10000000149011612
+                },
+                "globalSmoothWeightMax": {
+                    "value": 1
+                },
+                "globalSmoothWeightMin": {
+                    "value": 0.05000000074505806
+                },
+                "maxDp": {
+                    "value": 0.009999999776482582
+                },
+                "maxOptimizationIterations": {
+                    "value": 100
+                },
+                "minCosBetweenNormals": {
+                    "value": 0.6499999761581421
+                },
+                "minDp": {
+                    "value": 0.0020000000949949026
+                },
+                "nICPIterations": {
+                    "value": 7
+                },
+                "nNodesToUse": {
+                    "value": 8
+                },
+                "nOptimizationIterations": {
+                    "value": 20
+                },
+                "nSubdivisions": {
+                    "value": 3
+                },
+                "normalizeSampling": {
+                    "value": true
+                },
+                "points": {
+                },
+                "polygons": {
+                },
+                "samplingMax": {
+                    "value": 10
+                },
+                "samplingMin": {
+                    "value": 0.10000000149011612
+                },
+                "samplingType": {
+                    "value": 0
+                }
+            },
+            "x": -189,
+            "y": 98
+        },
+        "RigidAlignment": {
+            "color": {
+                "a": 0,
+                "b": 0,
+                "g": 0,
+                "r": 0
+            },
+            "hasColor": false,
+            "isAlwaysVisible": false,
+            "nodeId": 2,
+            "nodeType": "RigidAlignment",
+            "params": {
+                "fitRotation": {
+                    "value": true
+                },
+                "fitScale": {
+                    "value": true
+                },
+                "fitTranslation": {
+                    "value": true
+                },
+                "geomFixed": {
+                    "connectedNodeId": 1
+                },
+                "geomFloating": {
+                    "connectedNodeId": 0
+                },
+                "points": {
+                    "connectedNodeId": 3
+                }
+            },
+            "x": -175,
+            "y": -1
+        },
+        "SelectPointPairs": {
+            "color": {
+                "a": 0,
+                "b": 0,
+                "g": 0,
+                "r": 0
+            },
+            "hasColor": false,
+            "isAlwaysVisible": true,
+            "nodeId": 3,
+            "nodeType": "SelectPointPairs",
+            "params": {
+                "fileNameLeft": {
+                    "value": ""
+                },
+                "fileNameRight": {
+                    "value": ""
+                },
+                "geomLeft": {
+                    "connectedNodeId": 0
+                },
+                "geomRight": {
+                    "connectedNodeId": 1
+                },
+                "pointsFormatLeft": {
+                    "value": 0
+                },
+                "pointsFormatRight": {
+                    "value": 0
+                },
+                "pointsLeft": {
+                    "value": [ [ 3911, 0.2387039065361023, 0.20305512845516205 ], [ 16771, 0.28145402669906616, 0.14301934838294983 ], [ 31742, 0.33348381519317627, 0.5769610404968262 ], [ 4, 0.3060317933559418, 0.48725035786628723 ], [ 1807, 0.08373439311981201, 0.572810173034668 ] ]
+                },
+                "pointsRight": {
+                    "value": [ [ 2036686, 0.14834362268447876, 0.6868592500686646 ], [ 999714, 0.4332698583602905, 0.03923303633928299 ], [ 1008666, 0.6235861778259277, 0.08971146494150162 ], [ 1016629, 0.010210394859313965, 0.3775213658809662 ], [ 1978491, 0.5295776128768921, 0.039409663528203964 ] ]
+                },
+                "sourceLeft": {
+                    "value": 0
+                },
+                "sourceRight": {
+                    "value": 0
+                },
+                "symmetryLeft": {
+                    "value": 0
+                },
+                "symmetryRight": {
+                    "value": 0
+                },
+                "syncTransform": {
+                    "value": {
+                        "offset": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 0
+                        },
+                        "rotationQuat": {
+                            "scalar": 1,
+                            "x": 0,
+                            "y": 0,
+                            "z": 0
+                        },
+                        "scale": 1,
+                        "translation": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 0
+                        }
+                    }
+                },
+                "syncViews": {
+                    "value": false
+                }
+            },
+            "x": 4,
+            "y": -29
+        },
+        "Source": {
+            "color": {
+                "a": 0,
+                "b": 0,
+                "g": 0,
+                "r": 0
+            },
+            "hasColor": false,
+            "isAlwaysVisible": false,
+            "nodeId": 0,
+            "nodeType": "LoadGeom",
+            "params": {
+                "fileName": {
+                    "value": "/home/liblaf/github/liblaf/mesh-kit/exp/2024/09/12/faceform/data/template/maxilla.obj"
+                },
+                "rotation": {
+                    "value": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "scale": {
+                    "value": 1
+                },
+                "texture": {
+                },
+                "translation": {
+                    "value": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "visualParam": {
+                    "value": {
+                        "colorBack": {
+                            "b": 23,
+                            "g": 23,
+                            "r": 23
+                        },
+                        "colorFront": {
+                            "b": 255,
+                            "g": 56,
+                            "r": 12
+                        },
+                        "colorWire": {
+                            "b": 34,
+                            "g": 26,
+                            "r": 17
+                        },
+                        "isLightingEnabled": true,
+                        "isSurfaceEnabled": true,
+                        "isWireframeEnabled": true,
+                        "surfaceFillType": 1
+                    }
+                }
+            },
+            "x": -262,
+            "y": -108
+        },
+        "Target": {
+            "color": {
+                "a": 0,
+                "b": 0,
+                "g": 0,
+                "r": 0
+            },
+            "hasColor": false,
+            "isAlwaysVisible": true,
+            "nodeId": 1,
+            "nodeType": "LoadGeom",
+            "params": {
+                "fileName": {
+                    "value": "/home/liblaf/github/liblaf/mesh-kit/exp/2024/09/12/organize-ct/data/75180/20131206/skull.obj"
+                },
+                "rotation": {
+                    "value": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "scale": {
+                    "value": 1
+                },
+                "texture": {
+                },
+                "translation": {
+                    "value": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "visualParam": {
+                    "value": {
+                        "colorBack": {
+                            "b": 23,
+                            "g": 23,
+                            "r": 23
+                        },
+                        "colorFront": {
+                            "b": 255,
+                            "g": 56,
+                            "r": 12
+                        },
+                        "colorWire": {
+                            "b": 34,
+                            "g": 26,
+                            "r": 17
+                        },
+                        "isLightingEnabled": true,
+                        "isSurfaceEnabled": true,
+                        "isWireframeEnabled": false,
+                        "surfaceFillType": 1
+                    }
+                }
+            },
+            "x": -50,
+            "y": -108
+        }
+    },
+    "pythonCode": "",
+    "timeline": {
+        "current": 0,
+        "max": 25,
+        "min": 0
+    }
+}
