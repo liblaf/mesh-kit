@@ -3,11 +3,11 @@ from typing import Any
 import pytorch3d
 import pytorch3d.ops
 import torch
+from dvclive import Live
 from pytorch3d.structures import Meshes
 
 import mkit
 import mkit.typing.torch as tt
-from dvclive import Live
 from mkit.ops.registration.non_rigid.amberg_pytorch3d._local_affine import LocalAffine
 from mkit.ops.registration.non_rigid.amberg_pytorch3d._params import (
     ParamsDict,
@@ -107,7 +107,7 @@ def _step(
         # stiffness loss
         loss_stiff: tt.F = local_affine.loss_stiffness(gamma=params.gamma)
         # landmark loss
-        loss_landmark: tt.F = 0
+        loss_landmark: tt.F = torch.as_tensor(0.0)
         if params.source_landmark_idx:
             loss_landmark = (
                 (points[params.source_landmark_idx] - params.target_landmark_pos)
@@ -123,7 +123,7 @@ def _step(
         live.log_metric("loss/dist", loss_distance.item())
         live.log_metric("loss/stiff", loss_stiff.item())
         live.log_metric("loss/landmark", loss_landmark.item())
-        live.log_metric("loss", loss.item())
+        live.log_metric("loss/sum", loss.item())
         if torch.abs(loss - last_loss) / last_loss < params.eps:
             break
         loss.backward()
