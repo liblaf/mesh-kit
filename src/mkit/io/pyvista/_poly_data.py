@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeGuard
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pyvista as pv
@@ -21,10 +21,6 @@ def as_poly_data(mesh: AnySurfaceMesh) -> pv.PolyData:
     return r.convert(mesh, pv.PolyData)
 
 
-def is_poly_data(mesh: Any) -> TypeGuard[pv.PolyData]:
-    return isinstance(mesh, pv.PolyData)
-
-
 def is_point_cloud(mesh: pv.PolyData) -> bool:
     """Determine if a given PyVista PolyData object represents a point cloud.
 
@@ -38,7 +34,7 @@ def is_point_cloud(mesh: pv.PolyData) -> bool:
         True if the PolyData object is a point cloud, False otherwise.
 
     Reference:
-        1. <https://github.com/pyvista/pyvista/blob/main/pyvista/core/filters/poly_data.py#L1724-L1728>
+        1. <https://github.com/pyvista/pyvista/blob/556d86725f27c43e30445c877961910d0fff0893/pyvista/core/filters/poly_data.py#L1730-L1734>
     """
     return (mesh.n_points + mesh.n_lines) == mesh.n_cells
 

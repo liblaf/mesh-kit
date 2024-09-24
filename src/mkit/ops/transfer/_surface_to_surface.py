@@ -1,42 +1,58 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable
+from typing import TYPE_CHECKING, Any, Literal
 
-import numpy as np
-import numpy.typing as npt
 import pyvista as pv
-import trimesh as tm
 
 import mkit
-import mkit.typing as t
+import mkit.ops.transfer._auto as auto
+import mkit.ops.transfer._barycentric as barycentric
+import mkit.ops.transfer._nearest as nearest
+import mkit.ops.transfer._utils as u
 import mkit.typing.numpy as nt
+from mkit.ops.transfer._abc import TransferFn
+from mkit.typing import AttributesLike
+
+if TYPE_CHECKING:
+    import numpy as np
+    from jaxtyping import Shaped
+
+_METHODS: dict[tuple[str, str], TransferFn] = {
+    ("auto", "point-to-point"): auto.point_to_point,
+    ("auto", "cell-to-cell"): auto.cell_to_cell,
+    ("barycentric", "point-to-point"): barycentric.point_to_point,
+    ("barycentric", "cell-to-cell"): barycentric.cell_to_cell,
+    ("nearest", "point-to-point"): nearest.point_to_point,
+    ("nearest", "cell-to-cell"): nearest.cell_to_cell,
+}
 
 
 def surface_to_surface(
-    source: t.AnyTriMesh,
-    target: t.AnyPointSet,
-    point_data: Mapping[str, npt.ArrayLike] | pv.DataSetAttributes | None = None,
-    point_data_names: Sequence[str] | None = None,
+    source: Any,
+    target: Any,
+    point_data: AttributesLike | None = None,
+    point_data_names: Iterable[str] | None = None,
+    cell_data: AttributesLike | None = None,
+    cell_data_names: Iterable[str] | None = None,
+    *,
+    distance_threshold: float = 0.1,
+    method: Literal["auto", "barycentric", "nearest"] = "auto",
+    transfer: Literal["point-to-point", "cell-to-cell"] = "point-to-point",
 ) -> pv.PolyData:
     source: pv.PolyData = mkit.io.pyvista.as_poly_data(source)
-    source = source.triangulate(progress_bar=True)
     target: pv.PolyData = mkit.io.pyvista.as_poly_data(target)
-    target = target.triangulate(progress_bar=True)
-    if point_data is None:
-        if point_data_names is not None:
-            point_data = {k: source.point_data[k] for k in point_data_names}
-        else:
-            point_data = source.point_data
-    source_tm: tm.Trimesh = mkit.io.trimesh.as_trimesh(source)
-    target_tm: tm.Trimesh = mkit.io.trimesh.as_trimesh(target)
-    closest: nt.DN3
-    triangle_id: nt.IN
-    closest, _dist, triangle_id = source_tm.nearest.on_surface(target_tm.vertices)
-    faces: nt.IN3 = source_tm.faces[triangle_id]
-    barycentric: nt.DN3 = tm.triangles.points_to_barycentric(
-        source_tm.vertices[faces], closest
+    point_data: dict[str, nt.FN] = u.get_point_data(
+        source, point_data, point_data_names
     )
-    target.point_data["dist"] = _dist
-    for k, v in point_data.items():
-        data: npt.NDArray = np.asarray(v)[faces]  # (V, 3, ...)
-        data_interp: npt.NDArray = np.einsum("ij,ij...->i...", barycentric, data)
-        target.point_data[k] = mkit.math.numpy.cast(data_interp, data.dtype)
+    cell_data: dict[str, nt.FN] = u.get_cell_data(source, cell_data, cell_data_names)
+    if (method, transfer) not in _METHODS:
+        msg: str = f"Unsupported transfer: {method} {transfer}"
+        raise ValueError(msg)
+    fn: TransferFn = _METHODS[(method, transfer)]
+    data: dict[str, Shaped[np.ndarray, "N ..."]] = fn(
+        source, target, point_data, distance_threshold=distance_threshold
+    )
+    if transfer.endswith("to-point"):
+        target.point_data.update(data)
+    elif transfer.endswith("to-cell"):
+        target.cell_data.update(data)
     return target

@@ -24,6 +24,6 @@ def meshio_to_trimesh(mesh: meshio.Mesh) -> tm.Trimesh:
 
 
 @r.register(C.PYVISTA_POLY_DATA, C.TRIMESH)
-def polydata_to_trimesh(mesh: pv.PolyData, *, progress_bar: bool = True) -> tm.Trimesh:
+def polydata_to_trimesh(mesh: pv.PolyData, *, progress_bar: bool = False) -> tm.Trimesh:
     mesh = mesh.triangulate(progress_bar=progress_bar)
     return tm.Trimesh(mesh.points, mesh.regular_faces)

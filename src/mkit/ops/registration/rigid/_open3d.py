@@ -12,7 +12,7 @@ def icp_open3d(
     source: Any,
     target: Any,
     *,
-    init: nt.D44Like | None = None,
+    init: nt.F44Like | None = None,
     distance_threshold: float = 0.01,
 ) -> RigidRegistrationResult:
     raise NotImplementedError

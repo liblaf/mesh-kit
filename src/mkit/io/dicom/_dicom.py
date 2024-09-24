@@ -34,6 +34,10 @@ class Acquisition:
             time=data["AcquisitionTime"].value,
         )
 
+    @property
+    def id(self) -> str:
+        return self.meta.id
+
 
 class Patient(Sequence[Acquisition]):
     dpath: Path
@@ -51,6 +55,10 @@ class Patient(Sequence[Acquisition]):
     @functools.cached_property
     def meta(self) -> MetaPatient:
         return mkit.utils.load_pydantic(MetaPatient, self.dpath / "patient.json")
+
+    @property
+    def id(self) -> str:
+        return self.meta.id
 
 
 class DICOMDataset(Mapping[str, Patient]):

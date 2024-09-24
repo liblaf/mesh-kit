@@ -3,10 +3,18 @@ from pathlib import Path
 
 import numpy as np
 import numpy.typing as npt
+import pooch
 import pyvista as pv
-import ubelt as ub
 
 import mkit.ext.ict_facekit._topology as t
+
+_REGISTRY: pooch.Pooch = pooch.create(
+    pooch.os_cache("mesh-kit"),
+    "https://github.com/ICT-VGL/ICT-FaceKit/raw/master/FaceXModel/",
+    registry={
+        "generic_neutral_mesh.obj": "sha256:eedbc2576d8e5ea57f55255b8f98263213a1efb5431d8bfceed1d7aef10271f9"
+    },
+)
 
 
 class ICTFaceKit(Mapping[str, pv.PolyData]):
@@ -14,10 +22,7 @@ class ICTFaceKit(Mapping[str, pv.PolyData]):
 
     def __init__(self, *, progress_bar: bool = True) -> None:
         filename: Path = Path(
-            ub.grabdata(
-                "https://github.com/ICT-VGL/ICT-FaceKit/raw/master/FaceXModel/generic_neutral_mesh.obj",
-                hash_prefix="732c43451bc211dc",
-            )
+            _REGISTRY.fetch("generic_neutral_mesh.obj", progressbar=progress_bar)
         )
         self.mesh: pv.PolyData = pv.read(filename, progress_bar=progress_bar)  # pyright: ignore [reportAttributeAccessIssue]
         self.mesh.clean(inplace=True, progress_bar=progress_bar)

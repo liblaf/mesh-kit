@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 def downsample_mesh(
-    mesh: Any, *, density: float = 4e4 / np.sqrt(3), agg: int = 7, verbose: bool = True
+    mesh: Any, *, density: float = 1e4, agg: int = 7, verbose: bool = True
 ) -> pv.PolyData:
     import fast_simplification
 
@@ -42,7 +42,7 @@ def mask_points(
 def sample_points(mesh: Any, density: float = 1e4) -> pv.PolyData:
     mesh: tm.Trimesh = mkit.io.trimesh.as_trimesh(mesh)
     count: int = int(density * mesh.area / mesh.scale**2) + 1
-    samples: nt.DN3
+    samples: nt.FN3
     if len(mesh.vertices) < count / 2:
         samples = mesh.sample(count - len(mesh.vertices))
         samples = np.vstack([mesh.vertices, samples])

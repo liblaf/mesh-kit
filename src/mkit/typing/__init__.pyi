@@ -8,6 +8,8 @@ from ._geometry import (
     AnyTetMesh,
     AnyTriMesh,
     AnyVolumeMesh,
+    AttributeArray,
+    AttributesLike,
 )
 from ._types import (
     StrPath,
@@ -29,6 +31,8 @@ __all__ = [
     "AnyTetMesh",
     "AnyTriMesh",
     "AnyVolumeMesh",
+    "AttributeArray",
+    "AttributesLike",
     "StrPath",
     "full_name",
     "full_name_parts",

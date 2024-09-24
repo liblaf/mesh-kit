@@ -15,14 +15,14 @@ def icp_trimesh(
     max_iterations: int = 100,
     reflection: bool = False,
     scale: bool = True,
-    source_weight: nt.DN3Like | None = None,
-    target_weight: nt.DN3Like | None = None,
+    source_weight: nt.FN3Like | None = None,
+    target_weight: nt.FN3Like | None = None,
     threshold: float = 1e-6,
     translation: bool = True,
 ) -> RigidRegistrationResult:
     source: tm.Trimesh = _preprocess(source, source_weight)
     target: tm.Trimesh = _preprocess(target, target_weight)
-    matrix: nt.D44
+    matrix: nt.F44
     cost: float
     matrix, _transformed, cost = tm.registration.icp(
         source.vertices,
@@ -36,7 +36,7 @@ def icp_trimesh(
     return RigidRegistrationResult(transform=matrix, cost=cost)
 
 
-def _preprocess(mesh: Any, weight: nt.DN3Like | None = None) -> tm.Trimesh:
+def _preprocess(mesh: Any, weight: nt.FN3Like | None = None) -> tm.Trimesh:
     if weight is not None:
         logger.warning("Weight is not supported, using mask instead.")
     mesh: tm.Trimesh = mkit.io.trimesh.as_trimesh(

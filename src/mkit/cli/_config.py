@@ -20,7 +20,7 @@ class BaseConfig(ps.BaseSettings):
         return (
             init_settings,
             env_settings,
-            ps.YamlConfigSettingsSource(settings_cls),
             dotenv_settings,
             file_secret_settings,
+            ps.YamlConfigSettingsSource(settings_cls),
         )

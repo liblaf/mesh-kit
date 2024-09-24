@@ -15,10 +15,10 @@ FILTER: dict[str | None, str | int | bool] = {
 
 
 def init(level: str | int = logging.NOTSET, file: StrPath | None = None) -> None:
+    rich.traceback.install(show_locals=True)
     logger.remove()
     logger.add(sys.stderr, level=level, filter=FILTER)
     if file is not None:
         filepath: Path = Path(file)
         logger.add(filepath.open("w"), level=level, filter=FILTER)
     logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
-    rich.traceback.install(show_locals=True)

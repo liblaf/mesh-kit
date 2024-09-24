@@ -3,6 +3,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TypedDict, TypeVar, Unpack
 
+import rich.traceback
 from loguru import logger
 
 import mkit
@@ -28,6 +29,7 @@ def auto_run(
 
 
 def run(fn: Callable[[_C], _T], **kwargs: Unpack[Kwargs]) -> _T:
+    rich.traceback.install(show_locals=True)
     sig: inspect.Signature = inspect.signature(fn)
     annotation: type[_C] = sig.parameters["cfg"].annotation
     cfg: _C = annotation(**kwargs)

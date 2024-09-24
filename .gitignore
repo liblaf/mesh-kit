@@ -177,7 +177,6 @@ poetry.toml
 
 # pixi environments
 .pixi
-*.egg-info
 
 # pytest-benchmark
 .benchmarks/

@@ -19,7 +19,7 @@ def global_registration(
     source: Any,
     target: Any,
     *,
-    init: nt.D44Like | None = None,
+    init: nt.F44Like | None = None,
     inverse: bool = False,
     method: Literal["open3d"] = "open3d",
     normalize: bool = True,
@@ -38,11 +38,11 @@ def global_registration(
     target = pre.downsample_mesh(target)
     if init is None:
         init = tt.identity_matrix()
-    init: nt.D44 = np.asarray(init)
+    init: nt.F44 = np.asarray(init)
     source = source.transform(init, inplace=False, progress_bar=True)
     if normalize:
-        source_norm: nt.D44 = mkit.ops.transform.normalize_transform(source)
-        target_denorm: nt.D44 = mkit.ops.transform.denormalize_transform(target)
+        source_norm: nt.F44 = mkit.ops.transform.normalize_transform(source)
+        target_denorm: nt.F44 = mkit.ops.transform.denormalize_transform(target)
         source: pv.PolyData = mkit.ops.transform.normalize(source)
         target: pv.PolyData = mkit.ops.transform.normalize(target)
     else:

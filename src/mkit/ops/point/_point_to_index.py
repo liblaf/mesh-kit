@@ -5,7 +5,7 @@ import mkit.typing.numpy as nt
 
 
 def point_to_index(
-    points: nt.DN3Like, query: nt.DN3Like, *, tol: float = 1e-6
+    points: nt.FN3Like, query: nt.FN3Like, *, tol: float = 1e-6
 ) -> nt.IN3:
     scale: float = np.linalg.norm(np.ptp(points, axis=0))
     tree: KDTree = KDTree(points)

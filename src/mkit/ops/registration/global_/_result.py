@@ -8,4 +8,4 @@ class GlobalRegistrationResult:
     correspondence_set: nt.IN2
     fitness: float
     inlier_rmse: float
-    transform: nt.D44
+    transform: nt.F44

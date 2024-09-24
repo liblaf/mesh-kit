@@ -22,14 +22,14 @@ def rigid_registration(
     source: Any,
     target: Any,
     *,
-    init: nt.D44Like | None = None,
-    init_global: nt.D44Like | None = None,
+    init: nt.F44Like | None = None,
+    init_global: nt.F44Like | None = None,
     inverse: bool = False,
     method: Literal["open3d", "trimesh"] = "trimesh",
     reflection: bool = False,
     scale: bool = True,
-    source_weight: nt.DN3Like | None = None,
-    target_weight: nt.DN3Like | None = None,
+    source_weight: nt.FN3Like | None = None,
+    target_weight: nt.FN3Like | None = None,
     translation: bool = True,
     **kwargs,
 ) -> reg.RigidRegistrationResult:
@@ -60,7 +60,7 @@ def rigid_registration(
         )
         init = global_result.transform
     source: pv.PolyData = pre.downsample_mesh(source)
-    init: nt.D44 = np.asarray(init)
+    init: nt.F44 = np.asarray(init)
     source = source.transform(init, inplace=False, progress_bar=True)
     target: pv.PolyData = pre.downsample_mesh(target)
     fn = _METHODS[method]

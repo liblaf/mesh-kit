@@ -24,8 +24,9 @@ def convert(from_: Any, to: type[_T], *args, **kwargs) -> _T:
     for from_type in type(from_).mro():
         from_parts: str = mkit.typing.full_name_parts(from_type)
         for (f, t), fn in _REGISTRY.items():
-            if mkit.typing.is_subsequence(
-                f.split("."), from_parts
-            ) and mkit.typing.is_subsequence(t.split("."), to_parts):
+            if (
+                mkit.typing.is_instance_named_partial(from_, f)
+                and mkit.typing.is_instance_named_partial
+            ):
                 return fn(from_, *args, **kwargs)
     raise _t.UnsupportedConversionError(from_, to)
