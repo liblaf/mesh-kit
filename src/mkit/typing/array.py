@@ -2,6 +2,8 @@ import jax.typing as jxt
 import numpy.typing as npt
 from jaxtyping import Bool, Float, Integer, Shaped
 
+from mkit.typing import is_array_like
+
 ArrayLike = npt.ArrayLike | jxt.ArrayLike
 
 BLike = Bool[ArrayLike, ""]
@@ -57,4 +59,5 @@ __all__ = [
     "INLike",
     "Integer",
     "Shaped",
+    "is_array_like",
 ]

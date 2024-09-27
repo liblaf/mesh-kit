@@ -22,8 +22,8 @@ def rigid_registration(
     source: Any,
     target: Any,
     *,
+    estimate_init: bool = True,
     init: nt.F44Like | None = None,
-    init_global: nt.F44Like | None = None,
     inverse: bool = False,
     method: Literal["open3d", "trimesh"] = "trimesh",
     reflection: bool = False,
@@ -37,13 +37,10 @@ def rigid_registration(
     if inverse:
         if init is not None:
             init = tt.inverse_matrix(init)
-        if init_global is not None:
-            init_global = tt.inverse_matrix(init_global)
         result = rigid_registration(
             target,
             source,
             init=init,
-            init_global=init_global,
             method=method,
             reflection=reflection,
             scale=scale,
@@ -54,15 +51,14 @@ def rigid_registration(
         )
         result.transform = tt.inverse_matrix(result.transform)
         return result
+    source: pv.PolyData = pre.simplify_mesh(source)
+    target: pv.PolyData = pre.simplify_mesh(target)
     if init is None:
-        global_result: reg.GlobalRegistrationResult = reg.global_registration(
-            source, target, init=init_global
-        )
-        init = global_result.transform
-    source: pv.PolyData = pre.downsample_mesh(source)
+        init = tt.identity_matrix()
+    if estimate_init:
+        init = pre.estimate_transform(source, target, init)
     init: nt.F44 = np.asarray(init)
-    source = source.transform(init, inplace=False, progress_bar=True)
-    target: pv.PolyData = pre.downsample_mesh(target)
+    source = source.transform(init)
     fn = _METHODS[method]
     result = fn(
         source,

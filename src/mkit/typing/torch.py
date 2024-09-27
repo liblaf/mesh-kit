@@ -1,6 +1,7 @@
 import torch
 from jaxtyping import Bool, Float, Integer, Shaped
 
+from mkit.typing import is_array_like
 from mkit.typing.array import (
     ArrayLike,
     BLike,
@@ -102,4 +103,5 @@ __all__ = [
     "INLike",
     "Integer",
     "Shaped",
+    "is_array_like",
 ]

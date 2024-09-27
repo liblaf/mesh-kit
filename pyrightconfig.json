@@ -1,6 +1,12 @@
 {
   "typeCheckingMode": "standard",
-  "include": ["src"],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    "exp/2024/07",
+    "exp/2024/08"
+  ],
 
   "reportAssignmentType": "none",
   "reportPrivateImportUsage": "none",

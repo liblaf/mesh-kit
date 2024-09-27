@@ -16,10 +16,13 @@ from ._types import (
 )
 from ._utils import (
     full_name,
-    full_name_parts,
+    is_array_like,
+    is_class_named,
+    is_class_named_partial,
     is_instance_named,
     is_instance_named_partial,
-    is_subsequence,
+    is_named,
+    is_named_partial,
 )
 
 __all__ = [
@@ -35,10 +38,13 @@ __all__ = [
     "AttributesLike",
     "StrPath",
     "full_name",
-    "full_name_parts",
+    "is_array_like",
+    "is_class_named",
+    "is_class_named_partial",
     "is_instance_named",
     "is_instance_named_partial",
-    "is_subsequence",
+    "is_named",
+    "is_named_partial",
     "jax",
     "numpy",
 ]

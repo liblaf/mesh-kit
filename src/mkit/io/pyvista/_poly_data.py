@@ -7,8 +7,8 @@ import numpy as np
 import pyvista as pv
 
 import mkit
-import mkit.io._register as r
 import mkit.typing.numpy as nt
+from mkit.io._register import REGISTRY
 from mkit.io._typing import ClassName as C  # noqa: N814
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 def as_poly_data(mesh: AnySurfaceMesh) -> pv.PolyData:
-    return r.convert(mesh, pv.PolyData)
+    return REGISTRY.convert(mesh, pv.PolyData)
 
 
 def is_point_cloud(mesh: pv.PolyData) -> bool:
@@ -39,45 +39,27 @@ def is_point_cloud(mesh: pv.PolyData) -> bool:
     return (mesh.n_points + mesh.n_lines) == mesh.n_cells
 
 
-def read_poly_data(fpath: StrPath) -> pv.PolyData:
+def load_poly_data(fpath: StrPath) -> pv.PolyData:
     fpath: Path = Path(fpath)
     mesh: pv.PolyData
-    if fpath.suffix == ".obj":  # noqa: SIM108
-        mesh = read_obj(fpath)
-    else:
-        mesh = pv.read(fpath)
-    mesh.clean(inplace=True, progress_bar=True)
+    match fpath.suffix:
+        case ".obj":
+            mesh = mkit.io.pyvista.load_obj(fpath)
+        case _:
+            mesh = pv.read(fpath)
+    mesh = mesh.clean()
     return mesh
 
 
-def read_obj(fpath: StrPath) -> pv.PolyData:
-    fpath: Path = Path(fpath)
-    group_dup: list[str] = []
-    for line in mkit.utils.strip_comments(fpath.read_text()):
-        if line.startswith("g"):
-            words: list[str] = line.split()
-            if len(words) >= 2:
-                group_dup.append(words[1])
-            else:
-                group_dup.append(str(len(group_dup)))
-    mesh: pv.PolyData
-    if not group_dup:
-        mesh = pv.read(fpath)
-        return mesh
-    group_uniq: list[str] = list(dict.fromkeys(group_dup))
-    dup_to_uniq: dict[str, int] = {name: i for i, name in enumerate(group_uniq)}
-    mesh = pv.read(fpath)
-    group_id: nt.IN = mkit.math.numpy.cast(mesh.cell_data["GroupIds"], int)
-    group_id = np.asarray([dup_to_uniq[group_dup[i]] for i in group_id])
-    mesh.cell_data["GroupIds"] = group_id
-    mesh.field_data["GroupNames"] = group_uniq
-    return mesh
+REGISTRY.register(C.MESHIO, C.PYVISTA_POLY_DATA)(pv.wrap)
 
 
-r.register(C.MESHIO, C.PYVISTA_POLY_DATA)(pv.wrap)
+@REGISTRY.register(C.ARRAY_LIKE, C.PYVISTA_POLY_DATA, priority=-10)
+def array_to_poly_data(points: nt.FN3Like) -> pv.PolyData:
+    return pv.wrap(np.asarray(points))  # pyright: ignore [reportReturnType]
 
 
-@r.register(C.TRIMESH, C.PYVISTA_POLY_DATA)
+@REGISTRY.register(C.TRIMESH, C.PYVISTA_POLY_DATA)
 def trimesh_to_poly_data(mesh: tm.Trimesh) -> pv.PolyData:
     try:
         wrapped: pv.PolyData = pv.wrap(mesh)
@@ -87,7 +69,7 @@ def trimesh_to_poly_data(mesh: tm.Trimesh) -> pv.PolyData:
         return wrapped
 
 
-@r.register(C.OPEN3D_POINT_CLOUD, C.PYVISTA_POLY_DATA)
+@REGISTRY.register(C.OPEN3D_POINT_CLOUD, C.PYVISTA_POLY_DATA)
 def open3d_point_cloud_to_poly_data(mesh: Any) -> pv.PolyData:
     pcd: pv.PolyData = pv.wrap(mesh.points)
     return pcd

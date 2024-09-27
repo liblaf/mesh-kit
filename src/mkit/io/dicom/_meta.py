@@ -3,7 +3,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 
-class MetaAcquisition(BaseModel):
+class AcquisitionMeta(BaseModel):
     age: str
     birth_date: str
     date: str
@@ -13,13 +13,13 @@ class MetaAcquisition(BaseModel):
     time: str
 
 
-class MetaPatient(BaseModel):
-    acquisitions: list[MetaAcquisition] = []
+class PatientMeta(BaseModel):
+    acquisitions: list[AcquisitionMeta] = []
     birth_date: str
     id: str
     name: str
     sex: Literal["F", "M"]
 
 
-class MetaDataset(BaseModel):
-    patients: dict[str, MetaPatient] = {}
+class DatasetMeta(BaseModel):
+    patients: dict[str, PatientMeta] = {}

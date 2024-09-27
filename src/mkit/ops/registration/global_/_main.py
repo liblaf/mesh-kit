@@ -34,8 +34,8 @@ def global_registration(
         )
         result.transform = tt.inverse_matrix(result.transform)
         return result
-    source = pre.downsample_mesh(source)
-    target = pre.downsample_mesh(target)
+    source = pre.simplify_mesh(source)
+    target = pre.simplify_mesh(target)
     if init is None:
         init = tt.identity_matrix()
     init: nt.F44 = np.asarray(init)

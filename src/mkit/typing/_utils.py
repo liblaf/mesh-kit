@@ -1,6 +1,8 @@
 from collections.abc import Sequence
 from typing import Any
 
+import mkit
+
 
 def full_name(obj: Any) -> str:
     """Returns the fully qualified name of the given object.
@@ -23,33 +25,43 @@ def full_name(obj: Any) -> str:
     return clazz.__module__ + "." + clazz.__qualname__
 
 
-def full_name_parts(obj: Any) -> list[str]:
-    return full_name(obj).split(".")
+def is_array_like(obj: Any) -> bool:
+    return (
+        hasattr(obj, "__iter__")
+        and hasattr(obj, "__len__")
+        and not isinstance(obj, str | bytes)
+    )
 
 
-def is_instance_named(obj: Any, name: str | Sequence[str]) -> bool:
-    if isinstance(name, str):
-        name = [name]
-    return any((full_name(clazz) in name) for clazz in type(obj).mro())
+def is_class_named(cls: type, name: str | Sequence[str]) -> bool:
+    return any((full_name(cls) in mkit.utils.flatten(name)) for cls in cls.__mro__)
 
 
-def is_instance_named_partial(obj: Any, name: str | Sequence[str]) -> bool:
-    if isinstance(name, str):
-        name = [name]
-    for clazz in type(obj).mro():
-        obj_parts: list[str] = full_name_parts(clazz)
-        for n in name:
-            class_parts: list[str] = n.split(".")
-            if is_subsequence(class_parts, obj_parts):
+def is_class_named_partial(cls: type, name: str | Sequence[str]) -> bool:
+    for clazz in cls.__mro__:
+        class_parts: list[str] = full_name(clazz).split(".")
+        for n in mkit.utils.flatten(name):
+            name_parts: list[str] = n.split(".")
+            if mkit.utils.is_subsequence(class_parts, name_parts):
                 return True
     return False
 
 
-def is_subsequence(a: Sequence[Any], b: Sequence[Any]) -> bool:
-    i: int = 0
-    j: int = 0
-    while i < len(a) and j < len(b):
-        if a[i] == b[j]:
-            i += 1
-        j += 1
-    return i == len(a)
+def is_instance_named(obj: Any, name: str | Sequence[str]) -> bool:
+    return is_class_named(type(obj), name)
+
+
+def is_instance_named_partial(obj: Any, name: str | Sequence[str]) -> bool:
+    return is_class_named_partial(type(obj), name)
+
+
+def is_named(obj: Any, name: str | Sequence[str]) -> bool:
+    if isinstance(obj, type):
+        return is_class_named(obj, name)
+    return is_instance_named(obj, name)
+
+
+def is_named_partial(obj: Any, name: str | Sequence[str]) -> bool:
+    if isinstance(obj, type):
+        return is_class_named_partial(obj, name)
+    return is_instance_named_partial(obj, name)
