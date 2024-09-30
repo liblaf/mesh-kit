@@ -18,18 +18,11 @@ def as_meshes(mesh: Any) -> Meshes:
 
 @REGISTRY.register(C.PYVISTA_POLY_DATA, C.PYTORCH3D_MESHES)
 def pyvista_poly_data_to_pytorch3d(
-    mesh: pv.PolyData,
-    *,
-    device: str | torch.device = "cuda",
-    ftype: torch.dtype = torch.float32,
-    itype: torch.dtype = torch.int64,
-    progress_bar: bool = False,
+    mesh: pv.PolyData, *, progress_bar: bool = False
 ) -> Meshes:
     mesh = mesh.triangulate(progress_bar=progress_bar)
-    points: torch.Tensor = torch.as_tensor(mesh.points, ftype).reshape(
-        1, mesh.n_points, 3
-    )
-    faces: torch.Tensor = torch.as_tensor(mesh.regular_faces, itype).reshape(
+    points: torch.Tensor = torch.as_tensor(mesh.points).reshape(1, mesh.n_points, 3)
+    faces: torch.Tensor = torch.as_tensor(mesh.regular_faces).reshape(
         1, mesh.n_faces_strict, 3
     )
-    return Meshes(points, faces).to(device)
+    return Meshes(points, faces)

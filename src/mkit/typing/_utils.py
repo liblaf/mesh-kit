@@ -25,14 +25,6 @@ def full_name(obj: Any) -> str:
     return clazz.__module__ + "." + clazz.__qualname__
 
 
-def is_array_like(obj: Any) -> bool:
-    return (
-        hasattr(obj, "__iter__")
-        and hasattr(obj, "__len__")
-        and not isinstance(obj, str | bytes)
-    )
-
-
 def is_class_named(cls: type, name: str | Sequence[str]) -> bool:
     return any((full_name(cls) in mkit.utils.flatten(name)) for cls in cls.__mro__)
 

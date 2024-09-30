@@ -37,16 +37,10 @@ class StepParamsDict(TypedDict, total=False):
     weight_stiff: float
 
 
-class PointDataDict(TypedDict, total=False):
+class PointDataDict(TypedDict):
     threshold_distance: tt.FNLike
     threshold_normal: tt.FNLike
     weight: tt.FNLike
-
-
-class ParamsDict(TypedDict, total=False):
-    lr: float
-    point_data: PointDataDict
-    steps: Iterable[StepParamsDict]
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -54,7 +48,7 @@ class Params(Iterable[StepParams]):
     lr: float = 1e-4
     n_points: int
     point_data: PointDataDict = dataclasses.field(default_factory=dict)
-    steps: Iterable[StepParamsDict] = dataclasses.field(
+    steps: list[StepParamsDict] = dataclasses.field(
         default_factory=lambda: [
             {"weight_landmark": 5, "weight_stiff": 50},
             {"weight_landmark": 2, "weight_stiff": 20},
@@ -123,3 +117,7 @@ class Params(Iterable[StepParams]):
             self.point_data.get("threshold_normal", 1.0)
         )
         return torch.broadcast_to(value, (self.n_points,))
+
+
+params = Params(n_points=2)
+ic(list(params))

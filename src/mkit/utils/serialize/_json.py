@@ -1,17 +1,17 @@
 import json
-from pathlib import Path
+import pathlib
 from typing import Any
 
-from mkit.typing import StrPath
+import pydantic
 
 
-def load_json(fpath: StrPath, **kwargs) -> Any:
-    fpath: Path = Path(fpath)
+@pydantic.validate_call
+def load_json(fpath: pydantic.FilePath, **kwargs) -> Any:
     with fpath.open() as fp:
         return json.load(fp, **kwargs)
 
 
-def save_json(data: Any, fpath: StrPath, **kwargs) -> None:
-    fpath: Path = Path(fpath)
+@pydantic.validate_call
+def save_json(data: Any, fpath: pathlib.Path, **kwargs) -> None:
     with fpath.open("w") as fp:
         json.dump(data, fp, **kwargs)

@@ -12,7 +12,6 @@ from mkit.physics.model import Model
 
 if TYPE_CHECKING:
     import pyvista as pv
-    import scipy.sparse
     import sparse
 
 
@@ -72,7 +71,7 @@ def test_energy_hess_random(model: Model, disp_random: jax.Array) -> None:
 
 
 def test_energy_hess_zero(model: Model, disp_zero: jax.Array) -> None:
-    energy_hess_actual: scipy.sparse.coo_array = model.energy_hess(disp_zero)
+    energy_hess_actual: sparse.COO = model.energy_hess(disp_zero)
     energy_hess_desired: jax.Array = jax.hessian(energy_naive)(disp_zero, model)
     np.testing.assert_allclose(
         energy_hess_actual.todense(), energy_hess_desired, rtol=1e-14, atol=0

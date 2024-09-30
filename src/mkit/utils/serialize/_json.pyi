@@ -1,0 +1,6 @@
+from typing import Any
+
+from mkit.typing import StrPath
+
+def load_json(fpath: StrPath, **kwargs) -> Any: ...
+def save_json(data: Any, fpath: StrPath, **kwargs) -> None: ...

@@ -1,11 +1,11 @@
+from ._abc import RigidRegistrationMethod
 from ._main import rigid_registration
-from ._open3d import icp_open3d
 from ._result import RigidRegistrationResult
-from ._trimesh import icp_trimesh
+from ._trimesh import TrimeshICP
 
 __all__ = [
+    "RigidRegistrationMethod",
     "RigidRegistrationResult",
-    "icp_open3d",
-    "icp_trimesh",
+    "TrimeshICP",
     "rigid_registration",
 ]

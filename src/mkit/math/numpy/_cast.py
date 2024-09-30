@@ -1,9 +1,17 @@
 import numpy as np
 import numpy.typing as npt
 
+import mkit
+
 
 def as_bool(x: npt.ArrayLike) -> npt.NDArray[np.bool]:
     return cast(x, bool)
+
+
+def as_numpy(x: npt.ArrayLike) -> npt.NDArray[...]:
+    if mkit.typing.is_torch(x):
+        return x.numpy(force=True)
+    return np.asarray(x)
 
 
 def cast(x: npt.ArrayLike, dtype: npt.DTypeLike) -> npt.NDArray[...]:

@@ -1,16 +1,15 @@
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Literal
 
-import pyvista as pv
-
 import mkit
 import mkit.typing.numpy as nt
-from mkit.ops.registration.non_rigid import amberg_pytorch3d
+from mkit.ops.registration.non_rigid import (
+    NonRigidRegistrationResult,
+    amberg_pytorch3d,
+)
 
 if TYPE_CHECKING:
-    from mkit.ops.registration.non_rigid.amberg_pytorch3d._result import (
-        NonRigidRegistrationResult,
-    )
+    import pyvista as pv
 
 _METHODS: dict[str, Callable] = {"amberg": amberg_pytorch3d.nricp_amberg_pytorch3d}
 
@@ -20,7 +19,7 @@ def non_rigid_registration(
     target: Any,
     method: Literal["amberg"] = "amberg",
     params: amberg_pytorch3d.ParamsDict | None = None,
-) -> pv.PolyData:
+) -> NonRigidRegistrationResult:
     source: pv.PolyData = mkit.io.pyvista.as_poly_data(source)
     target: pv.PolyData = mkit.io.pyvista.as_poly_data(target)
     target_norm: nt.F44 = mkit.ops.transform.normalize_transform(target)
@@ -31,4 +30,4 @@ def non_rigid_registration(
     result: NonRigidRegistrationResult = fn(source, target, params)
     source.points = result.result
     source = source.transform(target_denorm, inplace=False)
-    return source
+    return NonRigidRegistrationResult(result=source.points)

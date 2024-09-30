@@ -1,8 +1,9 @@
+import pathlib
 from collections.abc import Callable
-from pathlib import Path
 from typing import Any
 
-from mkit.typing import StrPath
+import pydantic
+
 from mkit.utils import serialize
 
 _READERS: dict[str, Callable[..., Any]] = {
@@ -19,8 +20,8 @@ _WRITERS: dict[str, Callable[..., None]] = {
 }
 
 
-def load(fpath: StrPath, ext: str | None = None, **kwargs) -> Any:
-    fpath: Path = Path(fpath)
+@pydantic.validate_call
+def load(fpath: pydantic.FilePath, ext: str | None = None, **kwargs) -> Any:
     if ext is None:
         ext = fpath.suffix
     if ext not in _READERS:
@@ -30,8 +31,8 @@ def load(fpath: StrPath, ext: str | None = None, **kwargs) -> Any:
     return reader(fpath, **kwargs)
 
 
-def save(data: Any, fpath: StrPath, ext: str | None = None, **kwargs) -> None:
-    fpath: Path = Path(fpath)
+@pydantic.validate_call
+def save(data: Any, fpath: pathlib.Path, ext: str | None = None, **kwargs) -> None:
     if ext is None:
         ext = fpath.suffix
     if ext not in _WRITERS:

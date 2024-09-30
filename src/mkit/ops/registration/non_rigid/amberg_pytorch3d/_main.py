@@ -8,14 +8,14 @@ from pytorch3d.structures import Meshes
 
 import mkit
 import mkit.typing.torch as tt
+from mkit.ops.registration.non_rigid.amberg_pytorch3d import (
+    NonRigidRegistrationResult,
+)
 from mkit.ops.registration.non_rigid.amberg_pytorch3d._local_affine import LocalAffine
 from mkit.ops.registration.non_rigid.amberg_pytorch3d._params import (
     ParamsDict,
     ParamsSchema,
     StepParams,
-)
-from mkit.ops.registration.non_rigid.amberg_pytorch3d._result import (
-    NonRigidRegistrationResult,
 )
 
 

@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Any
 
 import trimesh as tm
@@ -5,35 +6,38 @@ from loguru import logger
 
 import mkit
 import mkit.typing.numpy as nt
-from mkit.ops.registration import RigidRegistrationResult
+from mkit.ops.registration import rigid
 
 
-def icp_trimesh(
-    source: Any,
-    target: Any,
-    *,
-    max_iterations: int = 100,
-    reflection: bool = False,
-    scale: bool = True,
-    source_weight: nt.FN3Like | None = None,
-    target_weight: nt.FN3Like | None = None,
-    threshold: float = 1e-6,
-    translation: bool = True,
-) -> RigidRegistrationResult:
-    source: tm.Trimesh = _preprocess(source, source_weight)
-    target: tm.Trimesh = _preprocess(target, target_weight)
-    matrix: nt.F44
-    cost: float
-    matrix, _transformed, cost = tm.registration.icp(
-        source.vertices,
-        target,
-        threshold=threshold,
-        max_iterations=max_iterations,
-        reflection=reflection,
-        scale=scale,
-        translation=translation,
-    )
-    return RigidRegistrationResult(transform=matrix, cost=cost)
+@dataclasses.dataclass(kw_only=True)
+class TrimeshICP(rigid.RigidRegistrationMethod):
+    max_iterations: int = 100
+    reflection: bool = False
+    scale: bool = True
+    threshold: float = 1e-6
+    translation: bool = True
+
+    def __call__(
+        self,
+        source: Any,
+        target: Any,
+        source_weight: nt.FNLike | None = None,
+        target_weight: nt.FNLike | None = None,
+    ) -> rigid.RigidRegistrationResult:
+        source: tm.Trimesh = _preprocess(source, source_weight)
+        target: tm.Trimesh = _preprocess(target, target_weight)
+        matrix: nt.F44
+        cost: float
+        matrix, _transformed, cost = tm.registration.icp(
+            source.vertices,
+            target,
+            threshold=self.threshold,
+            max_iterations=self.max_iterations,
+            reflection=self.reflection,
+            scale=self.scale,
+            translation=self.translation,
+        )
+        return rigid.RigidRegistrationResult(transform=matrix, cost=cost)
 
 
 def _preprocess(mesh: Any, weight: nt.FN3Like | None = None) -> tm.Trimesh:

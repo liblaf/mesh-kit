@@ -3,11 +3,8 @@ from pathlib import Path
 import numpy as np
 import pydantic_settings
 import pyvista as pv
-import torch
-import trimesh.transformations as tt
 
 import mkit
-import mkit.ops.registration.rigid as reg
 import mkit.typing.numpy as nt
 
 
@@ -47,7 +44,6 @@ def select_by_group_names(mesh: pv.PolyData, names: list[str]) -> nt.BN:
 
 
 def main(cfg: Config) -> None:
-    torch.set_default_device("cuda")
     source: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.source)
     target: pv.PolyData = mkit.ext.sculptor.get_template_face()
     mkit.io.save(target, "data/target.vtp")
@@ -57,16 +53,11 @@ def main(cfg: Config) -> None:
     source.cell_data["Weight"] = source_weight
     source = source.cell_data_to_point_data(pass_cell_data=True)
     mkit.io.save(source, "data/source.vtp")
-    res: reg.RigidRegistrationResult = reg.rigid_registration(
-        source,
-        target,
-        estimate_init=True,
-        init=tt.rotation_matrix(np.pi / 2, [1, 0, 0]),
-        source_weight=source.point_data["Weight"],
+    res: mkit.ops.registration.NonRigidRegistrationResult = (
+        mkit.ops.registration.non_rigid_registration(source, target)
     )
-    ic(res.cost)
-    result: pv.PolyData = source.transform(res.transform)
-    mkit.io.save(result, "data/rigid.vtp")
+    result: pv.PolyData = source.transform(res.result)
+    mkit.io.save(result, "data/non-rigid.vtp")
 
 
 mkit.cli.auto_run()(main)

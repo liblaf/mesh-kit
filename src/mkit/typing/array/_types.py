@@ -1,8 +1,6 @@
 import jax.typing as jxt
 import numpy.typing as npt
-from jaxtyping import Bool, Float, Integer, Shaped
-
-from mkit.typing import is_array_like
+from jaxtyping import Bool, Float, Integer
 
 ArrayLike = npt.ArrayLike | jxt.ArrayLike
 
@@ -30,34 +28,3 @@ IN2Like = Integer[ArrayLike, "N 2"]
 IN3Like = Integer[ArrayLike, "N 3"]
 IN4Like = Integer[ArrayLike, "N 4"]
 INLike = Integer[ArrayLike, "N"]
-
-__all__ = [
-    "ArrayLike",
-    "BLike",
-    "BNLike",
-    "Bool",
-    "F3Like",
-    "F4Like",
-    "F33Like",
-    "F34Like",
-    "F43Like",
-    "F44Like",
-    "FLike",
-    "FMN3Like",
-    "FMNLike",
-    "FN3Like",
-    "FNLike",
-    "FNNLike",
-    "Float",
-    "I2Like",
-    "I3Like",
-    "I4Like",
-    "ILike",
-    "IN2Like",
-    "IN3Like",
-    "IN4Like",
-    "INLike",
-    "Integer",
-    "Shaped",
-    "is_array_like",
-]

@@ -8,7 +8,8 @@
     "exp/2024/08"
   ],
 
-  "reportAssignmentType": "none",
+  "reportArgumentType": "information",
+  "reportAssignmentType": "information",
   "reportPrivateImportUsage": "none",
   "reportRedeclaration": "none"
 }

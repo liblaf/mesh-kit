@@ -1,4 +1,9 @@
-from ._main import NonRigidRegistrationResult, non_rigid_registration
-from .amberg_pytorch3d import ParamsDict
+from ._abc import NonRigidRegistrationMethod
+from ._main import non_rigid_registration
+from ._result import NonRigidRegistrationResult
 
-__all__ = ["NonRigidRegistrationResult", "ParamsDict", "non_rigid_registration"]
+__all__ = [
+    "NonRigidRegistrationMethod",
+    "NonRigidRegistrationResult",
+    "non_rigid_registration",
+]

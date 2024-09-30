@@ -22,7 +22,9 @@ for path in sorted(pkg_dir.rglob("*.py")):
         full_doc_path = full_doc_path.with_name("README.md")
     elif parts[-1].startswith("_"):
         continue
-    nav_parts: tuple[str, ...] = (".".join(parts[:i]) for i in range(1, len(parts) + 1))
+    nav_parts: tuple[str, ...] = tuple(
+        ".".join(parts[:i]) for i in range(1, len(parts) + 1)
+    )
     nav[nav_parts] = doc_path.as_posix()
     with editor.open(full_doc_path.as_posix(), "w") as fd:
         identifier: str = ".".join(parts)
