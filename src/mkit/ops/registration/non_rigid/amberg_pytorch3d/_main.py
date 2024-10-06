@@ -33,6 +33,13 @@ class Amberg(nr.NonRigidRegistrationMethod):
     ) -> None:
         self._source = mkit.io.pyvista.as_poly_data(source)
         self._target = mkit.io.pyvista.as_poly_data(target)
+        self._target = mkit.ops.registration.preprocess.simplify_mesh(
+            self._target,
+            density=2
+            * self._source.n_faces_strict
+            * self._source.length**2
+            / self._source.area,
+        )
         self.params = p.Params(
             n_points=self.n_points,
             normalization_transformation=self.normalization_transformation,

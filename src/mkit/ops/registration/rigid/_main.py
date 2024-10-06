@@ -1,8 +1,11 @@
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
+import trimesh as tm
 import trimesh.transformations as tt
+from loguru import logger
 
+import mkit
 import mkit.ops.registration.preprocess as pre
 import mkit.typing.numpy as nt
 from mkit.ops.registration import rigid
@@ -37,18 +40,27 @@ def rigid_registration(
         )
         result.transform = tt.inverse_matrix(result.transform)
         return result
-    source: pv.PolyData = pre.simplify_mesh(source)
-    target: pv.PolyData = pre.simplify_mesh(target)
+    source: tm.Trimesh = _preprocess(source, source_weight)
+    target: tm.Trimesh = _preprocess(target, target_weight)
+    source_simplified: pv.PolyData = pre.simplify_mesh(source)
+    target_simplified: pv.PolyData = pre.simplify_mesh(target)
     if init is None:
         init = tt.identity_matrix()
     if estimate_init:
-        init = pre.estimate_transform(source, target, init)
+        init = pre.estimate_transform(source_simplified, target_simplified, init)
     init: nt.F44 = np.asarray(init)
-    source = source.transform(init)
+    source_simplified = source_simplified.transform(init)
     if method is None:
         method = rigid.TrimeshICP()
-    result = method(
-        source, target, source_weight=source_weight, target_weight=target_weight
-    )
+    result = method(source_simplified, target_simplified)
     result.transform = tt.concatenate_matrices(result.transform, init)
     return result
+
+
+def _preprocess(mesh: Any, weight: nt.FN3Like | None = None) -> tm.Trimesh:
+    if weight is not None:
+        logger.warning("Weight is not supported, using mask instead.")
+    mesh: tm.Trimesh = mkit.io.trimesh.as_trimesh(
+        mkit.ops.registration.preprocess.mask_points(mesh, weight)
+    )
+    return mesh
