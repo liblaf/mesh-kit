@@ -16,7 +16,7 @@ class Config(mkit.cli.BaseConfig):
 
 def main(cfg: Config) -> None:
     source: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.source)
-    target: pv.PolyData = mkit.ext.sculptor.get_template_mandible()
+    target: pv.PolyData = mkit.ext.sculptor.get_template_maxilla()
     target.triangulate(inplace=True)
     target.cell_data.update(
         mkit.ops.transfer.surface_to_surface(

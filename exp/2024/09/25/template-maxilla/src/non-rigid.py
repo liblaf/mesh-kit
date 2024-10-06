@@ -27,7 +27,7 @@ GROUPS_FREE: list[str] = ["upperTeeth"]
 
 def main(cfg: Config) -> None:
     source: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.source)
-    target: pv.PolyData = mkit.ext.sculptor.get_template_mandible()
+    target: pv.PolyData = mkit.ext.sculptor.get_template_maxilla()
     mkit.io.save(target, "data/target.vtp")
     mkit.io.save(source, "data/non-rigid-source.vtp")
     source_weight: nt.FN = np.ones((source.n_faces_strict,))

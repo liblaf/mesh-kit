@@ -2,7 +2,7 @@ steps:
   - optim_params:
       weight_landmark: 5
       weight_stiff: 50
-    weight_normal: 0.1
+    weight_normal: 0.0
   - optim_params:
       weight_landmark: 0.5
       weight_stiff: 5
