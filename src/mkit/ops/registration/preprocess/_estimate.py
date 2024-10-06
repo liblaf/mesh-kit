@@ -20,8 +20,8 @@ def estimate_transform(
     init = np.asarray(init) if init is not None else tt.identity_matrix()
     source = source.transform(init, inplace=False)
     trans: nt.F44 = tt.concatenate_matrices(
-        mkit.ops.transform.denormalize_transform(target),
-        mkit.ops.transform.normalize_transform(source),
+        mkit.ops.transform.denorm_transformation(target),
+        mkit.ops.transform.norm_transformation(source),
         init,
     )
     return trans

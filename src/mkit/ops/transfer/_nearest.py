@@ -12,12 +12,12 @@ from mkit.typing import AttributeArray, AttributesLike
 
 if TYPE_CHECKING:
     import pyvista as pv
-    from jaxtyping import Shaped
 
 
 @dataclasses.dataclass(kw_only=True)
 class C2CNearest(C2CMethod):
     distance_threshold: float = 0.1
+    fill_value: nt.ArrayLike = np.nan
 
     def __call__(
         self, source: Any, target: Any, data: AttributesLike | None = None
@@ -38,19 +38,23 @@ class C2CNearest(C2CMethod):
                 "Some cells are not within the distance threshold: {}",
                 self.distance_threshold,
             )
-        target_cell_data: dict[str, Shaped[np.ndarray, "V ..."]] = {}
+        target_cell_data: dict[str, nt.Shaped[np.ndarray, "V ..."]] = {}
         for k, v in data.items():
-            data: Shaped[np.ndarray, "V ..."] = np.asarray(v)[idx]
+            data: nt.Shaped[np.ndarray, "V ..."] = np.asarray(v)[idx]
             target_cell_data[k] = data
-            target_cell_data[k][~valid] = np.nan
+            if not valid.all():
+                target_cell_data[k][~valid] = self.fill_value
         return target_cell_data
 
 
 @dataclasses.dataclass(kw_only=True)
 class P2PNearest(P2PMethod):
     distance_threshold: float = 0.1
+    fill_value: nt.ArrayLike = np.nan
 
     def __call__(
         self, source: Any, target: Any, data: AttributesLike | None = None
     ) -> dict[str, AttributeArray]:
+        if not data:
+            return {}
         raise NotImplementedError

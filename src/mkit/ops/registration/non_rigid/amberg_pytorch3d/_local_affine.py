@@ -1,6 +1,5 @@
 import torch
 
-import mkit
 import mkit.typing.numpy as nt
 import mkit.typing.torch as tt
 
@@ -8,14 +7,14 @@ import mkit.typing.torch as tt
 class LocalAffine(torch.nn.Module):
     A: tt.Float[torch.Tensor, "V 3 3"]
     b: tt.FN3
-    edges: nt.IN2
+    edges: tt.IN2
     n_points: int
 
     def __init__(self, n_points: int, edges: nt.IN2Like) -> None:
         super().__init__()
         self.A = torch.nn.Parameter(torch.eye(3).tile(n_points, 1, 1))
         self.b = torch.nn.Parameter(torch.zeros(n_points, 3))
-        self.edges = mkit.math.numpy.as_numpy(edges)
+        self.edges = torch.as_tensor(edges).reshape((-1, 2))
         self.n_points = n_points
 
     def forward(self, points: tt.FN3Like) -> tt.FN3:

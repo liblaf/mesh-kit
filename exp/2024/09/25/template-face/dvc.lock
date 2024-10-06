@@ -1,0 +1,79 @@
+schema: '2.0'
+stages:
+  rigid:
+    cmd: python src/rigid.py --output data/rigid.vtp 
+      /home/liblaf/.local/opt/Wrap/Gallery/TexturingXYZ/XYZ_ReadyToSculpt_eyesOpen_PolyGroups_GEO.obj
+    deps:
+    - path: 
+        /home/liblaf/.local/opt/Wrap/Gallery/TexturingXYZ/XYZ_ReadyToSculpt_eyesOpen_PolyGroups_GEO.obj
+      hash: md5
+      md5: 1881671cb9f3a5be0202d0a7f1393add
+      size: 1864607
+    - path: src/rigid.py
+      hash: md5
+      md5: 2db9f95f965860425bfdc9e82fafe185
+      size: 2068
+    outs:
+    - path: data/rigid.vtp
+      hash: md5
+      md5: ebf85435f508148c850b81c2861ab460
+      size: 531249
+  non-rigid:
+    cmd: python src/non-rigid.py --output data/non-rigid.vtp --source data/rigid.vtp
+    deps:
+    - path: data/rigid.vtp
+      hash: md5
+      md5: ebf85435f508148c850b81c2861ab460
+      size: 531249
+    - path: src/non-rigid.py
+      hash: md5
+      md5: fa44c34998395e6770c04ab2775a0b60
+      size: 2229
+    params:
+      params/non-rigid.yaml:
+        steps:
+        - optim_params:
+            weight_landmark: 5
+            weight_stiff: 50
+        - optim_params:
+            weight_landmark: 0.5
+            weight_stiff: 5
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 2
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.8
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.5
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.35
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.2
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.1
+    outs:
+    - path: data/non-rigid.vtp
+      hash: md5
+      md5: 8bef4685e36e5029ac8f403aa629ef90
+      size: 541212
+  transfer:
+    cmd: python src/transfer.py --output data/transfer.vtp --source data/non-rigid.vtp
+    deps:
+    - path: data/non-rigid.vtp
+      hash: md5
+      md5: 8bef4685e36e5029ac8f403aa629ef90
+      size: 541212
+    - path: src/transfer.py
+      hash: md5
+      md5: ed491a40052a3c50864bbd3ec117b494
+      size: 846
+    outs:
+    - path: data/transfer.vtp
+      hash: md5
+      md5: bbbf19cdef74214bcc63c05e3555cfc2
+      size: 480128

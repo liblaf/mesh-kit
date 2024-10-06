@@ -1,7 +1,10 @@
+import jax
 import meshio
+import numpy as np
 import open3d as o3d
 import pytorch3d.structures
 import pyvista as pv
+import torch
 import trimesh as tm
 
 TYPES: list[type] = [
@@ -13,6 +16,9 @@ TYPES: list[type] = [
     pv.PolyData,
     pv.UnstructuredGrid,
     tm.Trimesh,
+    jax.Array,
+    np.ndarray,
+    torch.Tensor,
 ]
 
 

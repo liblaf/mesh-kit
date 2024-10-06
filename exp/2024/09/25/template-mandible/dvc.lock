@@ -1,0 +1,78 @@
+schema: '2.0'
+stages:
+  rigid:
+    cmd: python src/rigid.py --output data/rigid.vtp /home/liblaf/.local/opt/Wrap/Gallery/Basemeshes/WrapJaw.obj
+    deps:
+    - path: /home/liblaf/.local/opt/Wrap/Gallery/Basemeshes/WrapJaw.obj
+      hash: md5
+      md5: 8cbbe9b10dcfb4e94237faf45f46683d
+      size: 198154
+    - path: src/rigid.py
+      hash: md5
+      md5: 804db2bf836ab0ffdf158812d044df96
+      size: 1452
+    outs:
+    - path: data/rigid.vtp
+      hash: md5
+      md5: 2b69350a0caf0df958fc4fff865c64fb
+      size: 54147
+  non-rigid:
+    cmd: python src/non-rigid.py --output data/non-rigid.vtp --source data/rigid.vtp
+    deps:
+    - path: data/rigid.vtp
+      hash: md5
+      md5: 2b69350a0caf0df958fc4fff865c64fb
+      size: 54147
+    - path: src/non-rigid.py
+      hash: md5
+      md5: 2c01581e75ac1b388b1a42a992af518b
+      size: 1611
+    params:
+      params/non-rigid.yaml:
+        steps:
+        - optim_params:
+            weight_landmark: 5
+            weight_stiff: 50
+          weight_normal: 0.1
+        - optim_params:
+            weight_landmark: 0.5
+            weight_stiff: 5
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 2
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.8
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.5
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.35
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.2
+        - optim_params:
+            weight_landmark: 0
+            weight_stiff: 0.1
+    outs:
+    - path: data/non-rigid.vtp
+      hash: md5
+      md5: 61c5c89298c047e559da37a63db60b1b
+      size: 54184
+  transfer:
+    cmd: python src/transfer.py --output data/transfer.vtp --source data/non-rigid.vtp
+    deps:
+    - path: data/non-rigid.vtp
+      hash: md5
+      md5: 61c5c89298c047e559da37a63db60b1b
+      size: 54184
+    - path: src/transfer.py
+      hash: md5
+      md5: bc10f2e3325a5f783d2a7f195e088742
+      size: 850
+    outs:
+    - path: data/transfer.vtp
+      hash: md5
+      md5: 0a1f1a6e9be0a91b09d4fdc9b6437df6
+      size: 507457

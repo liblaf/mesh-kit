@@ -1,6 +1,6 @@
 from . import func, iter, serialize, text
 from .func import kwargs_to_positional
-from .iter import flatten, is_subsequence
+from .iter import flatten, is_subsequence, merge_mapping
 from .live import Live
 from .serialize import (
     load,
@@ -28,6 +28,7 @@ __all__ = [
     "load_pydantic",
     "load_toml",
     "load_yaml",
+    "merge_mapping",
     "save",
     "save_json",
     "save_pydantic",

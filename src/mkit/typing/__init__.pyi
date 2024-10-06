@@ -24,6 +24,8 @@ from ._utils import (
     is_named_partial,
 )
 from .array import is_array_like
+from .jax import is_jax
+from .numpy import is_numpy
 from .torch import is_torch
 
 __all__ = [
@@ -45,8 +47,10 @@ __all__ = [
     "is_class_named_partial",
     "is_instance_named",
     "is_instance_named_partial",
+    "is_jax",
     "is_named",
     "is_named_partial",
+    "is_numpy",
     "is_torch",
     "jax",
     "numpy",

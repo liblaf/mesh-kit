@@ -41,8 +41,8 @@ def global_registration(
     init: nt.F44 = np.asarray(init)
     source = source.transform(init, inplace=False, progress_bar=True)
     if normalize:
-        source_norm: nt.F44 = mkit.ops.transform.normalize_transform(source)
-        target_denorm: nt.F44 = mkit.ops.transform.denormalize_transform(target)
+        source_norm: nt.F44 = mkit.ops.transform.norm_transformation(source)
+        target_denorm: nt.F44 = mkit.ops.transform.denorm_transformation(target)
         source: pv.PolyData = mkit.ops.transform.normalize(source)
         target: pv.PolyData = mkit.ops.transform.normalize(target)
     else:

@@ -12,6 +12,8 @@ from mkit.io._register import REGISTRY
 from mkit.io._typing import ClassName as C  # noqa: N814
 
 if TYPE_CHECKING:
+    import open3d as o3d
+    import pytorch3d.structures
     import trimesh as tm
 
     from mkit.typing import AnySurfaceMesh, StrPath
@@ -70,6 +72,14 @@ def trimesh_to_poly_data(mesh: tm.Trimesh) -> pv.PolyData:
 
 
 @REGISTRY.register(C.OPEN3D_POINT_CLOUD, C.PYVISTA_POLY_DATA)
-def open3d_point_cloud_to_poly_data(mesh: Any) -> pv.PolyData:
+def open3d_point_cloud_to_poly_data(mesh: o3d.geometry.PointCloud) -> pv.PolyData:
     pcd: pv.PolyData = pv.wrap(mesh.points)
     return pcd
+
+
+@REGISTRY.register(C.PYTORCH3D_MESHES, C.PYVISTA_POLY_DATA)
+def pytorch3d_meshes_to_poly_data(mesh: pytorch3d.structures.Meshes) -> pv.PolyData:
+    return pv.PolyData.from_regular_faces(
+        mesh.verts_packed().numpy(force=True),  # pyright: ignore [reportOptionalMemberAccess]
+        mesh.faces_packed().numpy(force=True),  # pyright: ignore [reportOptionalMemberAccess]
+    )

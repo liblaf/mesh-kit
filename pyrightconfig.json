@@ -1,12 +1,6 @@
 {
   "typeCheckingMode": "standard",
-  "exclude": [
-    "**/node_modules",
-    "**/__pycache__",
-    "**/.*",
-    "exp/2024/07",
-    "exp/2024/08"
-  ],
+  "include": ["src", "tools", "exp/2024/09/25"],
 
   "reportArgumentType": "information",
   "reportAssignmentType": "information",

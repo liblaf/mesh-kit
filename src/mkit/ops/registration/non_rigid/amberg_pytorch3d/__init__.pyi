@@ -1,4 +1,4 @@
-from ._main import nricp_amberg_pytorch3d
+from ._main import Amberg
 from ._params import ParamsDict
 
-__all__ = ["ParamsDict", "nricp_amberg_pytorch3d"]
+__all__ = ["Amberg", "ParamsDict"]

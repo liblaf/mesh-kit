@@ -13,6 +13,7 @@ import mkit.typing.numpy as nt
 
 class Config(mkit.cli.BaseConfig):
     source: pydantic_settings.CliPositionalArg[Path]
+    output: Path = Path("data/rigid.vtp")
 
 
 GROUP_NAMES_MATCH: list[str] = [
@@ -66,7 +67,7 @@ def main(cfg: Config) -> None:
     )
     ic(res.cost)
     result: pv.PolyData = source.transform(res.transform)
-    mkit.io.save(result, "data/rigid.vtp")
+    mkit.io.save(result, cfg.output)
 
 
 mkit.cli.auto_run()(main)

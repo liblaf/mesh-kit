@@ -1,13 +1,16 @@
 import collections
-from typing import Literal, Self
+from typing import Any, Literal, Self
 
 import dvclive
 import numpy.typing as npt
+from loguru import logger
+
+import mkit
 
 
 class Live:
     _live: dvclive.Live | None = None
-    array: collections.defaultdict[str, list[npt.NDArray]]
+    records: dict[int, dict[str, Any]]
     enable: bool = True
 
     def __init__(
@@ -24,7 +27,7 @@ class Live:
         resume: bool = False,
         save_dvc_exp: bool = True,
     ) -> None:
-        self.array = collections.defaultdict(list)
+        self.records = collections.defaultdict(dict)
         self.enable = enable
         if enable:
             self._live = dvclive.Live(
@@ -42,36 +45,60 @@ class Live:
             self._live = None
 
     def __enter__(self) -> Self:
-        if self._live:
-            self._live.__enter__()
+        if self._live is None:
+            return self
+        self._live.__enter__()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        if self._live:
-            self._live.__exit__(exc_type, exc_val, exc_tb)
+        if self._live is None:
+            return
+        self._live.__exit__(exc_type, exc_val, exc_tb)
 
     def end(self) -> None:
-        if self._live:
-            self._live.end()
+        if self._live is None:
+            return
+        self._live.end()
 
-    def log_array(self, name: float | str) -> None:
-        if self.enable:
-            self.array[name].append(name)
+    def log_array(self, name: str, array: npt.ArrayLike) -> None:
+        if not self.enable:
+            return
+        self.records[self.step][name] = mkit.math.as_numpy(array)
 
     def log_metric(
         self,
         name: str,
-        val: float | str,
+        val: Any,
         *,
         timestamp: bool = False,
         plot: bool = True,
     ) -> None:
-        if self._live:
-            self._live.log_metric(name, val, timestamp=timestamp, plot=plot)
+        if self._live is None:
+            return
+        val: int | float | str = mkit.math.as_scalar(val)
+        self.records[self.step][name] = val
+        self._live.log_metric(name, val, timestamp=timestamp, plot=plot)
 
     def next_step(self, *, milestone: bool = True) -> None:
+        if self._live is None:
+            return
+        if milestone:
+            metrics: str = ""
+            for k, v in self.records[self.step].items():
+                metrics += f"{k}: {v}\n"
+            self._live.make_report()
+            logger.info("step {}: {}", self.step, metrics)
+            self._live.next_step()
+        else:
+            self._live.step += 1
+
+    @property
+    def step(self) -> int:
         if self._live:
-            if milestone:
-                self._live.next_step()
-            else:
-                self._live.step += 1
+            return self._live.step
+        return 0
+
+    @step.setter
+    def step(self, step: int) -> None:
+        if self._live:
+            self._live.step = step

@@ -1,5 +1,5 @@
 import dataclasses
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import numpy as np
 import trimesh as tm
@@ -10,23 +10,24 @@ import mkit.typing.numpy as nt
 from mkit.ops.transfer._abc import C2CMethod, P2PMethod
 from mkit.typing import AttributeArray, AttributesLike
 
-if TYPE_CHECKING:
-    from jaxtyping import Shaped
-
 
 @dataclasses.dataclass(kw_only=True)
 class C2CBarycentric(C2CMethod):
     distance_threshold: float = 0.1
+    fill_value: nt.ArrayLike = np.nan
 
     def __call__(
         self, source: Any, target: Any, data: AttributesLike | None = None
     ) -> dict[str, AttributeArray]:
+        if not data:
+            return {}
         raise NotImplementedError
 
 
 @dataclasses.dataclass(kw_only=True)
 class P2PBarycentric(P2PMethod):
     distance_threshold: float = 0.1
+    fill_value: nt.ArrayLike = np.nan
 
     def __call__(
         self, source: Any, target: Any, data: AttributesLike | None = None
@@ -51,10 +52,11 @@ class P2PBarycentric(P2PMethod):
                 self.distance_threshold,
             )
         for k, v in data.items():
-            data: Shaped[np.ndarray, "V 3 ..."] = np.asarray(v)[faces]  # (V, 3, ...)
-            data_interp: Shaped[np.ndarray, "V 3 ..."] = np.einsum(
+            data: nt.Shaped[np.ndarray, "V 3 ..."] = np.asarray(v)[faces]  # (V, 3, ...)
+            data_interp: nt.Shaped[np.ndarray, "V 3 ..."] = np.einsum(
                 "ij,ij...->i...", barycentric, data
             )
             target_point_data[k] = mkit.math.numpy.cast(data_interp, data.dtype)
-            target_point_data[k][~valid] = np.nan
+            if not valid.all():
+                target_point_data[k][~valid] = self.fill_value
         return target_point_data

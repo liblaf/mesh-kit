@@ -9,4 +9,4 @@ if TYPE_CHECKING:
 
 
 def is_torch(obj: Any) -> TypeGuard[torch.Tensor]:
-    return mkit.typing.is_instance_named(obj, "torch.Tensor")
+    return mkit.typing.is_instance_named_partial(obj, "torch.Tensor")
