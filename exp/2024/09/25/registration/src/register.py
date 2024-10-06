@@ -5,7 +5,6 @@ from typing import Any
 import numpy as np
 import pydantic
 import pyvista as pv
-import trimesh.transformations as tr
 
 import mkit
 import mkit.typing.numpy as nt
@@ -37,13 +36,13 @@ def load_non_rigid_params(component: str) -> Any:
 
 
 def rigid_registration(
-    source: pv.PolyData, target: pv.PolyData, component: str
+    source: pv.PolyData, target: pv.PolyData, *, estimate_init: bool = True
 ) -> mkit.ops.registration.RigidRegistrationResult:
     result: mkit.ops.registration.rigid.RigidRegistrationResult = (
         mkit.ops.registration.rigid.rigid_registration(
             source,
             target,
-            estimate_init=True,
+            estimate_init=estimate_init,
             source_weight=source.point_data["Weight"],
         )
     )
@@ -94,7 +93,7 @@ def main(cfg: Config) -> None:
             face: pv.PolyData = ct_to_surface(acq.ct, -200)
             mkit.io.save(face, f"data/patients/{patient.id}/{acq.date}/00-face.vtp")
             face_rigid_result: mkit.ops.registration.RigidRegistrationResult = (
-                rigid_registration(template_face, face, "face")
+                rigid_registration(template_face, face)
             )
             face_rigid: pv.PolyData = template_face.transform(
                 face_rigid_result.transform, inplace=False
@@ -113,7 +112,7 @@ def main(cfg: Config) -> None:
             skull: pv.PolyData = ct_to_surface(acq.ct, 200)
             mkit.io.save(skull, f"data/patients/{patient.id}/{acq.date}/00-skull.vtp")
             skull_rigid_result: mkit.ops.registration.RigidRegistrationResult = (
-                rigid_registration(template_maxilla, skull, "mandible")
+                rigid_registration(template_maxilla, skull)
             )
             rigid_maxilla: pv.PolyData = template_maxilla.transform(
                 skull_rigid_result.transform, inplace=False
@@ -132,6 +131,12 @@ def main(cfg: Config) -> None:
 
             rigid_mandible: pv.PolyData = template_mandible.transform(
                 skull_rigid_result.transform, inplace=False
+            )
+            mandible_rigid_result: mkit.ops.registration.RigidRegistrationResult = (
+                rigid_registration(rigid_mandible, skull, estimate_init=False)
+            )
+            rigid_mandible = rigid_mandible.transform(
+                mandible_rigid_result.transform, inplace=False
             )
             mkit.io.save(
                 rigid_mandible,

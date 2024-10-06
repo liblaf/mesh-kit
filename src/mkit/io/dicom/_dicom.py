@@ -87,7 +87,7 @@ class DICOMDataset(Mapping[str, Patient]):
         return Patient(self.dpath / patient_id)
 
     def __iter__(self) -> Iterator[str]:
-        yield from self.meta.patients.keys()
+        yield from sorted(self.meta.patients.keys())
 
     def __len__(self) -> int:
         return len(self.meta.patients)

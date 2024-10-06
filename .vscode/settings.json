@@ -1,4 +1,7 @@
 {
+  "[yaml]": {
+    "editor.tabSize": 2
+  },
   "files.associations": {
     "*.wrap": "json"
   },

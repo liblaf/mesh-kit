@@ -44,7 +44,7 @@ class OptimParamsDict(TypedDict, total=False):
 @dataclasses.dataclass(kw_only=True)
 class ICPParams:
     eps: float = 1e-4
-    max_iter: int = 10
+    max_iter: int = 7
     optim_params: OptimParams
     weight_normal: float = 0.0
 
@@ -97,7 +97,7 @@ class Params(Iterable[ICPParams]):
     def make_step_params(self, kwargs: ICPParamsDict) -> ICPParams:
         return ICPParams(
             eps=kwargs.get("eps", 1e-4),
-            max_iter=kwargs.get("max_iter", 10),
+            max_iter=kwargs.get("max_iter", 7),
             optim_params=self.make_optim_params(kwargs.get("optim_params", {})),
             weight_normal=kwargs.get("weight_normal", 0.0),
         )
