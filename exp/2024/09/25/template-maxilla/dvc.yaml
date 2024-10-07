@@ -1,8 +1,8 @@
 metrics:
-- dvclive/metrics.json
+  - dvclive/metrics.json
 plots:
-- dvclive/plots/metrics:
-    x: step
+  - dvclive/plots/metrics:
+      x: step
 stages:
   rigid:
     cmd: >-
@@ -10,10 +10,10 @@ stages:
       --output data/rigid.vtp
       /home/liblaf/.local/opt/Wrap/Gallery/Basemeshes/WrapSkull.obj
     deps:
-    - /home/liblaf/.local/opt/Wrap/Gallery/Basemeshes/WrapSkull.obj
-    - src/rigid.py
+      - /home/liblaf/.local/opt/Wrap/Gallery/Basemeshes/WrapSkull.obj
+      - src/rigid.py
     outs:
-    - data/rigid.vtp
+      - data/rigid.vtp
 
   non-rigid:
     cmd: >-
@@ -21,12 +21,12 @@ stages:
       --output data/non-rigid.vtp
       --source data/rigid.vtp
     deps:
-    - data/rigid.vtp
-    - src/non-rigid.py
+      - data/rigid.vtp
+      - src/non-rigid.py
     params:
-    - params/non-rigid.yaml:
+      - params/non-rigid.yaml:
     outs:
-    - data/non-rigid.vtp
+      - data/non-rigid.vtp
 
   transfer:
     cmd: >-
@@ -34,7 +34,7 @@ stages:
       --output data/transfer.vtp
       --source data/non-rigid.vtp
     deps:
-    - data/non-rigid.vtp
-    - src/transfer.py
+      - data/non-rigid.vtp
+      - src/transfer.py
     outs:
-    - data/transfer.vtp
+      - data/transfer.vtp
