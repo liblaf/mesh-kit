@@ -1,10 +1,10 @@
 schema: '2.0'
 stages:
   rigid:
-    cmd: python src/rigid.py --output data/rigid.vtp 
+    cmd: python src/rigid.py --output data/rigid.vtp
       /home/liblaf/.local/opt/Wrap/Gallery/TexturingXYZ/XYZ_ReadyToSculpt_eyesOpen_PolyGroups_GEO.obj
     deps:
-    - path: 
+    - path:
         /home/liblaf/.local/opt/Wrap/Gallery/TexturingXYZ/XYZ_ReadyToSculpt_eyesOpen_PolyGroups_GEO.obj
       hash: md5
       md5: 1881671cb9f3a5be0202d0a7f1393add

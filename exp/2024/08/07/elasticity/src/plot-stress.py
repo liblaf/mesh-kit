@@ -99,14 +99,12 @@ nh_jac = jax.jacobian(nh)
 
 
 def main() -> None:
-    points = np.asarray(
-        [
-            [1 / np.sqrt(3), 0, 0],
-            [-0.5 / np.sqrt(3), 0, 0.5],
-            [-0.5 / np.sqrt(3), 0, -0.5],
-            [0, np.sqrt(2 / 3), 0],
-        ]
-    )
+    points = np.asarray([
+        [1 / np.sqrt(3), 0, 0],
+        [-0.5 / np.sqrt(3), 0, 0.5],
+        [-0.5 / np.sqrt(3), 0, -0.5],
+        [0, np.sqrt(2 / 3), 0],
+    ])
     disp = np.zeros((4, 3))
     X = jnp.linspace(-0.5 * np.sqrt(2 / 3), np.sqrt(2 / 3))
     Y1 = []

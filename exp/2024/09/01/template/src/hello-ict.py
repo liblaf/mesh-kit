@@ -15,13 +15,11 @@ def main(cfg: CLIConfig) -> None:
     ict.extract("Eyeball left").save("data/eyeball.ply")
     ict.extract("Eye blend left").save("data/eye-blend.ply")
     ict.extract("Eye occlusion left").save("data/eye-occlusion.ply")
-    face: pv.PolyData = pv.merge(
-        [
-            ict.narrow_face,
-            ict.extract("Eye occlusion left"),
-            ict.extract("Eye occlusion right"),
-        ]
-    )
+    face: pv.PolyData = pv.merge([
+        ict.narrow_face,
+        ict.extract("Eye occlusion left"),
+        ict.extract("Eye occlusion right"),
+    ])
     ic(face)
     face.save("data/face-filled.ply")
 
