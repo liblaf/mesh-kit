@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 def as_point_cloud(mesh: Any) -> o3d.geometry.PointCloud:
-    REGISTRY.convert(mesh, o3d.geometry.PointCloud)
+    return REGISTRY.convert(mesh, o3d.geometry.PointCloud)
 
 
 @REGISTRY.register(C.ARRAY_LIKE, C.OPEN3D_POINT_CLOUD, priority=-10)

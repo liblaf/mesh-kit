@@ -34,7 +34,7 @@ def is_class_named_partial(cls: type, name: str | Sequence[str]) -> bool:
         class_parts: list[str] = full_name(clazz).split(".")
         for n in mkit.utils.flatten(name):
             name_parts: list[str] = n.split(".")
-            if mkit.utils.is_subsequence(class_parts, name_parts):
+            if mkit.utils.is_subsequence(name_parts, class_parts):
                 return True
     return False
 
