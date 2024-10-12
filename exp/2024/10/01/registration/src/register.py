@@ -7,7 +7,6 @@ import numpy as np
 import pydantic
 import pyvista as pv
 import torch
-import trimesh.transformations as tf
 from loguru import logger
 
 import mkit
