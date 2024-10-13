@@ -1,0 +1,2184 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Copy/Paste Detector Report</title><link href="styles/tailwind.css" rel="stylesheet"><link href="styles/prism.css" rel="stylesheet"></head><body class="bg-gray-100"><header class="bg-white shadow py-4"><div class="container mx-auto px-4"><h1 class="text-3xl font-semibold text-gray-800">jscpd - copy/paste report</h1></div></header><main class="container mx-auto my-8 p-4 bg-white shadow rounded"><section class="mb-8" id="dashboard"><h2 class="text-2xl font-semibold text-gray-700 mb-4">Dashboard</h2><div class="grid grid-cols-4 gap-4"><div class="bg-blue-200 p-4 rounded text-center"><h3 class="text-lg font-semibold text-blue-800 mb-2">Total Files</h3><span class="text-4xl font-bold text-blue-800">180</span></div><div class="bg-green-200 p-4 rounded text-center"><h3 class="text-lg font-semibold text-green-800 mb-2">Total Lines of Code</h3><span class="text-4xl font-bold text-green-800">8960</span></div><div class="bg-yellow-200 p-4 rounded text-center"><h3 class="text-lg font-semibold text-yellow-800 mb-2">Number of Clones</h3><span class="text-4xl font-bold text-yellow-800">106</span></div><div class="bg-red-200 p-4 rounded text-center"><h3 class="text-lg font-semibold text-red-800 mb-2">Duplicated Lines</h3><span class="text-4xl font-bold text-red-800">2175 (24.27%)</span></div></div></section><section class="mb-8" id="formats"><h2 class="text-2xl font-semibold text-gray-700 mb-4">Formats with Duplications</h2><table class="w-full table-auto"><thead><tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal"><th class="py-3 px-6 text-left">Format</th><th class="py-3 px-6 text-left">Files</th><th class="py-3 px-6 text-left">Lines</th><th class="py-3 px-6 text-left">Clones</th><th class="py-3 px-6 text-left">Duplicated Lines</th><th class="py-3 px-6 text-left">Duplicated Tokens</th></tr></thead><tbody><tr class="bg-white border-b border-gray-200 text-gray-800 text-sm"><td class="py-3 px-6"><a class="text-blue-600 hover:underline" href="#python-clones">python</a></td><td class="py-3 px-6">180</td><td class="py-3 px-6">8960</td><td class="py-3 px-6">106</td><td class="py-3 px-6">2175</td><td class="py-3 px-6">20950</td></tr></tbody></table></section><section class="mb-8" id="txt-clones"><a name="python-clones"></a><h2 class="text-2xl font-semibold text-gray-700 mb-4">python</h2><div class="divide-y divide-gray-200 border-b-2"><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/template/maxilla.py (Line 1:1 - Line 48:2), exp/2024/10/01/registration/src/template/maxilla.py (Line 1:1 - Line 48:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn0" onclick="toggleCodeBlock('cloneGroup0', 'expandBtn0', 'collapseBtn0')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn0" onclick="toggleCodeBlock('cloneGroup0', 'expandBtn0', 'collapseBtn0')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup0"><code class="language-python text-sm text-gray-800">from pathlib import Path
+from typing import TYPE_CHECKING
+
+import numpy as np
+import pydantic
+import scipy.spatial
+
+import mkit
+import mkit.typing.numpy as nt
+
+if TYPE_CHECKING:
+    import pyvista as pv
+
+
+class Config(mkit.cli.BaseConfig):
+    template: pydantic.FilePath = Path(
+        &quot;/home/liblaf/Documents/data/template/maxilla.vtp&quot;
+    )
+    mandible: pydantic.FilePath = Path(
+        &quot;/home/liblaf/Documents/data/template/mandible.vtp&quot;
+    )
+    output: Path = Path(&quot;data/template/maxilla.vtp&quot;)
+
+
+GROUP_NAMES_FREE: list[str] = [&quot;nostrils&quot;, &quot;upperTeeth&quot;]
+GROUP_NAMES_FITTING: list[str] = [&quot;eyeSockets&quot;, &quot;skull&quot;]
+
+
+def main(cfg: Config) -&gt; None:
+    maxilla: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.template)
+    mandible: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.mandible)
+    weight: nt.FN = np.zeros((maxilla.n_faces_strict,))
+    weight[mkit.ops.select.select_by_group_names(GROUP_NAMES_FREE, mesh=maxilla)] = 0.1
+    weight[mkit.ops.select.select_by_group_names(GROUP_NAMES_FITTING, mesh=maxilla)] = (
+        1.0
+    )
+    maxilla.point_data.update(
+        mkit.ops.attr.cell_data_to_point_data(maxilla, {&quot;Weight&quot;: weight})
+    )
+    kdtree: scipy.spatial.KDTree = scipy.spatial.KDTree(mandible.points)
+    dist: nt.FN
+    dist, _idx = kdtree.query(maxilla.points)
+    maxilla.point_data[&quot;Weight&quot;][dist &lt; 0.02 * maxilla.length] = 0.0
+    maxilla.rotate_x(180, inplace=True)
+    mkit.io.save(maxilla, cfg.output)
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/template/mandible.py (Line 1:1 - Line 49:2), exp/2024/10/01/registration/src/template/mandible.py (Line 1:1 - Line 49:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn1" onclick="toggleCodeBlock('cloneGroup1', 'expandBtn1', 'collapseBtn1')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn1" onclick="toggleCodeBlock('cloneGroup1', 'expandBtn1', 'collapseBtn1')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup1"><code class="language-python text-sm text-gray-800">from pathlib import Path
+from typing import TYPE_CHECKING
+
+import numpy as np
+import pydantic
+import scipy
+import scipy.spatial
+
+import mkit
+import mkit.typing.numpy as nt
+
+if TYPE_CHECKING:
+    import pyvista as pv
+
+
+class Config(mkit.cli.BaseConfig):
+    template: pydantic.FilePath = Path(
+        &quot;/home/liblaf/Documents/data/template/mandible.vtp&quot;
+    )
+    maxilla: pydantic.FilePath = Path(
+        &quot;/home/liblaf/Documents/data/template/maxilla.vtp&quot;
+    )
+    output: Path = Path(&quot;data/template/mandible.vtp&quot;)
+
+
+GROUP_NAMES_FREE: list[str] = [&quot;lowerTeeth&quot;]
+GROUP_NAMES_FITTING: list[str] = [&quot;jaw&quot;]
+
+
+def main(cfg: Config) -&gt; None:
+    mandible: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.template)
+    maxilla: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.maxilla)
+    weight: nt.FN = np.zeros((mandible.n_faces_strict,))
+    weight[mkit.ops.select.select_by_group_names(GROUP_NAMES_FREE, mesh=mandible)] = 0.1
+    weight[
+        mkit.ops.select.select_by_group_names(GROUP_NAMES_FITTING, mesh=mandible)
+    ] = 1.0
+    mandible.point_data.update(
+        mkit.ops.attr.cell_data_to_point_data(mandible, {&quot;Weight&quot;: weight})
+    )
+    kdtree: scipy.spatial.KDTree = scipy.spatial.KDTree(maxilla.points)
+    dist: nt.FN
+    dist, _idx = kdtree.query(mandible.points)
+    mandible.point_data[&quot;Weight&quot;][dist &lt; 0.03 * mandible.length] = 0.0
+    mandible.rotate_x(180, inplace=True)
+    mkit.io.save(mandible, cfg.output)
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/template/face.py (Line 1:1 - Line 75:2), exp/2024/10/01/registration/src/template/face.py (Line 1:1 - Line 75:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn2" onclick="toggleCodeBlock('cloneGroup2', 'expandBtn2', 'collapseBtn2')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn2" onclick="toggleCodeBlock('cloneGroup2', 'expandBtn2', 'collapseBtn2')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup2"><code class="language-python text-sm text-gray-800">from pathlib import Path
+from typing import TYPE_CHECKING
+
+import numpy as np
+import pydantic
+
+import mkit
+import mkit.typing.numpy as nt
+
+if TYPE_CHECKING:
+    import pyvista as pv
+
+
+class Config(mkit.cli.BaseConfig):
+    template: pydantic.FilePath = Path(&quot;/home/liblaf/Documents/data/template/face.vtp&quot;)
+    output: Path = Path(&quot;data/template/face.vtp&quot;)
+
+
+GROUP_NAMES_REMOVE: list[str] = [
+    &quot;EyeSocketBottom&quot;,
+    &quot;EyeSocketTop&quot;,
+    &quot;MouthSocketBottom&quot;,
+    &quot;MouthSocketTop&quot;,
+]
+GROUP_NAMES_FREE: list[str] = [
+    &quot;EarSocket&quot;,
+    &quot;LipInnerBottom&quot;,
+    &quot;LipInnerTop&quot;,
+    &quot;Nostril&quot;,
+]
+GROUP_NAMES_WEAK: list[str] = [
+    &quot;Ear&quot;,
+    &quot;EarNeckBack&quot;,
+]
+GROUP_NAMES_PARTIAL: list[str] = [
+    &quot;HeadBack&quot;,
+    &quot;NeckBack&quot;,
+    &quot;NeckFront&quot;,
+]
+GROUP_NAMES_FITTING: list[str] = [
+    &quot;Caruncle&quot;,
+    &quot;Chin&quot;,
+    &quot;EyelidBottom&quot;,
+    &quot;EyelidInnerBottom&quot;,
+    &quot;EyelidInnerTop&quot;,
+    &quot;EyelidOuterBottom&quot;,
+    &quot;EyelidOuterTop&quot;,
+    &quot;EyelidTop&quot;,
+    &quot;Face&quot;,
+    &quot;LipBottom&quot;,
+    &quot;LipOuterBottom&quot;,
+    &quot;LipOuterTop&quot;,
+    &quot;LipTop&quot;,
+]
+
+
+def main(cfg: Config) -&gt; None:
+    face: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.template)
+    face.remove_cells(
+        mkit.ops.select.select_by_group_names(GROUP_NAMES_REMOVE, mesh=face),
+        inplace=True,
+    )
+    weight: nt.FN = np.zeros((face.n_faces_strict,))
+    weight[mkit.ops.select.select_by_group_names(GROUP_NAMES_FREE, mesh=face)] = 0.0
+    weight[mkit.ops.select.select_by_group_names(GROUP_NAMES_WEAK, mesh=face)] = 0.1
+    weight[mkit.ops.select.select_by_group_names(GROUP_NAMES_PARTIAL, mesh=face)] = 0.4
+    weight[mkit.ops.select.select_by_group_names(GROUP_NAMES_FITTING, mesh=face)] = 1.0
+    face.point_data.update(
+        mkit.ops.attr.cell_data_to_point_data(face, {&quot;Weight&quot;: weight})
+    )
+    face.rotate_x(180, inplace=True)
+    mkit.io.save(face, cfg.output)
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/12/faceform/src/transfer/mandible.py (Line 1:1 - Line 14:33), exp/2024/09/12/faceform/src/transfer/maxilla.py (Line 1:1 - Line 14:32)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn3" onclick="toggleCodeBlock('cloneGroup3', 'expandBtn3', 'collapseBtn3')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn3" onclick="toggleCodeBlock('cloneGroup3', 'expandBtn3', 'collapseBtn3')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup3"><code class="language-python text-sm text-gray-800">import pyvista as pv
+import scipy.spatial
+
+import mkit
+import mkit.typing.numpy as nt
+
+
+class Config(mkit.cli.BaseConfig):
+    pass
+
+
+def main(cfg: Config) -&gt; None:
+    source: pv.PolyData = mkit.io.pyvista.read_poly_data(
+        &quot;data/registration/mandible.obj&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/12/faceform/src/transfer/mandible.py (Line 19:29 - Line 32:2), exp/2024/09/12/faceform/src/transfer/maxilla.py (Line 19:28 - Line 32:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn4" onclick="toggleCodeBlock('cloneGroup4', 'expandBtn4', 'collapseBtn4')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn4" onclick="toggleCodeBlock('cloneGroup4', 'expandBtn4', 'collapseBtn4')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup4"><code class="language-python text-sm text-gray-800">)
+
+
+def transfer_cell_data(source: pv.PolyData, target: pv.PolyData) -&gt; pv.PolyData:
+    source_cell_centers: pv.PolyData = source.cell_centers()
+    target_cell_centers: pv.PolyData = target.cell_centers()
+    kdtree: scipy.spatial.KDTree = scipy.spatial.KDTree(source_cell_centers.points)
+    idx: nt.IN
+    _dist, idx = kdtree.query(target_cell_centers.points)
+    target.cell_data[&quot;GroupIds&quot;] = source_cell_centers.point_data[&quot;GroupIds&quot;][idx]
+    return target
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/12/faceform/src/transfer/face.py (Line 1:1 - Line 13:29), exp/2024/09/12/faceform/src/transfer/maxilla.py (Line 1:1 - Line 14:32)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn5" onclick="toggleCodeBlock('cloneGroup5', 'expandBtn5', 'collapseBtn5')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn5" onclick="toggleCodeBlock('cloneGroup5', 'expandBtn5', 'collapseBtn5')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup5"><code class="language-python text-sm text-gray-800">import pyvista as pv
+import scipy.spatial
+
+import mkit
+import mkit.typing.numpy as nt
+
+
+class Config(mkit.cli.BaseConfig):
+    pass
+
+
+def main(cfg: Config) -&gt; None:
+    source: pv.PolyData = mkit.io.pyvista.read_poly_data(&quot;data/registration/face.obj&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/12/faceform/src/transfer/face.py (Line 17:25 - Line 30:2), exp/2024/09/12/faceform/src/transfer/maxilla.py (Line 19:28 - Line 32:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn6" onclick="toggleCodeBlock('cloneGroup6', 'expandBtn6', 'collapseBtn6')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn6" onclick="toggleCodeBlock('cloneGroup6', 'expandBtn6', 'collapseBtn6')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup6"><code class="language-python text-sm text-gray-800">)
+
+
+def transfer_cell_data(source: pv.PolyData, target: pv.PolyData) -&gt; pv.PolyData:
+    source_cell_centers: pv.PolyData = source.cell_centers()
+    target_cell_centers: pv.PolyData = target.cell_centers()
+    kdtree: scipy.spatial.KDTree = scipy.spatial.KDTree(source_cell_centers.points)
+    idx: nt.IN
+    _dist, idx = kdtree.query(target_cell_centers.points)
+    target.cell_data[&quot;GroupIds&quot;] = source_cell_centers.point_data[&quot;GroupIds&quot;][idx]
+    return target
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/linear-vs-hyper/src/plot/solution.py (Line 17:1 - Line 28:5), exp/2024/09/01/cylinder/src/plot/solution.py (Line 15:1 - Line 26:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn7" onclick="toggleCodeBlock('cloneGroup7', 'expandBtn7', 'collapseBtn7')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn7" onclick="toggleCodeBlock('cloneGroup7', 'expandBtn7', 'collapseBtn7')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup7"><code class="language-python text-sm text-gray-800">def main(cfg: Config) -&gt; None:
+    mesh: pv.UnstructuredGrid = pv.read(cfg.solution)
+    execution_time: float = np.asarray(mesh.field_data[&quot;execution_time&quot;]).item()
+    volume_rest: float = mesh.volume
+    mesh.warp_by_vector(&quot;solution&quot;, inplace=True, progress_bar=True)
+    relative_volume_change: float = mesh.volume / volume_rest
+    pl: pv.Plotter = pv.Plotter(off_screen=True)
+    pl.add_axes()  # pyright: ignore [reportCallIssue]
+    pl.add_mesh(mesh, scalars=&quot;energy_density&quot;)
+    if cfg.camera is not None:
+        mkit.plot.load_camera(pl, cfg.camera)
+    else</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/linear-vs-hyper/src/plot/input.py (Line 12:2 - Line 26:2), exp/2024/09/01/cylinder/src/plot/input.py (Line 11:2 - Line 25:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn8" onclick="toggleCodeBlock('cloneGroup8', 'expandBtn8', 'collapseBtn8')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn8" onclick="toggleCodeBlock('cloneGroup8', 'expandBtn8', 'collapseBtn8')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup8"><code class="language-python text-sm text-gray-800">Path
+
+
+def main(cfg: Config) -&gt; None:
+    mesh: pv.UnstructuredGrid = pv.read(cfg.input)
+    pl: pv.Plotter = pv.Plotter(off_screen=True)
+    pl.add_axes()  # pyright: ignore [reportCallIssue]
+    pl.add_mesh(mesh, color=&quot;white&quot;)
+    if cfg.camera is not None:
+        mkit.plot.load_camera(pl, cfg.camera)
+    pl.save_graphic(cfg.fig)
+
+
+if __name__ == &quot;__main__&quot;:
+    mkit.cli.run(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/cylinder/src/plot/solution.py (Line 13:2 - Line 30:3), exp/2024/09/01/cylinder/src/plot/solution.py (Line 12:2 - Line 31:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn9" onclick="toggleCodeBlock('cloneGroup9', 'expandBtn9', 'collapseBtn9')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn9" onclick="toggleCodeBlock('cloneGroup9', 'expandBtn9', 'collapseBtn9')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup9"><code class="language-python text-sm text-gray-800">Path
+
+
+def main(cfg: Config) -&gt; None:
+    mesh: pv.UnstructuredGrid = pv.read(cfg.solution)
+    execution_time: float = np.asarray(mesh.field_data[&quot;execution_time&quot;]).item()
+    volume_rest: float = mesh.volume
+    mesh.warp_by_vector(&quot;solution&quot;, inplace=True, progress_bar=True)
+    relative_volume_change: float = mesh.volume / volume_rest
+    pl: pv.Plotter = pv.Plotter(off_screen=True)
+    pl.add_axes()  # pyright: ignore [reportCallIssue]
+    pl.add_mesh(mesh, scalars=&quot;energy_density&quot;)
+    if cfg.camera is not None:
+        mkit.plot.load_camera(pl, cfg.camera)
+    else:
+        camera: pv.Camera = pl.camera
+        camera.tight(0.1)
+    pl</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/cylinder/src/plot/solution.py (Line 29:4 - Line 42:2), exp/2024/09/01/cylinder/src/plot/solution.py (Line 25:7 - Line 38:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn10" onclick="toggleCodeBlock('cloneGroup10', 'expandBtn10', 'collapseBtn10')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn10" onclick="toggleCodeBlock('cloneGroup10', 'expandBtn10', 'collapseBtn10')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup10"><code class="language-python text-sm text-gray-800">)
+    pl.add_text(
+        f&quot;Relative Volume Change: {relative_volume_change:.2f}&quot;,
+        position=(0, pl.window_size[1] - 1 * 18 * 2),  # pyright: ignore [reportArgumentType]
+    )
+    pl.add_text(
+        f&quot;Execution Time: {execution_time:.1f} s&quot;,
+        position=(0, pl.window_size[1] - 2 * 18 * 2),  # pyright: ignore [reportArgumentType]
+    )
+    pl.save_graphic(cfg.fig)
+
+
+if __name__ == &quot;__main__&quot;:
+    mkit.cli.run(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/cylinder/src/plot/input.py (Line 1:1 - Line 26:2), exp/2024/08/07/linear-vs-hyper/src/plot/input.py (Line 1:1 - Line 25:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn11" onclick="toggleCodeBlock('cloneGroup11', 'expandBtn11', 'collapseBtn11')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn11" onclick="toggleCodeBlock('cloneGroup11', 'expandBtn11', 'collapseBtn11')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup11"><code class="language-python text-sm text-gray-800">import pathlib
+
+import pyvista as pv
+
+import mkit.cli
+import mkit.plot
+
+
+class Config(mkit.cli.BaseConfig):
+    camera: pathlib.Path | None = None
+    fig: pathlib.Path
+    input: pathlib.Path
+
+
+def main(cfg: Config) -&gt; None:
+    mesh: pv.UnstructuredGrid = pv.read(cfg.input)
+    pl: pv.Plotter = pv.Plotter(off_screen=True)
+    pl.add_axes()  # pyright: ignore [reportCallIssue]
+    pl.add_mesh(mesh, color=&quot;white&quot;)
+    if cfg.camera is not None:
+        mkit.plot.load_camera(pl, cfg.camera)
+    pl.save_graphic(cfg.fig)
+
+
+if __name__ == &quot;__main__&quot;:
+    mkit.cli.run(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/constitutive/src/plot/curve.py (Line 40:23 - Line 49:4), exp/2024/08/07/constitutive/src/plot/curve.py (Line 25:15 - Line 34:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn12" onclick="toggleCodeBlock('cloneGroup12', 'expandBtn12', 'collapseBtn12')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn12" onclick="toggleCodeBlock('cloneGroup12', 'expandBtn12', 'collapseBtn12')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup12"><code class="language-python text-sm text-gray-800">(
+    x: jxt.ArrayLike,
+    energy_fn: CellEnergy,
+    points: jxt.ArrayLike,
+    cell_data: Mapping[str, jxt.ArrayLike],
+) -&gt; jax.Array:
+    def single(x: jxt.ArrayLike) -&gt; jax.Array:
+        disp: jax.Array = jnp.zeros((4, 3))
+        disp = disp.at[0, 0].set(x)
+        jac</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/constitutive/src/plot/curve.py (Line 55:23 - Line 65:2), exp/2024/08/07/constitutive/src/plot/curve.py (Line 25:15 - Line 50:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn13" onclick="toggleCodeBlock('cloneGroup13', 'expandBtn13', 'collapseBtn13')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn13" onclick="toggleCodeBlock('cloneGroup13', 'expandBtn13', 'collapseBtn13')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup13"><code class="language-python text-sm text-gray-800">(
+    x: jxt.ArrayLike,
+    energy_fn: CellEnergy,
+    points: jxt.ArrayLike,
+    cell_data: Mapping[str, jxt.ArrayLike],
+) -&gt; jax.Array:
+    def single(x: jxt.ArrayLike) -&gt; jax.Array:
+        disp: jax.Array = jnp.zeros((4, 3))
+        disp = disp.at[0, 0].set(x)
+        jac: jax.Array = energy_fn.jac(disp, points, cell_data=cell_data)
+        return jac[2</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/constitutive/src/plot/curve.py (Line 105:23 - Line 112:14), exp/2024/08/07/constitutive/src/plot/curve.py (Line 91:23 - Line 98:15)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn14" onclick="toggleCodeBlock('cloneGroup14', 'expandBtn14', 'collapseBtn14')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn14" onclick="toggleCodeBlock('cloneGroup14', 'expandBtn14', 'collapseBtn14')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup14"><code class="language-python text-sm text-gray-800">(
+            x, cfg.energy_fn, mesh.points, cfg.params
+        )
+        f: jax.Array = mesh.volume * jac
+        plt.plot(x, f, label=cfg.name)
+    plt.legend()
+    plt.xlabel(&quot;Displacement&quot;)
+    plt.ylabel(&quot;Shear Force&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-maxilla/src/non-rigid.py (Line 32:28 - Line 38:5), exp/2024/09/25/template-maxilla/src/rigid.py (Line 31:18 - Line 37:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn15" onclick="toggleCodeBlock('cloneGroup15', 'expandBtn15', 'collapseBtn15')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn15" onclick="toggleCodeBlock('cloneGroup15', 'expandBtn15', 'collapseBtn15')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup15"><code class="language-python text-sm text-gray-800">)
+    source_weight: nt.FN = np.ones((source.n_faces_strict,))
+    source_weight[mkit.ops.select.select_by_group_names(GROUPS_FREE, mesh=source)] = 0
+    source.point_data.update(
+        mkit.ops.attr.cell_data_to_point_data(source, {&quot;Weight&quot;: source_weight})
+    )
+    res: mkit</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-mandible/src/transfer.py (Line 1:1 - Line 19:22), exp/2024/09/25/template-maxilla/src/transfer.py (Line 1:1 - Line 19:21)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn16" onclick="toggleCodeBlock('cloneGroup16', 'expandBtn16', 'collapseBtn16')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn16" onclick="toggleCodeBlock('cloneGroup16', 'expandBtn16', 'collapseBtn16')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup16"><code class="language-python text-sm text-gray-800">from pathlib import Path
+from typing import TYPE_CHECKING
+
+import pydantic
+
+import mkit
+
+if TYPE_CHECKING:
+    import pyvista as pv
+
+
+class Config(mkit.cli.BaseConfig):
+    source: pydantic.FilePath = Path(&quot;data/non-rigid.vtp&quot;)
+    output: Path = Path(&quot;data/transfer.vtp&quot;)
+
+
+def main(cfg: Config) -&gt; None:
+    source: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.source)
+    target: pv.PolyData = mkit.ext.sculptor.get_template_mandible</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-mandible/src/transfer.py (Line 19:22 - Line 33:2), exp/2024/09/25/template-maxilla/src/transfer.py (Line 19:21 - Line 33:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn17" onclick="toggleCodeBlock('cloneGroup17', 'expandBtn17', 'collapseBtn17')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn17" onclick="toggleCodeBlock('cloneGroup17', 'expandBtn17', 'collapseBtn17')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup17"><code class="language-python text-sm text-gray-800">()
+    target.triangulate(inplace=True)
+    target.cell_data.update(
+        mkit.ops.transfer.surface_to_surface(
+            source,
+            target,
+            {&quot;GroupIds&quot;: source.cell_data[&quot;GroupIds&quot;]},
+            method=mkit.ops.transfer.C2CAuto(),
+        )
+    )
+    target.field_data[&quot;GroupNames&quot;] = source.field_data[&quot;GroupNames&quot;]
+    mkit.io.save(target, cfg.output)
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-mandible/src/rigid.py (Line 1:1 - Line 22:15), exp/2024/09/25/template-maxilla/src/rigid.py (Line 1:1 - Line 22:15)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn18" onclick="toggleCodeBlock('cloneGroup18', 'expandBtn18', 'collapseBtn18')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn18" onclick="toggleCodeBlock('cloneGroup18', 'expandBtn18', 'collapseBtn18')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup18"><code class="language-python text-sm text-gray-800">from pathlib import Path
+from typing import TYPE_CHECKING
+
+import numpy as np
+import pydantic_settings
+import torch
+import trimesh.transformations as tt
+
+import mkit
+import mkit.ops.registration.rigid as reg
+import mkit.typing.numpy as nt
+
+if TYPE_CHECKING:
+    import pyvista as pv
+
+
+class Config(mkit.cli.BaseConfig):
+    source: pydantic_settings.CliPositionalArg[Path]
+    output: Path = Path(&quot;data/rigid.vtp&quot;)
+
+
+GROUPS_TO_KEEP</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-mandible/src/rigid.py (Line 34:17 - Line 51:2), exp/2024/09/25/template-maxilla/src/rigid.py (Line 33:12 - Line 49:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn19" onclick="toggleCodeBlock('cloneGroup19', 'expandBtn19', 'collapseBtn19')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn19" onclick="toggleCodeBlock('cloneGroup19', 'expandBtn19', 'collapseBtn19')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup19"><code class="language-python text-sm text-gray-800">, mesh=source)
+    ] = 0
+    source.point_data.update(
+        mkit.ops.attr.cell_data_to_point_data(source, {&quot;Weight&quot;: source_weight})
+    )
+    res: reg.RigidRegistrationResult = reg.rigid_registration(
+        source,
+        target,
+        estimate_init=True,
+        init=tt.rotation_matrix(np.pi / 2, [1, 0, 0]),
+        source_weight=source.point_data[&quot;Weight&quot;],
+    )
+    ic(res.cost)
+    result: pv.PolyData = source.transform(res.transform)
+    mkit.io.save(result, cfg.output)
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-mandible/src/non-rigid.py (Line 1:1 - Line 24:15), exp/2024/09/25/template-maxilla/src/non-rigid.py (Line 1:1 - Line 24:15)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn20" onclick="toggleCodeBlock('cloneGroup20', 'expandBtn20', 'collapseBtn20')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn20" onclick="toggleCodeBlock('cloneGroup20', 'expandBtn20', 'collapseBtn20')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup20"><code class="language-python text-sm text-gray-800">from pathlib import Path
+from typing import TYPE_CHECKING
+
+import numpy as np
+import pydantic
+import pydantic_settings
+
+import mkit
+import mkit.typing.numpy as nt
+
+if TYPE_CHECKING:
+    import pyvista as pv
+
+
+class Config(mkit.cli.BaseConfig):
+    model_config = pydantic_settings.SettingsConfigDict(
+        cli_parse_args=True, yaml_file=&quot;params/non-rigid.yaml&quot;
+    )
+    source: pydantic.FilePath = Path(&quot;data/rigid.vtp&quot;)
+    output: Path = Path(&quot;data/non-rigid.vtp&quot;)
+    steps: list[dict]
+
+
+GROUPS_TO_KEEP</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-mandible/src/non-rigid.py (Line 32:28 - Line 40:5), exp/2024/09/25/template-mandible/src/rigid.py (Line 31:18 - Line 39:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn21" onclick="toggleCodeBlock('cloneGroup21', 'expandBtn21', 'collapseBtn21')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn21" onclick="toggleCodeBlock('cloneGroup21', 'expandBtn21', 'collapseBtn21')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup21"><code class="language-python text-sm text-gray-800">)
+    source_weight: nt.FN = np.ones((source.n_faces_strict,))
+    source_weight[
+        mkit.ops.select.select_by_group_names(GROUPS_TO_REMOVE, mesh=source)
+    ] = 0
+    source.point_data.update(
+        mkit.ops.attr.cell_data_to_point_data(source, {&quot;Weight&quot;: source_weight})
+    )
+    res: mkit</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-mandible/src/non-rigid.py (Line 35:17 - Line 55:2), exp/2024/09/25/template-maxilla/src/non-rigid.py (Line 34:12 - Line 53:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn22" onclick="toggleCodeBlock('cloneGroup22', 'expandBtn22', 'collapseBtn22')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn22" onclick="toggleCodeBlock('cloneGroup22', 'expandBtn22', 'collapseBtn22')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup22"><code class="language-python text-sm text-gray-800">, mesh=source)
+    ] = 0
+    source.point_data.update(
+        mkit.ops.attr.cell_data_to_point_data(source, {&quot;Weight&quot;: source_weight})
+    )
+    res: mkit.ops.registration.NonRigidRegistrationResult = (
+        mkit.ops.registration.non_rigid_registration(
+            mkit.ops.registration.non_rigid.Amberg(
+                source,
+                target,
+                point_data={&quot;weight&quot;: source.point_data[&quot;Weight&quot;]},
+                steps=cfg.steps,
+            )
+        )
+    )
+    result: pv.PolyData = source.copy()
+    result.points = res.points
+    mkit.io.save(result, cfg.output)
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-face/src/transfer.py (Line 1:1 - Line 19:18), exp/2024/09/25/template-maxilla/src/transfer.py (Line 1:1 - Line 19:21)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn23" onclick="toggleCodeBlock('cloneGroup23', 'expandBtn23', 'collapseBtn23')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn23" onclick="toggleCodeBlock('cloneGroup23', 'expandBtn23', 'collapseBtn23')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup23"><code class="language-python text-sm text-gray-800">from pathlib import Path
+from typing import TYPE_CHECKING
+
+import pydantic
+
+import mkit
+
+if TYPE_CHECKING:
+    import pyvista as pv
+
+
+class Config(mkit.cli.BaseConfig):
+    source: pydantic.FilePath = Path(&quot;data/non-rigid.vtp&quot;)
+    output: Path = Path(&quot;data/transfer.vtp&quot;)
+
+
+def main(cfg: Config) -&gt; None:
+    source: pv.PolyData = mkit.io.pyvista.load_poly_data(cfg.source)
+    target: pv.PolyData = mkit.ext.sculptor.get_template_face</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-face/src/transfer.py (Line 19:18 - Line 33:2), exp/2024/09/25/template-maxilla/src/transfer.py (Line 19:21 - Line 33:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn24" onclick="toggleCodeBlock('cloneGroup24', 'expandBtn24', 'collapseBtn24')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn24" onclick="toggleCodeBlock('cloneGroup24', 'expandBtn24', 'collapseBtn24')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup24"><code class="language-python text-sm text-gray-800">()
+    target.triangulate(inplace=True)
+    target.cell_data.update(
+        mkit.ops.transfer.surface_to_surface(
+            source,
+            target,
+            {&quot;GroupIds&quot;: source.cell_data[&quot;GroupIds&quot;]},
+            method=mkit.ops.transfer.C2CAuto(),
+        )
+    )
+    target.field_data[&quot;GroupNames&quot;] = source.field_data[&quot;GroupNames&quot;]
+    mkit.io.save(target, cfg.output)
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-face/src/rigid.py (Line 60:18 - Line 73:2), exp/2024/09/25/template-maxilla/src/rigid.py (Line 36:5 - Line 49:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn25" onclick="toggleCodeBlock('cloneGroup25', 'expandBtn25', 'collapseBtn25')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn25" onclick="toggleCodeBlock('cloneGroup25', 'expandBtn25', 'collapseBtn25')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup25"><code class="language-python text-sm text-gray-800">)
+    res: reg.RigidRegistrationResult = reg.rigid_registration(
+        source,
+        target,
+        estimate_init=True,
+        init=tt.rotation_matrix(np.pi / 2, [1, 0, 0]),
+        source_weight=source.point_data[&quot;Weight&quot;],
+    )
+    ic(res.cost)
+    result: pv.PolyData = source.transform(res.transform)
+    mkit.io.save(result, cfg.output)
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-face/src/params.py (Line 91:9 - Line 97:2), src/mkit/ops/registration/non_rigid/amberg_pytorch3d/_params.py (Line 151:2 - Line 157:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn26" onclick="toggleCodeBlock('cloneGroup26', 'expandBtn26', 'collapseBtn26')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn26" onclick="toggleCodeBlock('cloneGroup26', 'expandBtn26', 'collapseBtn26')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup26"><code class="language-python text-sm text-gray-800">)
+
+    def get_point_weights(self, value: tt.FLike | tt.FNLike = 1.0) -&gt; tt.FN:
+        value = torch.as_tensor(value) * torch.as_tensor(
+            self.point_data.get(&quot;weight&quot;, 1.0)
+        )
+        return torch.broadcast_to(value, (self.n_points,))</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-face/src/params.py (Line 97:2 - Line 107:6), src/mkit/ops/registration/non_rigid/amberg_pytorch3d/_params.py (Line 127:9 - Line 138:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn27" onclick="toggleCodeBlock('cloneGroup27', 'expandBtn27', 'collapseBtn27')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn27" onclick="toggleCodeBlock('cloneGroup27', 'expandBtn27', 'collapseBtn27')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup27"><code class="language-python text-sm text-gray-800">)
+
+    def get_landmark_source_idx(self, value: tt.INLike | None = None) -&gt; tt.IN:
+        if value is None:
+            return torch.empty((0,), dtype=torch.int)
+        return torch.as_tensor(value)
+
+    def get_landmark_target_pos(self, value: tt.FN3Like | None = None) -&gt; tt.FN3:
+        if value is None:
+            return torch.empty((0, 3))
+        return torch.as_tensor(value</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-face/src/params.py (Line 107:6 - Line 115:4), src/mkit/ops/registration/non_rigid/amberg_pytorch3d/_params.py (Line 139:9 - Line 147:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn28" onclick="toggleCodeBlock('cloneGroup28', 'expandBtn28', 'collapseBtn28')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn28" onclick="toggleCodeBlock('cloneGroup28', 'expandBtn28', 'collapseBtn28')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup28"><code class="language-python text-sm text-gray-800">)
+
+    def get_threshold_distance(self, value: tt.FLike | tt.FNLike = 0.1) -&gt; tt.FN:
+        value = torch.as_tensor(value) * torch.as_tensor(
+            self.point_data.get(&quot;threshold_distance&quot;, 1.0)
+        )
+        return torch.broadcast_to(value, (self.n_points,))
+
+    def get_threshold_normal(self, value: tt.FLike | tt.FNLike = 0.1</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-face/src/non-rigid.py (Line 21:1 - Line 53:7), exp/2024/09/25/template-face/src/rigid.py (Line 19:1 - Line 51:6)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn29" onclick="toggleCodeBlock('cloneGroup29', 'expandBtn29', 'collapseBtn29')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn29" onclick="toggleCodeBlock('cloneGroup29', 'expandBtn29', 'collapseBtn29')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup29"><code class="language-python text-sm text-gray-800">GROUP_NAMES_MATCH: list[str] = [
+    &quot;Caruncle&quot;,
+    &quot;Chin&quot;,
+    &quot;EyelidBottom&quot;,
+    &quot;EyelidInnerBottom&quot;,
+    &quot;EyelidInnerTop&quot;,
+    &quot;EyelidOuterBottom&quot;,
+    &quot;EyelidOuterTop&quot;,
+    &quot;EyelidTop&quot;,
+    &quot;Face&quot;,
+    &quot;LipBottom&quot;,
+    &quot;LipOuterBottom&quot;,
+    &quot;LipOuterTop&quot;,
+    &quot;LipTop&quot;,
+]
+GROUP_NAMES_REMOVE: list[str] = [
+    &quot;MouthSocketBottom&quot;,
+    &quot;MouthSocketTop&quot;,
+    &quot;EyeSocketTop&quot;,
+    &quot;EyeSocketBottom&quot;,
+]
+
+
+def names_to_ids(mesh: pv.PolyData, names: list[str]) -&gt; list[int]:
+    return [i for i, name in enumerate(mesh.field_data[&quot;GroupNames&quot;]) if name in names]
+
+
+def select_by_group_names(mesh: pv.PolyData, names: list[str]) -&gt; nt.BN:
+    return np.isin(mesh.cell_data[&quot;GroupIds&quot;], names_to_ids(mesh, names))
+
+
+def main(cfg: Config) -&gt; None:
+    source</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/template-face/src/non-rigid.py (Line 61:28 - Line 77:2), exp/2024/09/25/template-maxilla/src/non-rigid.py (Line 37:5 - Line 53:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn30" onclick="toggleCodeBlock('cloneGroup30', 'expandBtn30', 'collapseBtn30')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn30" onclick="toggleCodeBlock('cloneGroup30', 'expandBtn30', 'collapseBtn30')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup30"><code class="language-python text-sm text-gray-800">)
+    res: mkit.ops.registration.NonRigidRegistrationResult = (
+        mkit.ops.registration.non_rigid_registration(
+            mkit.ops.registration.non_rigid.Amberg(
+                source,
+                target,
+                point_data={&quot;weight&quot;: source.point_data[&quot;Weight&quot;]},
+                steps=cfg.steps,
+            )
+        )
+    )
+    result: pv.PolyData = source.copy()
+    result.points = res.points
+    mkit.io.save(result, cfg.output)
+
+
+mkit.cli.auto_run()(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/tetgen.py (Line 11:17 - Line 38:9), exp/2024/10/01/registration/src/tetgen.py (Line 13:15 - Line 40:7)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn31" onclick="toggleCodeBlock('cloneGroup31', 'expandBtn31', 'collapseBtn31')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn31" onclick="toggleCodeBlock('cloneGroup31', 'expandBtn31', 'collapseBtn31')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup31"><code class="language-python text-sm text-gray-800">)
+    dicom_dir: pydantic.DirectoryPath = Path(&quot;~/Documents/CT/&quot;).expanduser()
+
+
+def main(cfg: Config) -&gt; None:
+    dataset: mkit.io.DICOMDataset = mkit.io.DICOMDataset(cfg.dicom_dir)
+    for patient in dataset.values():
+        try:
+            pre_face: pv.PolyData = mkit.io.pyvista.load_poly_data(
+                f&quot;{cfg.data_dir}/{patient.id}/{patient[0].date}/02-face-non-rigid.vtp&quot;
+            )
+            pre_mandible: pv.PolyData = mkit.io.pyvista.load_poly_data(
+                f&quot;{cfg.data_dir}/{patient.id}/{patient[0].date}/02-mandible-non-rigid.vtp&quot;
+            )
+            pre_maxilla: pv.PolyData = mkit.io.pyvista.load_poly_data(
+                f&quot;{cfg.data_dir}/{patient.id}/{patient[0].date}/02-maxilla-non-rigid.vtp&quot;
+            )
+            post_face: pv.PolyData = mkit.io.pyvista.load_poly_data(
+                f&quot;{cfg.data_dir}/{patient.id}/{patient[-1].date}/02-face-non-rigid.vtp&quot;
+            )
+            post_mandible: pv.PolyData = mkit.io.pyvista.load_poly_data(
+                f&quot;{cfg.data_dir}/{patient.id}/{patient[-1].date}/02-mandible-non-rigid.vtp&quot;
+            )
+            post_maxilla: pv.PolyData = mkit.io.pyvista.load_poly_data(
+                f&quot;{cfg.data_dir}/{patient.id}/{patient[-1].date}/02-maxilla-non-rigid.vtp&quot;
+            )
+        except FileNotFoundError:
+            continue</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/tetgen.py (Line 48:5 - Line 61:11), exp/2024/10/01/registration/src/tetgen.py (Line 60:6 - Line 73:9)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn32" onclick="toggleCodeBlock('cloneGroup32', 'expandBtn32', 'collapseBtn32')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn32" onclick="toggleCodeBlock('cloneGroup32', 'expandBtn32', 'collapseBtn32')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup32"><code class="language-python text-sm text-gray-800">(
+            (pre_mandible.n_points,), dtype=bool
+        )
+        pre_skull: pv.PolyData = pv.merge([pre_maxilla, pre_mandible])
+        pre_skull.flip_normals()
+        pre: pv.PolyData = pv.merge([pre_face, pre_skull])
+        tetra: pv.UnstructuredGrid = mkit.ext.tetwild(pre)
+        tetra.point_data.update(
+            mkit.ops.transfer.surface_to_volume(
+                pre,
+                tetra,
+                {
+                    &quot;pin_disp&quot;: pre.point_data[&quot;pin_disp&quot;],
+                    &quot;pin_mask&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/register.py (Line 9:1 - Line 52:4), exp/2024/10/01/registration/src/register.py (Line 12:1 - Line 55:6)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn33" onclick="toggleCodeBlock('cloneGroup33', 'expandBtn33', 'collapseBtn33')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn33" onclick="toggleCodeBlock('cloneGroup33', 'expandBtn33', 'collapseBtn33')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup33"><code class="language-python text-sm text-gray-800">import mkit
+import mkit.typing.numpy as nt
+
+
+class Config(mkit.cli.BaseConfig):
+    data_dir: pydantic.DirectoryPath = Path(&quot;/home/liblaf/Documents/CT&quot;)
+
+
+def ct_to_surface(ct: pv.ImageData, threshold: float) -&gt; pv.PolyData:
+    ct = ct.gaussian_smooth()
+    contours: pv.PolyData = ct.contour([threshold])
+    contour: pv.PolyData = contours.connectivity(&quot;largest&quot;)
+    return contour
+
+
+@functools.cache
+def prepare_template(component: str) -&gt; pv.PolyData:
+    source: pv.PolyData = mkit.io.pyvista.load_poly_data(
+        f&quot;data/template/{component}.vtp&quot;
+    )
+    return source
+
+
+@functools.cache
+def load_non_rigid_params(component: str) -&gt; Any:
+    cfg: Any = mkit.utils.load_yaml(f&quot;params/{component}.yaml&quot;)
+    return cfg[&quot;non-rigid&quot;]
+
+
+def rigid_registration(
+    source: pv.PolyData, target: pv.PolyData, *, estimate_init: bool = True
+) -&gt; mkit.ops.registration.RigidRegistrationResult:
+    result: mkit.ops.registration.rigid.RigidRegistrationResult = (
+        mkit.ops.registration.rigid.rigid_registration(
+            source,
+            target,
+            estimate_init=estimate_init,
+            source_weight=source.point_data[&quot;Weight&quot;],
+        )
+    )
+    return result
+
+
+def</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/register.py (Line 52:1 - Line 73:14), exp/2024/10/01/registration/src/register.py (Line 56:1 - Line 77:7)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn34" onclick="toggleCodeBlock('cloneGroup34', 'expandBtn34', 'collapseBtn34')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn34" onclick="toggleCodeBlock('cloneGroup34', 'expandBtn34', 'collapseBtn34')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup34"><code class="language-python text-sm text-gray-800">def non_rigid_registration(
+    source: pv.PolyData, target: pv.PolyData, component: str
+) -&gt; pv.PolyData:
+    weight: nt.FN = np.array(source.point_data[&quot;Weight&quot;])
+    weight[source.points[:, 2] &gt; target.bounds[5]] = 0
+    non_rigid: mkit.ops.registration.NonRigidRegistrationResult = (
+        mkit.ops.registration.non_rigid.non_rigid_registration(
+            mkit.ops.registration.non_rigid.Amberg(
+                source,
+                target,
+                point_data={&quot;weight&quot;: weight},
+                steps=load_non_rigid_params(component)[&quot;steps&quot;],
+            )
+        )
+    )
+    result: pv.PolyData = source.copy()
+    result.points = non_rigid.points
+    return result
+
+
+def main(cfg: Config) -&gt; None:
+    template_face</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/register.py (Line 73:5 - Line 78:4), exp/2024/10/01/registration/src/register.py (Line 88:5 - Line 93:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn35" onclick="toggleCodeBlock('cloneGroup35', 'expandBtn35', 'collapseBtn35')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn35" onclick="toggleCodeBlock('cloneGroup35', 'expandBtn35', 'collapseBtn35')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup35"><code class="language-python text-sm text-gray-800">template_face: pv.PolyData = prepare_template(&quot;face&quot;)
+    template_mandible: pv.PolyData = prepare_template(&quot;mandible&quot;)
+    template_maxilla: pv.PolyData = prepare_template(&quot;maxilla&quot;)
+    dataset: mkit.io.DICOMDataset = mkit.io.DICOMDataset(cfg.data_dir)
+    for patient in dataset.values():
+        for</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/register.py (Line 79:13 - Line 93:5), exp/2024/10/01/registration/src/register.py (Line 111:13 - Line 125:6)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn36" onclick="toggleCodeBlock('cloneGroup36', 'expandBtn36', 'collapseBtn36')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn36" onclick="toggleCodeBlock('cloneGroup36', 'expandBtn36', 'collapseBtn36')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup36"><code class="language-python text-sm text-gray-800">if acq_idx &gt; 0:
+                template_face = mkit.io.pyvista.load_poly_data(
+                    f&quot;data/patients/{patient.id}/{patient[0].date}/02-face-non-rigid.vtp&quot;
+                )
+                template_mandible = mkit.io.pyvista.load_poly_data(
+                    f&quot;data/patients/{patient.id}/{patient[0].date}/02-mandible-non-rigid.vtp&quot;
+                )
+                template_maxilla = mkit.io.pyvista.load_poly_data(
+                    f&quot;data/patients/{patient.id}/{patient[0].date}/02-maxilla-non-rigid.vtp&quot;
+                )
+            else:
+                template_face = prepare_template(&quot;face&quot;)
+                template_mandible = prepare_template(&quot;mandible&quot;)
+                template_maxilla = prepare_template(&quot;maxilla&quot;)
+            face</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/25/registration/src/register.py (Line 130:13 - Line 141:5), exp/2024/10/01/registration/src/register.py (Line 135:13 - Line 145:19)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn37" onclick="toggleCodeBlock('cloneGroup37', 'expandBtn37', 'collapseBtn37')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn37" onclick="toggleCodeBlock('cloneGroup37', 'expandBtn37', 'collapseBtn37')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup37"><code class="language-python text-sm text-gray-800">)
+
+            rigid_mandible: pv.PolyData = template_mandible.transform(
+                skull_rigid_result.transform, inplace=False
+            )
+            mandible_rigid_result: mkit.ops.registration.RigidRegistrationResult = (
+                rigid_registration(rigid_mandible, skull, estimate_init=False)
+            )
+            rigid_mandible = rigid_mandible.transform(
+                mandible_rigid_result.transform, inplace=False
+            )
+            mkit</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/12/faceform/src/face.py (Line 1:1 - Line 22:18), exp/2024/09/12/faceform/src/rigid.py (Line 1:1 - Line 22:19)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn38" onclick="toggleCodeBlock('cloneGroup38', 'expandBtn38', 'collapseBtn38')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn38" onclick="toggleCodeBlock('cloneGroup38', 'expandBtn38', 'collapseBtn38')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup38"><code class="language-python text-sm text-gray-800">from pathlib import Path
+from typing import TYPE_CHECKING
+
+import numpy as np
+import trimesh as tm
+
+import mkit
+
+if TYPE_CHECKING:
+    import pyvista as pv
+
+    from mkit.ops.registration import GlobalRegistrationResult, RigidRegistrationResult
+
+
+class Config(mkit.cli.BaseConfig):
+    target: Path
+    output: Path
+
+
+@mkit.cli.auto_run()
+def main(cfg: Config) -&gt; None:
+    source: pv.PolyData = mkit.ext.sculptor.get_template_face</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/12/faceform/src/face.py (Line 23:7 - Line 28:7), exp/2024/09/12/faceform/src/rigid.py (Line 25:18 - Line 30:7)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn39" onclick="toggleCodeBlock('cloneGroup39', 'expandBtn39', 'collapseBtn39')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn39" onclick="toggleCodeBlock('cloneGroup39', 'expandBtn39', 'collapseBtn39')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup39"><code class="language-python text-sm text-gray-800">)
+    result: GlobalRegistrationResult = mkit.ops.registration.global_registration(
+        source, target, init=tm.transformations.rotation_matrix(np.pi, [1.0, 0.0, 0.0])
+    )
+    source.transform(result.transform, inplace=True)
+    result</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/01/real-data/src/main.py (Line 24:3 - Line 30:5), exp/2024/10/01/registration/src/simulate.py (Line 26:3 - Line 32:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn40" onclick="toggleCodeBlock('cloneGroup40', 'expandBtn40', 'collapseBtn40')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn40" onclick="toggleCodeBlock('cloneGroup40', 'expandBtn40', 'collapseBtn40')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup40"><code class="language-python text-sm text-gray-800"># Poisson's ratio
+lambda_: float = E * nu / ((1 + nu) * (1 - 2 * nu))  # Lamé's first parameter
+G: float = E / (2 * (1 + nu))  # Shear modulus
+
+
+def main(cfg: Config) -&gt; None:
+    mesh</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/01/real-data/src/main.py (Line 30:6 - Line 42:5), exp/2024/10/01/registration/src/simulate.py (Line 42:11 - Line 56:5)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn41" onclick="toggleCodeBlock('cloneGroup41', 'expandBtn41', 'collapseBtn41')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn41" onclick="toggleCodeBlock('cloneGroup41', 'expandBtn41', 'collapseBtn41')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup41"><code class="language-python text-sm text-gray-800">)
+    material: elastic.Material = elastic.get_preset(cfg.material)
+    material.cell_data.update({&quot;mu&quot;: G, &quot;lambda&quot;: lambda_})
+    mesh.cell_data.update(material.cell_data)  # pyright: ignore [reportArgumentType]
+    problem: Problem = Problem(mesh, material.energy_fn)
+    res: scipy.optimize.OptimizeResult = problem.solve()
+    logger.info(&quot;{}&quot;, res)
+    disp: npt.NDArray[np.floating] = problem.make_disp(res.x)
+    mesh.point_data[&quot;solution&quot;] = disp
+    mesh.cell_data[&quot;energy_density&quot;] = np.asarray(problem.model.energy_density(disp))
+    mesh.field_data[&quot;execution_time&quot;] = res[&quot;execution_time&quot;]
+    mesh.field_data[&quot;success&quot;] = res[&quot;success&quot;]
+    mesh</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/01/cylinder/src/solve.py (Line 1:1 - Line 17:11), exp/2024/09/01/real-data/src/main.py (Line 1:1 - Line 17:14)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn42" onclick="toggleCodeBlock('cloneGroup42', 'expandBtn42', 'collapseBtn42')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn42" onclick="toggleCodeBlock('cloneGroup42', 'expandBtn42', 'collapseBtn42')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup42"><code class="language-python text-sm text-gray-800">from pathlib import Path
+from typing import TYPE_CHECKING
+
+import numpy as np
+import numpy.typing as npt
+import pyvista as pv
+from loguru import logger
+
+import mkit
+from mkit.physics import Problem
+from mkit.physics.energy import elastic
+
+if TYPE_CHECKING:
+    import scipy.optimize
+
+
+class Config(mkit.cli.BaseConfig</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/09/01/cylinder/src/solve.py (Line 25:9 - Line 39:2), exp/2024/10/01/registration/src/simulate.py (Line 44:2 - Line 46:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn43" onclick="toggleCodeBlock('cloneGroup43', 'expandBtn43', 'collapseBtn43')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn43" onclick="toggleCodeBlock('cloneGroup43', 'expandBtn43', 'collapseBtn43')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup43"><code class="language-python text-sm text-gray-800">)
+    mesh.cell_data.update(material.cell_data)  # pyright: ignore [reportArgumentType]
+    problem: Problem = Problem(mesh, material.energy_fn)
+    res: scipy.optimize.OptimizeResult = problem.solve()
+    logger.info(&quot;{}&quot;, res)
+    disp: npt.NDArray[np.floating] = problem.make_disp(res.x)
+    mesh.point_data[&quot;solution&quot;] = disp
+    mesh.cell_data[&quot;energy_density&quot;] = np.asarray(problem.model.energy_density(disp))
+    mesh.field_data[&quot;execution_time&quot;] = res[&quot;execution_time&quot;]
+    mesh.field_data[&quot;success&quot;] = res[&quot;success&quot;]
+    mesh.save(cfg.output)
+
+
+if __name__ == &quot;__main__&quot;:
+    mkit.cli.run(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/linear-vs-hyper/src/main.py (Line 133:6 - Line 139:11), exp/2024/10/01/registration/src/simulate.py (Line 46:10 - Line 54:11)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn44" onclick="toggleCodeBlock('cloneGroup44', 'expandBtn44', 'collapseBtn44')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn44" onclick="toggleCodeBlock('cloneGroup44', 'expandBtn44', 'collapseBtn44')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup44"><code class="language-python text-sm text-gray-800">)
+    res: scipy.optimize.OptimizeResult = problem.solve()
+    logger.info(&quot;{}&quot;, res)
+    disp: npt.NDArray[np.floating] = problem.make_disp(res.x)
+    mesh.point_data[&quot;solution&quot;] = disp
+    mesh.cell_data[&quot;energy_density&quot;] = np.asarray(problem.model.energy_density(disp))
+    mesh.point_data</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/linear-vs-hyper/src/gen.py (Line 18:2 - Line 26:9), exp/2024/09/01/cylinder/src/gen.py (Line 24:2 - Line 32:6)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn45" onclick="toggleCodeBlock('cloneGroup45', 'expandBtn45', 'collapseBtn45')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn45" onclick="toggleCodeBlock('cloneGroup45', 'expandBtn45', 'collapseBtn45')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup45"><code class="language-python text-sm text-gray-800">)
+    surface.triangulate(inplace=True, progress_bar=True)
+    tetmesh: pv.UnstructuredGrid = mkit.ext.tetwild(surface)
+    surface = tetmesh.extract_surface(progress_bar=True)
+    left_mask: npt.NDArray[np.bool] = surface.points[:, 0] &lt; surface.bounds[0] + 1e-3
+    right_mask: npt.NDArray[np.bool] = surface.points[:, 0] &gt; surface.bounds[1] - 1e-3
+    surface.point_data[&quot;pin_mask&quot;] = left_mask | right_mask
+    pin_disp: npt.NDArray[np.floating] = np.zeros((surface.n_points, 3))
+    pin_disp</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/plot-stress.py (Line 32:12 - Line 39:2), exp/2024/08/07/elasticity/src/plot-stress.py (Line 18:7 - Line 25:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn46" onclick="toggleCodeBlock('cloneGroup46', 'expandBtn46', 'collapseBtn46')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn46" onclick="toggleCodeBlock('cloneGroup46', 'expandBtn46', 'collapseBtn46')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup46"><code class="language-python text-sm text-gray-800">(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike] = {},
+    cell_data: Mapping[str, jxt.ArrayLike] = {},
+    field_data: Mapping[str, jxt.ArrayLike] = {},
+) -&gt; jax.Array:
+    F</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/plot-stress.py (Line 48:3 - Line 55:2), exp/2024/08/07/elasticity/src/plot-stress.py (Line 18:7 - Line 39:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn47" onclick="toggleCodeBlock('cloneGroup47', 'expandBtn47', 'collapseBtn47')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn47" onclick="toggleCodeBlock('cloneGroup47', 'expandBtn47', 'collapseBtn47')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup47"><code class="language-python text-sm text-gray-800">(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike] = {},
+    cell_data: Mapping[str, jxt.ArrayLike] = {},
+    field_data: Mapping[str, jxt.ArrayLike] = {},
+) -&gt; jax.Array:
+    F =</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/plot-stress.py (Line 63:10 - Line 70:2), exp/2024/08/07/elasticity/src/plot-stress.py (Line 18:7 - Line 25:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn48" onclick="toggleCodeBlock('cloneGroup48', 'expandBtn48', 'collapseBtn48')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn48" onclick="toggleCodeBlock('cloneGroup48', 'expandBtn48', 'collapseBtn48')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup48"><code class="language-python text-sm text-gray-800">(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike] = {},
+    cell_data: Mapping[str, jxt.ArrayLike] = {},
+    field_data: Mapping[str, jxt.ArrayLike] = {},
+) -&gt; jax.Array:
+    _</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/plot-stress.py (Line 78:4 - Line 86:2), exp/2024/08/07/elasticity/src/plot-stress.py (Line 18:7 - Line 40:11)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn49" onclick="toggleCodeBlock('cloneGroup49', 'expandBtn49', 'collapseBtn49')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn49" onclick="toggleCodeBlock('cloneGroup49', 'expandBtn49', 'collapseBtn49')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup49"><code class="language-python text-sm text-gray-800">(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike] = {},
+    cell_data: Mapping[str, jxt.ArrayLike] = {},
+    field_data: Mapping[str, jxt.ArrayLike] = {},
+) -&gt; jax.Array:
+    F: jax.Array = tetra.deformation_gradient(disp, points)
+    W</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/neo-hookean.py (Line 38:1 - Line 47:3), exp/2024/08/07/elasticity/src/plot-stress.py (Line 32:1 - Line 72:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn50" onclick="toggleCodeBlock('cloneGroup50', 'expandBtn50', 'collapseBtn50')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn50" onclick="toggleCodeBlock('cloneGroup50', 'expandBtn50', 'collapseBtn50')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup50"><code class="language-python text-sm text-gray-800">def neo_hookean(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike] = {},
+    cell_data: Mapping[str, jxt.ArrayLike] = {},
+    field_data: Mapping[str, jxt.ArrayLike] = {},
+) -&gt; jax.Array:
+    _: Any
+    F: jax.Array = tetra.deformation_gradient(disp, points)
+    mu</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/neo-hookean.py (Line 48:2 - Line 57:6), exp/2024/08/07/elasticity/src/plot-stress.py (Line 39:7 - Line 48:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn51" onclick="toggleCodeBlock('cloneGroup51', 'expandBtn51', 'collapseBtn51')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn51" onclick="toggleCodeBlock('cloneGroup51', 'expandBtn51', 'collapseBtn51')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup51"><code class="language-python text-sm text-gray-800">)
+    lambda_hat: jax.Array = mu + lambda_
+    W: jax.Array = (
+        0.5 * mu * jnp.sum(F**2)
+        + 0.5 * lambda_hat * (jnp.linalg.det(F) - 1 - mu / lambda_hat) ** 2
+    )
+    return W
+
+
+class</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/neo-hookean-2.py (Line 1:1 - Line 45:3), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 1:1 - Line 25:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn52" onclick="toggleCodeBlock('cloneGroup52', 'expandBtn52', 'collapseBtn52')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn52" onclick="toggleCodeBlock('cloneGroup52', 'expandBtn52', 'collapseBtn52')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup52"><code class="language-python text-sm text-gray-800">import functools
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any
+
+import jax
+import jax.numpy as jnp
+import jax.typing as jxt
+import numpy as np
+import numpy.typing as npt
+import pyvista as pv
+import rich
+import rich.traceback
+import scipy
+import scipy.optimize
+import scipy.sparse
+import taichi as ti
+from icecream import ic
+from scipy.optimize import OptimizeResult
+
+import mkit.ext
+import mkit.logging
+import mkit.point
+import mkit.sparse
+from mkit.physics.cell import tetra
+from mkit.physics.energy import gravity
+from mkit.physics.energy.abc import CellEnergyFn
+from mkit.physics.energy.elastic import corotated
+from mkit.physics.model import Model
+
+if TYPE_CHECKING:
+    import sparse
+
+ti.init()
+mkit.logging.init()
+rich.traceback.install(show_locals=True)
+
+
+def neo_hookean(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike] = {},
+    cell_data: Mapping[str, jxt.ArrayLike] = {},
+    field_data: Mapping[str, jxt.ArrayLike] = {},
+) -&gt; jax.Array:
+    mu</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/neo-hookean-2.py (Line 54:5 - Line 135:9), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 54:5 - Line 135:10)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn53" onclick="toggleCodeBlock('cloneGroup53', 'expandBtn53', 'collapseBtn53')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn53" onclick="toggleCodeBlock('cloneGroup53', 'expandBtn53', 'collapseBtn53')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup53"><code class="language-python text-sm text-gray-800">return W
+
+
+class Problem:
+    model: Model
+    energy_fn: CellEnergyFn
+
+    def __init__(self, mesh: Any) -&gt; None:
+        self.model = Model(mesh)
+        self.energy_fn = CellEnergyFn(neo_hookean) + CellEnergyFn(gravity)
+
+    def solve(self) -&gt; OptimizeResult:
+        x0: npt.NDArray[np.float64] = np.zeros((self.n_free, 3))
+        res: OptimizeResult = scipy.optimize.minimize(
+            self.fun,
+            x0.flatten(),
+            method=&quot;trust-constr&quot;,
+            jac=self.jac,
+            hess=self.hess,
+            options={&quot;disp&quot;: True, &quot;verbose&quot;: 2},
+            callback=self.callback,
+        )
+        # import cyipopt
+
+        # A: scipy.sparse.coo_matrix = self.slide_constraint.A
+        # ic(A.dtype)
+        # res: OptimizeResult = cyipopt.minimize_ipopt(
+        #     self.fun,
+        #     x0.flatten(),
+        #     jac=self.jac,
+        #     hess=self.hess,
+        #     constraints=[
+        #         # self.slide_constraint
+        #         {
+        #             &quot;type&quot;: &quot;eq&quot;,
+        #             &quot;fun&quot;: lambda x: A @ x,
+        #             &quot;jac&quot;: lambda x: scipy.sparse.coo_array(A),
+        #             &quot;hess&quot;: lambda x, v: np.zeros((self.n_free * 3,)),
+        #         }
+        #     ],
+        #     options={&quot;print_level&quot;: 5, &quot;max_wall_time&quot;: 300.0},
+        # )
+        return res
+
+    @mkit.logging.log_time
+    def fun(self, x: npt.ArrayLike) -&gt; float:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        energy: jax.Array = self.model.energy(self.energy_fn, disp)
+        return float(energy)
+
+    @mkit.logging.log_time
+    def jac(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        jac: jax.Array = self.model.energy_jac(self.energy_fn, disp)
+        return np.asarray(jac[self.free_mask].flatten())
+
+    @mkit.logging.log_time
+    def hess(self, x: npt.ArrayLike) -&gt; scipy.sparse.coo_matrix:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        hess: sparse.COO = self.model.energy_hess(self.energy_fn, disp)
+        hess = mkit.sparse.sparse_mask(
+            hess,
+            (
+                self.free_mask,
+                np.ones((3,), np.bool),
+                self.free_mask,
+                np.ones((3,), np.bool),
+            ),
+        )
+        return hess.reshape((self.n_free * 3, self.n_free * 3)).to_scipy_sparse()
+
+    def callback(self, intermediate_result: OptimizeResult) -&gt; None:
+        # ic(intermediate_result)
+        pass
+
+    @functools.cached_property
+    def n_free(self) -&gt; int:
+        return np.count_nonzero(self.free_mask)
+
+    def make_disp(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = np.zeros((self.model.n_points, 3))
+        disp[self.pin_mask</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/neo-hookean-2.py (Line 136:9 - Line 159:25), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 135:9 - Line 158:23)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn54" onclick="toggleCodeBlock('cloneGroup54', 'expandBtn54', 'collapseBtn54')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn54" onclick="toggleCodeBlock('cloneGroup54', 'expandBtn54', 'collapseBtn54')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup54"><code class="language-python text-sm text-gray-800">disp[self.free_mask] = np.asarray(x).reshape((self.n_free, 3))
+        return disp
+
+    @functools.cached_property
+    def free_mask(self) -&gt; npt.NDArray[np.bool]:
+        return ~self.pin_mask
+
+    @functools.cached_property
+    def pin_mask(self) -&gt; npt.NDArray[np.bool]:
+        return np.asarray(self.model.point_data[&quot;pin_mask&quot;], np.bool)
+
+
+def main() -&gt; None:
+    mesh: pv.UnstructuredGrid = pv.read(&quot;data/input.vtu&quot;)
+    problem = Problem(mesh)
+    res: OptimizeResult = problem.solve()
+    ic(res)
+    disp: npt.NDArray[np.float64] = problem.make_disp(res.x)
+    mesh.point_data[&quot;solution&quot;] = disp
+    mesh.cell_data[&quot;energy_density&quot;] = problem.model.energy_density(  # pyright: ignore [reportArgumentType]
+        CellEnergyFn(corotated), disp
+    )
+
+    mesh.save(&quot;data/Neo-Hookean-2.vtu&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear.py (Line 1:1 - Line 14:7), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 1:1 - Line 14:9)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn55" onclick="toggleCodeBlock('cloneGroup55', 'expandBtn55', 'collapseBtn55')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn55" onclick="toggleCodeBlock('cloneGroup55', 'expandBtn55', 'collapseBtn55')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup55"><code class="language-python text-sm text-gray-800">import functools
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any
+
+import jax
+import jax.numpy as jnp
+import jax.typing as jxt
+import numpy as np
+import numpy.typing as npt
+import pyvista as pv
+import rich
+import rich.traceback
+import scipy
+import scipy.linalg</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear.py (Line 18:1 - Line 40:7), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 16:1 - Line 38:12)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn56" onclick="toggleCodeBlock('cloneGroup56', 'expandBtn56', 'collapseBtn56')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn56" onclick="toggleCodeBlock('cloneGroup56', 'expandBtn56', 'collapseBtn56')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup56"><code class="language-python text-sm text-gray-800">import taichi as ti
+from icecream import ic
+from scipy.optimize import OptimizeResult
+
+import mkit.ext
+import mkit.logging
+import mkit.point
+import mkit.sparse
+from mkit.physics.cell import tetra
+from mkit.physics.energy import gravity
+from mkit.physics.energy.abc import CellEnergyFn
+from mkit.physics.energy.elastic import corotated
+from mkit.physics.model import Model
+
+if TYPE_CHECKING:
+    import sparse
+
+ti.init()
+mkit.logging.init()
+rich.traceback.install(show_locals=True)
+
+
+def linear</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear.py (Line 37:5 - Line 48:3), exp/2024/08/07/elasticity/src/plot-stress.py (Line 15:2 - Line 71:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn57" onclick="toggleCodeBlock('cloneGroup57', 'expandBtn57', 'collapseBtn57')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn57" onclick="toggleCodeBlock('cloneGroup57', 'expandBtn57', 'collapseBtn57')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup57"><code class="language-python text-sm text-gray-800">)
+
+
+def linear(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike] = {},
+    cell_data: Mapping[str, jxt.ArrayLike] = {},
+    field_data: Mapping[str, jxt.ArrayLike] = {},
+) -&gt; jax.Array:
+    _: Any
+    mu</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear.py (Line 50:5 - Line 57:6), exp/2024/08/07/elasticity/src/plot-stress.py (Line 25:5 - Line 32:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn58" onclick="toggleCodeBlock('cloneGroup58', 'expandBtn58', 'collapseBtn58')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn58" onclick="toggleCodeBlock('cloneGroup58', 'expandBtn58', 'collapseBtn58')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup58"><code class="language-python text-sm text-gray-800">grad_op: jax.Array = tetra.grad_op(points)
+    grad_u: jax.Array = grad_op @ disp
+    E: jax.Array = 0.5 * (grad_u.T + grad_u)
+    W: jax.Array = 0.5 * lambda_ * jnp.trace(E) ** 2 + mu * jnp.trace(E @ E)
+    return W
+
+
+class</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear.py (Line 63:7 - Line 135:73), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 63:12 - Line 135:5)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn59" onclick="toggleCodeBlock('cloneGroup59', 'expandBtn59', 'collapseBtn59')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn59" onclick="toggleCodeBlock('cloneGroup59', 'expandBtn59', 'collapseBtn59')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup59"><code class="language-python text-sm text-gray-800">) + CellEnergyFn(gravity)
+
+    def solve(self) -&gt; OptimizeResult:
+        x0: npt.NDArray[np.float64] = np.zeros((self.n_free, 3))
+        res: OptimizeResult = scipy.optimize.minimize(
+            self.fun,
+            x0.flatten(),
+            method=&quot;trust-constr&quot;,
+            jac=self.jac,
+            hess=self.hess,
+            options={&quot;disp&quot;: True, &quot;verbose&quot;: 2},
+            callback=self.callback,
+        )
+        # import cyipopt
+
+        # A: scipy.sparse.coo_matrix = self.slide_constraint.A
+        # ic(A.dtype)
+        # res: OptimizeResult = cyipopt.minimize_ipopt(
+        #     self.fun,
+        #     x0.flatten(),
+        #     jac=self.jac,
+        #     hess=self.hess,
+        #     constraints=[
+        #         # self.slide_constraint
+        #         {
+        #             &quot;type&quot;: &quot;eq&quot;,
+        #             &quot;fun&quot;: lambda x: A @ x,
+        #             &quot;jac&quot;: lambda x: scipy.sparse.coo_array(A),
+        #             &quot;hess&quot;: lambda x, v: np.zeros((self.n_free * 3,)),
+        #         }
+        #     ],
+        #     options={&quot;print_level&quot;: 5, &quot;max_wall_time&quot;: 300.0},
+        # )
+        return res
+
+    @mkit.logging.log_time
+    def fun(self, x: npt.ArrayLike) -&gt; float:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        energy: jax.Array = self.model.energy(self.energy_fn, disp)
+        return float(energy)
+
+    @mkit.logging.log_time
+    def jac(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        jac: jax.Array = self.model.energy_jac(self.energy_fn, disp)
+        return np.asarray(jac[self.free_mask].flatten())
+
+    @mkit.logging.log_time
+    def hess(self, x: npt.ArrayLike) -&gt; scipy.sparse.coo_matrix:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        hess: sparse.COO = self.model.energy_hess(self.energy_fn, disp)
+        hess = mkit.sparse.sparse_mask(
+            hess,
+            (
+                self.free_mask,
+                np.ones((3,), np.bool),
+                self.free_mask,
+                np.ones((3,), np.bool),
+            ),
+        )
+        return hess.reshape((self.n_free * 3, self.n_free * 3)).to_scipy_sparse()
+
+    def callback(self, intermediate_result: OptimizeResult) -&gt; None:
+        # ic(intermediate_result)
+        pass
+
+    @functools.cached_property
+    def n_free(self) -&gt; int:
+        return np.count_nonzero(self.free_mask)
+
+    def make_disp(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = np.zeros((self.model.n_points, 3))
+        # disp[self.pin_mask] = self.model.point_data[&quot;pin_disp&quot;][self.pin_mask]</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear.py (Line 136:9 - Line 159:18), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 135:9 - Line 158:23)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn60" onclick="toggleCodeBlock('cloneGroup60', 'expandBtn60', 'collapseBtn60')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn60" onclick="toggleCodeBlock('cloneGroup60', 'expandBtn60', 'collapseBtn60')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup60"><code class="language-python text-sm text-gray-800">disp[self.free_mask] = np.asarray(x).reshape((self.n_free, 3))
+        return disp
+
+    @functools.cached_property
+    def free_mask(self) -&gt; npt.NDArray[np.bool]:
+        return ~self.pin_mask
+
+    @functools.cached_property
+    def pin_mask(self) -&gt; npt.NDArray[np.bool]:
+        return np.asarray(self.model.point_data[&quot;pin_mask&quot;], np.bool)
+
+
+def main() -&gt; None:
+    mesh: pv.UnstructuredGrid = pv.read(&quot;data/input.vtu&quot;)
+    problem = Problem(mesh)
+    res: OptimizeResult = problem.solve()
+    ic(res)
+    disp: npt.NDArray[np.float64] = problem.make_disp(res.x)
+    mesh.point_data[&quot;solution&quot;] = disp
+    mesh.cell_data[&quot;energy_density&quot;] = problem.model.energy_density(  # pyright: ignore [reportArgumentType]
+        CellEnergyFn(corotated), disp
+    )
+
+    mesh.save(&quot;data/linear.vtu&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear-spsolve.py (Line 1:1 - Line 27:2), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 1:1 - Line 27:7)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn61" onclick="toggleCodeBlock('cloneGroup61', 'expandBtn61', 'collapseBtn61')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn61" onclick="toggleCodeBlock('cloneGroup61', 'expandBtn61', 'collapseBtn61')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup61"><code class="language-python text-sm text-gray-800">import functools
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any
+
+import jax
+import jax.numpy as jnp
+import jax.typing as jxt
+import numpy as np
+import numpy.typing as npt
+import pyvista as pv
+import rich
+import rich.traceback
+import scipy
+import scipy.linalg
+import scipy.optimize
+import scipy.sparse
+import scipy.sparse.linalg
+import taichi as ti
+from icecream import ic
+from scipy.optimize import OptimizeResult
+
+import mkit.ext
+import mkit.logging
+import mkit.point
+import mkit.sparse
+from mkit.physics.cell import tetra
+from mkit.physics.energy.</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear-spsolve.py (Line 27:1 - Line 64:4), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 26:1 - Line 63:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn62" onclick="toggleCodeBlock('cloneGroup62', 'expandBtn62', 'collapseBtn62')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn62" onclick="toggleCodeBlock('cloneGroup62', 'expandBtn62', 'collapseBtn62')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup62"><code class="language-python text-sm text-gray-800">from mkit.physics.energy.abc import CellEnergyFn
+from mkit.physics.energy.elastic import corotated
+from mkit.physics.model import Model
+
+if TYPE_CHECKING:
+    import sparse
+
+ti.init()
+mkit.logging.init()
+rich.traceback.install(show_locals=True)
+
+
+def linear(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike] = {},
+    cell_data: Mapping[str, jxt.ArrayLike] = {},
+    field_data: Mapping[str, jxt.ArrayLike] = {},
+) -&gt; jax.Array:
+    _: Any
+    mu: jax.Array = jnp.asarray(cell_data[&quot;mu&quot;])
+    lambda_: jax.Array = jnp.asarray(cell_data[&quot;lambda&quot;])
+    grad_op: jax.Array = tetra.grad_op(points)
+    grad_u: jax.Array = grad_op @ disp
+    E: jax.Array = 0.5 * (grad_u.T + grad_u)
+    W: jax.Array = 0.5 * lambda_ * jnp.trace(E) ** 2 + mu * jnp.trace(E @ E)
+    return W
+
+
+class Problem:
+    model: Model
+    energy_fn: CellEnergyFn
+
+    def __init__(self, mesh: Any) -&gt; None:
+        self.model = Model(mesh)
+        self.energy_fn = CellEnergyFn(linear)
+
+    def</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear-spsolve.py (Line 62:7 - Line 132:11), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 63:8 - Line 133:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn63" onclick="toggleCodeBlock('cloneGroup63', 'expandBtn63', 'collapseBtn63')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn63" onclick="toggleCodeBlock('cloneGroup63', 'expandBtn63', 'collapseBtn63')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup63"><code class="language-python text-sm text-gray-800">)
+
+    def solve(self) -&gt; OptimizeResult:
+        x0: npt.NDArray[np.float64] = np.zeros((self.n_free, 3))
+        res: OptimizeResult = scipy.optimize.minimize(
+            self.fun,
+            x0.flatten(),
+            method=&quot;trust-constr&quot;,
+            jac=self.jac,
+            hess=self.hess,
+            options={&quot;disp&quot;: True, &quot;verbose&quot;: 2},
+            callback=self.callback,
+        )
+        # import cyipopt
+
+        # A: scipy.sparse.coo_matrix = self.slide_constraint.A
+        # ic(A.dtype)
+        # res: OptimizeResult = cyipopt.minimize_ipopt(
+        #     self.fun,
+        #     x0.flatten(),
+        #     jac=self.jac,
+        #     hess=self.hess,
+        #     constraints=[
+        #         # self.slide_constraint
+        #         {
+        #             &quot;type&quot;: &quot;eq&quot;,
+        #             &quot;fun&quot;: lambda x: A @ x,
+        #             &quot;jac&quot;: lambda x: scipy.sparse.coo_array(A),
+        #             &quot;hess&quot;: lambda x, v: np.zeros((self.n_free * 3,)),
+        #         }
+        #     ],
+        #     options={&quot;print_level&quot;: 5, &quot;max_wall_time&quot;: 300.0},
+        # )
+        return res
+
+    @mkit.logging.log_time
+    def fun(self, x: npt.ArrayLike) -&gt; float:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        energy: jax.Array = self.model.energy(self.energy_fn, disp)
+        return float(energy)
+
+    @mkit.logging.log_time
+    def jac(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        jac: jax.Array = self.model.energy_jac(self.energy_fn, disp)
+        return np.asarray(jac[self.free_mask].flatten())
+
+    @mkit.logging.log_time
+    def hess(self, x: npt.ArrayLike) -&gt; scipy.sparse.coo_matrix:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        hess: sparse.COO = self.model.energy_hess(self.energy_fn, disp)
+        hess = mkit.sparse.sparse_mask(
+            hess,
+            (
+                self.free_mask,
+                np.ones((3,), np.bool),
+                self.free_mask,
+                np.ones((3,), np.bool),
+            ),
+        )
+        return hess.reshape((self.n_free * 3, self.n_free * 3)).to_scipy_sparse()
+
+    def callback(self, intermediate_result: OptimizeResult) -&gt; None:
+        # ic(intermediate_result)
+        pass
+
+    @functools.cached_property
+    def n_free(self) -&gt; int:
+        return np.count_nonzero(self.free_mask)
+
+    @functools</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/linear-spsolve.py (Line 134:9 - Line 154:6), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 131:10 - Line 150:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn64" onclick="toggleCodeBlock('cloneGroup64', 'expandBtn64', 'collapseBtn64')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn64" onclick="toggleCodeBlock('cloneGroup64', 'expandBtn64', 'collapseBtn64')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup64"><code class="language-python text-sm text-gray-800">)
+
+    def make_disp(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = np.zeros((self.model.n_points, 3))
+        disp[self.pin_mask] = self.model.point_data[&quot;pin_disp&quot;][self.pin_mask]
+        disp[self.free_mask] = np.asarray(x).reshape((self.n_free, 3))
+        return disp
+
+    @functools.cached_property
+    def free_mask(self) -&gt; npt.NDArray[np.bool]:
+        return ~self.pin_mask
+
+    @functools.cached_property
+    def pin_mask(self) -&gt; npt.NDArray[np.bool]:
+        return np.asarray(self.model.point_data[&quot;pin_mask&quot;], np.bool)
+
+
+def main() -&gt; None:
+    mesh: pv.UnstructuredGrid = pv.read(&quot;data/input.vtu&quot;)
+    problem = Problem(mesh)
+    model</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/elasticity/src/E-nu-to-lambda-mu.py (Line 10:5 - Line 22:2), exp/2024/08/07/elasticity/src/gen.py (Line 24:5 - Line 35:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn65" onclick="toggleCodeBlock('cloneGroup65', 'expandBtn65', 'collapseBtn65')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn65" onclick="toggleCodeBlock('cloneGroup65', 'expandBtn65', 'collapseBtn65')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup65"><code class="language-python text-sm text-gray-800">nu: float = 0.46
+
+
+def main() -&gt; None:
+    cfg: Config = OmegaConf.structured(Config)
+    cfg = OmegaConf.merge(cfg, OmegaConf.from_cli())
+    ic(cfg)
+
+    E: float = cfg.E
+    nu: float = cfg.nu
+    mu: float = E / (2 * (1 + nu))
+    lambda_: float = E * nu / ((1 + nu) * (1 - 2 * nu))
+    ic(mu)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/cylinder/src/main.py (Line 1:1 - Line 145:2), exp/2024/08/07/linear-vs-hyper/src/main.py (Line 1:1 - Line 46:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn66" onclick="toggleCodeBlock('cloneGroup66', 'expandBtn66', 'collapseBtn66')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn66" onclick="toggleCodeBlock('cloneGroup66', 'expandBtn66', 'collapseBtn66')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup66"><code class="language-python text-sm text-gray-800">import functools
+import pathlib
+from typing import TYPE_CHECKING, Any
+
+import jax
+import numpy as np
+import numpy.typing as npt
+import pyvista as pv
+import scipy.optimize
+import scipy.sparse
+from loguru import logger
+
+import mkit.cli
+import mkit.logging
+import mkit.sparse
+from mkit.physics.energy.abc import CellEnergy
+from mkit.physics.model import Model
+from mkit.physics.preset.elastic import MODELS, Elastic
+
+if TYPE_CHECKING:
+    import sparse
+
+
+class Config(mkit.cli.BaseConfig):
+    input: pathlib.Path
+    model: str
+    output: pathlib.Path
+
+
+class Problem:
+    model: Model
+    energy_fn: CellEnergy
+
+    def __init__(self, mesh: Any, name: str) -&gt; None:
+        cfg: Elastic = MODELS[name]
+        self.model = Model(mesh, cfg.energy_fn)
+        self.energy_fn = cfg.energy_fn
+        for k, v in cfg.params.items():
+            self.mesh.cell_data[k] = v  # pyright: ignore [reportArgumentType]
+
+    def solve(self) -&gt; scipy.optimize.OptimizeResult:
+        x0: npt.NDArray[np.floating] = np.zeros((self.n_free, 3))
+        try:
+            res: scipy.optimize.OptimizeResult = scipy.optimize.minimize(
+                self.fun,
+                x0.flatten(),
+                method=&quot;trust-constr&quot;,
+                jac=self.jac,
+                hess=self.hess,
+                options={&quot;disp&quot;: True},
+            )
+        except Exception as e:
+            res = scipy.optimize.OptimizeResult()
+            res[&quot;execution_time&quot;] = np.nan
+            res[&quot;message&quot;] = str(e)
+            res[&quot;success&quot;] = False
+            res[&quot;x&quot;] = x0.flatten()
+            return res
+        else:
+            return res
+
+    def fun(self, x: npt.ArrayLike) -&gt; jax.Array:
+        disp: npt.NDArray[np.floating] = self.make_disp(x)
+        energy: jax.Array = self.model.energy(disp)
+        return energy
+
+    def jac(self, x: npt.ArrayLike) -&gt; jax.Array:
+        disp: npt.NDArray[np.floating] = self.make_disp(x)
+        jac: jax.Array = self.model.energy_jac(disp)
+        return jac[self.free_mask].flatten()
+
+    def hess(self, x: npt.NDArray) -&gt; scipy.sparse.coo_matrix:
+        disp: npt.NDArray[np.floating] = self.make_disp(x)
+        hess: sparse.COO = self.model.energy_hess(disp)
+        coord_mask: npt.NDArray[np.bool] = np.ones((3,), bool)
+        hess = mkit.sparse.sparse_mask(
+            hess, (self.free_mask, coord_mask, self.free_mask, coord_mask)
+        )
+        return hess.reshape((self.n_free * 3, self.n_free * 3)).to_scipy_sparse()
+
+    def make_disp(self, _x: npt.ArrayLike) -&gt; npt.NDArray[np.floating]:
+        x: npt.NDArray[np.floating] = np.asarray(_x)
+        disp: npt.NDArray[np.floating] = self.pin_disp.copy()
+        disp[self.free_mask] = x.reshape((self.n_free, 3))
+        return disp
+
+    def energy_density(self, x: npt.ArrayLike) -&gt; jax.Array:
+        disp: npt.NDArray[np.floating] = self.make_disp(x)
+        W: jax.Array = self.model.energy_density(disp)
+        return W
+
+    @property
+    def mesh(self) -&gt; pv.UnstructuredGrid:
+        return self.model.mesh
+
+    @property
+    def n_points(self) -&gt; int:
+        return self.mesh.n_points
+
+    @property
+    def n_cells(self) -&gt; int:
+        return self.mesh.n_cells
+
+    @functools.cached_property
+    def n_free(self) -&gt; int:
+        return np.count_nonzero(self.free_mask)
+
+    @property
+    def point_data(self) -&gt; pv.DataSetAttributes:
+        return self.mesh.point_data
+
+    @functools.cached_property
+    def free_mask(self) -&gt; npt.NDArray[np.bool]:
+        return ~self.pin_mask
+
+    @functools.cached_property
+    def pin_disp(self) -&gt; npt.NDArray[np.floating]:
+        pin_disp: npt.NDArray[np.floating] | None = self.point_data.get(&quot;pin_disp&quot;)
+        if pin_disp is None:
+            pin_disp = np.zeros((self.n_points, 3))
+        return pin_disp
+
+    @functools.cached_property
+    def pin_mask(self) -&gt; npt.NDArray[np.bool]:
+        pin_mask: npt.NDArray[np.bool] | None = self.point_data.get(&quot;pin_mask&quot;)
+        if pin_mask is None:
+            pin_mask = np.zeros((self.n_points,), bool)
+        return pin_mask
+
+
+def main(cfg: Config) -&gt; None:
+    mesh: pv.UnstructuredGrid = pv.read(cfg.input)
+    problem: Problem = Problem(mesh, cfg.model)
+    res: scipy.optimize.OptimizeResult = problem.solve()
+    logger.info(&quot;{}&quot;, res)
+    disp: npt.NDArray[np.floating] = problem.make_disp(res.x)
+    mesh.point_data[&quot;solution&quot;] = disp
+    mesh.cell_data[&quot;energy_density&quot;] = np.asarray(problem.model.energy_density(disp))
+    mesh.field_data[&quot;execution_time&quot;] = res[&quot;execution_time&quot;]
+    mesh.field_data[&quot;success&quot;] = res[&quot;success&quot;]
+    mesh.save(cfg.output)
+
+
+if __name__ == &quot;__main__&quot;:
+    mkit.cli.run(main)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/cylinder/src/info.py (Line 1:1 - Line 17:2), exp/2024/08/07/linear-vs-hyper/src/info.py (Line 1:1 - Line 17:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn67" onclick="toggleCodeBlock('cloneGroup67', 'expandBtn67', 'collapseBtn67')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn67" onclick="toggleCodeBlock('cloneGroup67', 'expandBtn67', 'collapseBtn67')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup67"><code class="language-python text-sm text-gray-800">import sys
+
+import pyvista as pv
+from icecream import ic
+
+
+def main() -&gt; None:
+    mesh: pv.UnstructuredGrid = pv.read(sys.argv[1])
+    ic(mesh)
+    ic(mesh.point_data)
+    ic(mesh.cell_data)
+    ic(mesh.field_data)
+    ic(dict(mesh.field_data))
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/08/07/cylinder/src/gen.py (Line 15:2 - Line 49:9), exp/2024/09/01/cylinder/src/gen.py (Line 13:2 - Line 47:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn68" onclick="toggleCodeBlock('cloneGroup68', 'expandBtn68', 'collapseBtn68')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn68" onclick="toggleCodeBlock('cloneGroup68', 'expandBtn68', 'collapseBtn68')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup68"><code class="language-python text-sm text-gray-800">Path
+
+
+def main(cfg: Config) -&gt; None:
+    surface: pv.PolyData
+    match cfg.deform:
+        case &quot;squash&quot;:
+            surface = pv.Cylinder(height=2)
+        case &quot;stretch&quot;:
+            surface = pv.Cylinder()
+        case &quot;twist&quot;:
+            surface = pv.Box((-2, 2, -1, 1, -1, 1))
+    surface.triangulate(inplace=True, progress_bar=True)
+    tetmesh: pv.UnstructuredGrid = mkit.ext.tetwild(surface)
+    surface = tetmesh.extract_surface(progress_bar=True)
+    left_mask: npt.NDArray[np.bool] = surface.points[:, 0] &lt; surface.bounds[0] + 1e-3
+    right_mask: npt.NDArray[np.bool] = surface.points[:, 0] &gt; surface.bounds[1] - 1e-3
+    surface.point_data[&quot;pin_mask&quot;] = left_mask | right_mask
+    pin_disp: npt.NDArray[np.floating] = np.zeros((surface.n_points, 3))
+    match cfg.deform:
+        case &quot;squash&quot;:
+            pin_disp[left_mask] = [0.5, 0, 0]
+            pin_disp[right_mask] = [-0.5, 0, 0]
+        case &quot;stretch&quot;:
+            pin_disp[left_mask] = [-0.5, 0, 0]
+            pin_disp[right_mask] = [0.5, 0, 0]
+        case &quot;twist&quot;:
+            left_points: pv.PointSet = pv.PointSet(surface.points[left_mask])
+            left_points.rotate_x(-90, inplace=True)
+            pin_disp[left_mask] = left_points.points - surface.points[left_mask]
+            right_points: pv.PointSet = pv.PointSet(surface.points[right_mask])
+            right_points.rotate_x(90, inplace=True)
+            pin_disp[right_mask] = right_points.points - surface.points[right_mask]
+    surface.point_data[&quot;pin_disp&quot;] = pin_disp
+    tetmesh = mkit.transfer</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/nonhomogeneous.py (Line 88:9 - Line 98:39), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 63:8 - Line 73:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn69" onclick="toggleCodeBlock('cloneGroup69', 'expandBtn69', 'collapseBtn69')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn69" onclick="toggleCodeBlock('cloneGroup69', 'expandBtn69', 'collapseBtn69')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup69"><code class="language-python text-sm text-gray-800">)
+
+    def solve(self) -&gt; OptimizeResult:
+        x0: npt.NDArray[np.float64] = np.zeros((self.n_free, 3))
+        res: OptimizeResult = scipy.optimize.minimize(
+            self.fun,
+            x0.flatten(),
+            method=&quot;trust-constr&quot;,
+            jac=self.jac,
+            hess=self.hess,
+            # constraints=[self.slide_constraint],</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/nonhomogeneous.py (Line 99:13 - Line 160:8), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 73:13 - Line 133:6)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn70" onclick="toggleCodeBlock('cloneGroup70', 'expandBtn70', 'collapseBtn70')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn70" onclick="toggleCodeBlock('cloneGroup70', 'expandBtn70', 'collapseBtn70')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup70"><code class="language-python text-sm text-gray-800">options={&quot;disp&quot;: True, &quot;verbose&quot;: 2},
+            callback=self.callback,
+        )
+        # import cyipopt
+
+        # A: scipy.sparse.coo_matrix = self.slide_constraint.A
+        # ic(A.dtype)
+        # res: OptimizeResult = cyipopt.minimize_ipopt(
+        #     self.fun,
+        #     x0.flatten(),
+        #     jac=self.jac,
+        #     hess=self.hess,
+        #     constraints=[
+        #         # self.slide_constraint
+        #         {
+        #             &quot;type&quot;: &quot;eq&quot;,
+        #             &quot;fun&quot;: lambda x: A @ x,
+        #             &quot;jac&quot;: lambda x: scipy.sparse.coo_array(A),
+        #             &quot;hess&quot;: lambda x, v: np.zeros((self.n_free * 3,)),
+        #         }
+        #     ],
+        #     options={&quot;print_level&quot;: 5, &quot;max_wall_time&quot;: 300.0},
+        # )
+        return res
+
+    @mkit.logging.log_time
+    def fun(self, x: npt.ArrayLike) -&gt; float:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        energy: jax.Array = self.model.energy(self.energy_fn, disp)
+        return float(energy)
+
+    @mkit.logging.log_time
+    def jac(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        jac: jax.Array = self.model.energy_jac(self.energy_fn, disp)
+        return np.asarray(jac[self.free_mask].flatten())
+
+    @mkit.logging.log_time
+    def hess(self, x: npt.ArrayLike) -&gt; scipy.sparse.coo_matrix:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        hess: sparse.COO = self.model.energy_hess(self.energy_fn, disp)
+        hess = mkit.sparse.sparse_mask(
+            hess,
+            (
+                self.free_mask,
+                np.ones((3,), np.bool),
+                self.free_mask,
+                np.ones((3,), np.bool),
+            ),
+        )
+        return hess.reshape((self.n_free * 3, self.n_free * 3)).to_scipy_sparse()
+
+    def callback(self, intermediate_result: OptimizeResult) -&gt; None:
+        # ic(intermediate_result)
+        pass
+
+    @functools.cached_property
+    def n_free(self) -&gt; int:
+        return np.count_nonzero(self.free_mask)
+
+    @functools.cached_property
+    def n_slide</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/nonhomogeneous.py (Line 161:11 - Line 176:11), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 131:10 - Line 147:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn71" onclick="toggleCodeBlock('cloneGroup71', 'expandBtn71', 'collapseBtn71')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn71" onclick="toggleCodeBlock('cloneGroup71', 'expandBtn71', 'collapseBtn71')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup71"><code class="language-python text-sm text-gray-800">)
+
+    def make_disp(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = np.zeros((self.model.n_points, 3))
+        disp[self.free_mask] = np.asarray(x).reshape((self.n_free, 3))
+        return disp
+
+    @functools.cached_property
+    def free_mask(self) -&gt; npt.NDArray[np.bool]:
+        return ~self.pin_mask
+
+    @functools.cached_property
+    def pin_mask(self) -&gt; npt.NDArray[np.bool]:
+        return np.asarray(self.model.point_data[&quot;pin_mask&quot;], np.bool)
+
+    @functools</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/nonhomogeneous.py (Line 181:2 - Line 190:15), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 149:5 - Line 158:23)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn72" onclick="toggleCodeBlock('cloneGroup72', 'expandBtn72', 'collapseBtn72')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn72" onclick="toggleCodeBlock('cloneGroup72', 'expandBtn72', 'collapseBtn72')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup72"><code class="language-python text-sm text-gray-800">)
+res: OptimizeResult = problem.solve()
+ic(res)
+disp: npt.NDArray[np.float64] = problem.make_disp(res.x)
+mesh.point_data[&quot;solution&quot;] = disp
+mesh.cell_data[&quot;energy_density&quot;] = problem.model.energy_density(  # pyright: ignore [reportArgumentType]
+    CellEnergyFn(corotated), disp
+)
+
+mesh.save(&quot;solution.vtu&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/nonhomogeneous-plot.py (Line 3:15 - Line 15:21), exp/2024/07/10/nonhomogeneous/src/plot.py (Line 3:12 - Line 15:12)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn73" onclick="toggleCodeBlock('cloneGroup73', 'expandBtn73', 'collapseBtn73')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn73" onclick="toggleCodeBlock('cloneGroup73', 'expandBtn73', 'collapseBtn73')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup73"><code class="language-python text-sm text-gray-800">)
+mesh_warp: pv.UnstructuredGrid = mesh.warp_by_vector(&quot;solution&quot;, progress_bar=True)
+mesh_clip: pv.UnstructuredGrid = mesh_warp.clip(
+    &quot;-x&quot;, (0, 0, 0), progress_bar=True, crinkle=True
+)
+pl = pv.Plotter(off_screen=True)
+pl.add_axes()  # pyright: ignore [reportCallIssue]
+pl.add_mesh(mesh_clip, scalars=&quot;energy_density&quot;, name=&quot;mesh&quot;)
+camera: pv.Camera = pl.camera
+camera.tight(0.2, view=&quot;zy&quot;)
+camera.to_paraview_pvcc(&quot;camera.pvcc&quot;)
+pl.camera = pv.Camera.from_paraview_pvcc(&quot;camera.pvcc&quot;)
+pl.screenshot(&quot;nonhomogeneous.png&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/main.py (Line 1:1 - Line 48:6), exp/2024/07/10/nonhomogeneous/src/nonhomogeneous.py (Line 1:1 - Line 48:58)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn74" onclick="toggleCodeBlock('cloneGroup74', 'expandBtn74', 'collapseBtn74')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn74" onclick="toggleCodeBlock('cloneGroup74', 'expandBtn74', 'collapseBtn74')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup74"><code class="language-python text-sm text-gray-800">import dataclasses
+import functools
+from typing import TYPE_CHECKING
+
+import numpy as np
+import numpy.typing as npt
+import pyvista as pv
+import rich
+import rich.traceback
+import scipy
+import scipy.optimize
+import scipy.sparse
+import sparse
+import taichi as ti
+from icecream import ic
+from omegaconf import OmegaConf
+from scipy.optimize import LinearConstraint, OptimizeResult
+
+import mkit.ext
+import mkit.logging
+import mkit.point
+import mkit.sparse
+from mkit.physics.energy import gravity
+from mkit.physics.energy.abc import CellEnergyFn
+from mkit.physics.energy.elastic import corotated
+from mkit.physics.model import Model
+
+if TYPE_CHECKING:
+    import jax
+
+ti.init()
+mkit.logging.init()
+rich.traceback.install(show_locals=True)
+
+
+@dataclasses.dataclass(kw_only=True)
+class Config:
+    mu: float = 1e3
+    lambda_: float = 3e3
+
+
+cfg: Config = OmegaConf.structured(Config)
+cfg = OmegaConf.merge(cfg, OmegaConf.from_cli())
+ic(cfg)
+
+inner: pv.PolyData = pv.Icosphere(radius=0.1)
+inner.point_data[&quot;pin_mask&quot;] = np.ones((inner.n_points,), bool)
+inner</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/main.py (Line 50:1 - Line 58:2), exp/2024/07/10/nonhomogeneous/src/nonhomogeneous.py (Line 50:1 - Line 58:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn75" onclick="toggleCodeBlock('cloneGroup75', 'expandBtn75', 'collapseBtn75')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn75" onclick="toggleCodeBlock('cloneGroup75', 'expandBtn75', 'collapseBtn75')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup75"><code class="language-python text-sm text-gray-800">inner.point_data[&quot;pin_mask&quot;] &amp;= ~inner.point_data[&quot;slide_mask&quot;]
+inner.point_data[&quot;normal&quot;] = inner.point_normals
+
+outer: pv.PolyData = pv.Icosphere(radius=0.2)
+outer.point_data[&quot;pin_mask&quot;] = np.zeros((outer.n_points,), bool)
+outer.point_data[&quot;slide_mask&quot;] = np.zeros((outer.n_points,), bool)
+outer.point_data[&quot;normal&quot;] = outer.point_normals
+
+mesh: pv.UnstructuredGrid = mkit.ext.tetwild_wrapped(outer, inner)</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/main.py (Line 58:6 - Line 66:6), exp/2024/07/10/nonhomogeneous/src/nonhomogeneous.py (Line 58:5 - Line 57:5)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn76" onclick="toggleCodeBlock('cloneGroup76', 'expandBtn76', 'collapseBtn76')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn76" onclick="toggleCodeBlock('cloneGroup76', 'expandBtn76', 'collapseBtn76')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup76"><code class="language-python text-sm text-gray-800">)
+ic(mesh)
+mesh.cell_data[&quot;mu&quot;] = np.full((mesh.n_cells,), cfg.mu)
+mesh.cell_data[&quot;lambda&quot;] = np.full((mesh.n_cells,), cfg.lambda_)
+mesh.cell_data[&quot;density&quot;] = np.full((mesh.n_cells,), 1e3)
+mesh.cell_data[&quot;gravity&quot;] = np.tile(np.asarray([0, -9.8, 0]), (mesh.n_cells, 1))
+
+
+class</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/main.py (Line 66:1 - Line 94:12), exp/2024/07/10/nonhomogeneous/src/nonhomogeneous.py (Line 70:1 - Line 73:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn77" onclick="toggleCodeBlock('cloneGroup77', 'expandBtn77', 'collapseBtn77')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn77" onclick="toggleCodeBlock('cloneGroup77', 'expandBtn77', 'collapseBtn77')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup77"><code class="language-python text-sm text-gray-800">class Problem:
+    model: Model
+    energy_fn: CellEnergyFn
+
+    def __init__(self) -&gt; None:
+        self.model = Model(mesh)
+        self.energy_fn = CellEnergyFn(corotated) + CellEnergyFn(gravity)
+
+        point_normal: npt.NDArray[np.float64] = np.asarray(
+            self.model.point_data[&quot;normal&quot;]
+        )
+        A: sparse.COO = sparse.COO(
+            (np.repeat(np.arange(self.n_free), 3), np.arange(self.n_free * 3)),
+            point_normal[self.free_mask].flatten(),
+        )
+        A = A[self.slide_mask[self.free_mask], :]
+        self.slide_constraint = LinearConstraint(
+            A.reshape((self.n_slide, self.n_free * 3)).to_scipy_sparse(), lb=0, ub=0
+        )
+
+    def solve(self) -&gt; OptimizeResult:
+        x0: npt.NDArray[np.float64] = np.zeros((self.n_free, 3))
+        res: OptimizeResult = scipy.optimize.minimize(
+            self.fun,
+            x0.flatten(),
+            method=&quot;trust-constr&quot;,
+            jac=self.jac,
+            hess=self.hess,
+            constraints</code></pre></div><div class="py-4"><p class="text-gray-600">exp/2024/07/10/nonhomogeneous/src/main.py (Line 94:2 - Line 186:2), exp/2024/08/07/elasticity/src/neo-hookean.py (Line 72:5 - Line 190:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn78" onclick="toggleCodeBlock('cloneGroup78', 'expandBtn78', 'collapseBtn78')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn78" onclick="toggleCodeBlock('cloneGroup78', 'expandBtn78', 'collapseBtn78')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup78"><code class="language-python text-sm text-gray-800">,
+            options={&quot;disp&quot;: True, &quot;verbose&quot;: 2},
+            callback=self.callback,
+        )
+        # import cyipopt
+
+        # A: scipy.sparse.coo_matrix = self.slide_constraint.A
+        # ic(A.dtype)
+        # res: OptimizeResult = cyipopt.minimize_ipopt(
+        #     self.fun,
+        #     x0.flatten(),
+        #     jac=self.jac,
+        #     hess=self.hess,
+        #     constraints=[
+        #         # self.slide_constraint
+        #         {
+        #             &quot;type&quot;: &quot;eq&quot;,
+        #             &quot;fun&quot;: lambda x: A @ x,
+        #             &quot;jac&quot;: lambda x: scipy.sparse.coo_array(A),
+        #             &quot;hess&quot;: lambda x, v: np.zeros((self.n_free * 3,)),
+        #         }
+        #     ],
+        #     options={&quot;print_level&quot;: 5, &quot;max_wall_time&quot;: 300.0},
+        # )
+        return res
+
+    @mkit.logging.log_time
+    def fun(self, x: npt.ArrayLike) -&gt; float:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        energy: jax.Array = self.model.energy(self.energy_fn, disp)
+        return float(energy)
+
+    @mkit.logging.log_time
+    def jac(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        jac: jax.Array = self.model.energy_jac(self.energy_fn, disp)
+        return np.asarray(jac[self.free_mask].flatten())
+
+    @mkit.logging.log_time
+    def hess(self, x: npt.ArrayLike) -&gt; scipy.sparse.coo_matrix:
+        disp: npt.NDArray[np.float64] = self.make_disp(x)
+        hess: sparse.COO = self.model.energy_hess(self.energy_fn, disp)
+        hess = mkit.sparse.sparse_mask(
+            hess,
+            (
+                self.free_mask,
+                np.ones((3,), np.bool),
+                self.free_mask,
+                np.ones((3,), np.bool),
+            ),
+        )
+        return hess.reshape((self.n_free * 3, self.n_free * 3)).to_scipy_sparse()
+
+    def callback(self, intermediate_result: OptimizeResult) -&gt; None:
+        # ic(intermediate_result)
+        pass
+
+    @functools.cached_property
+    def n_free(self) -&gt; int:
+        return np.count_nonzero(self.free_mask)
+
+    @functools.cached_property
+    def n_slide(self) -&gt; int:
+        return np.count_nonzero(self.slide_mask)
+
+    def make_disp(self, x: npt.ArrayLike) -&gt; npt.NDArray[np.float64]:
+        disp: npt.NDArray[np.float64] = np.zeros((self.model.n_points, 3))
+        disp[self.free_mask] = np.asarray(x).reshape((self.n_free, 3))
+        return disp
+
+    @functools.cached_property
+    def free_mask(self) -&gt; npt.NDArray[np.bool]:
+        return ~self.pin_mask
+
+    @functools.cached_property
+    def pin_mask(self) -&gt; npt.NDArray[np.bool]:
+        return np.asarray(self.model.point_data[&quot;pin_mask&quot;], np.bool)
+
+    @functools.cached_property
+    def slide_mask(self) -&gt; npt.NDArray[np.bool]:
+        return np.asarray(self.model.point_data[&quot;slide_mask&quot;], np.bool) &amp; ~self.pin_mask
+
+
+problem = Problem()
+res: OptimizeResult = problem.solve()
+ic(res)
+disp: npt.NDArray[np.float64] = problem.make_disp(res.x)
+mesh.point_data[&quot;solution&quot;] = disp
+mesh.cell_data[&quot;energy_density&quot;] = problem.model.energy_density(  # pyright: ignore [reportArgumentType]
+    CellEnergyFn(corotated), disp
+)
+
+mesh.save(&quot;solution.vtu&quot;)</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/energy/elastic/_wikipedia.py (Line 30:23 - Line 37:8), src/mkit/physics/energy/elastic/_wikipedia.py (Line 12:7 - Line 19:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn79" onclick="toggleCodeBlock('cloneGroup79', 'expandBtn79', 'collapseBtn79')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn79" onclick="toggleCodeBlock('cloneGroup79', 'expandBtn79', 'collapseBtn79')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup79"><code class="language-python text-sm text-gray-800">(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike],
+    cell_data: Mapping[str, jxt.ArrayLike],
+    field_data: Mapping[str, jxt.ArrayLike],
+) -&gt; jax.Array:
+    lambda_</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/energy/elastic/_chen.py (Line 14:10 - Line 26:8), src/mkit/physics/energy/elastic/_wikipedia.py (Line 12:7 - Line 19:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn80" onclick="toggleCodeBlock('cloneGroup80', 'expandBtn80', 'collapseBtn80')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn80" onclick="toggleCodeBlock('cloneGroup80', 'expandBtn80', 'collapseBtn80')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup80"><code class="language-python text-sm text-gray-800">(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike],
+    cell_data: Mapping[str, jxt.ArrayLike],
+    field_data: Mapping[str, jxt.ArrayLike],
+) -&gt; jax.Array:
+    &quot;&quot;&quot;Corotated (Stomakhin 2012).
+
+    Reference:
+        1. Chen, Yizhou, et al. &quot;Position-Based Nonlinear Gauss-Seidel for Quasistatic Hyperelasticity.&quot; arXiv preprint arXiv:2306.09021 (2023).
+        2. Stomakhin, Alexey, et al. &quot;Energetically Consistent Invertible Elasticity.&quot; Symposium on Computer Animation. Vol. 1. No. 2. 2012.
+    &quot;&quot;&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/energy/elastic/_chen.py (Line 39:12 - Line 51:8), src/mkit/physics/energy/elastic/_wikipedia.py (Line 12:7 - Line 19:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn81" onclick="toggleCodeBlock('cloneGroup81', 'expandBtn81', 'collapseBtn81')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn81" onclick="toggleCodeBlock('cloneGroup81', 'expandBtn81', 'collapseBtn81')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup81"><code class="language-python text-sm text-gray-800">(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike],
+    cell_data: Mapping[str, jxt.ArrayLike],
+    field_data: Mapping[str, jxt.ArrayLike],
+) -&gt; jax.Array:
+    &quot;&quot;&quot;Neo-Hookean (Macklin 2021).
+
+    Reference:
+        1. Chen, Yizhou, et al. &quot;Position-Based Nonlinear Gauss-Seidel for Quasistatic Hyperelasticity.&quot; arXiv preprint arXiv:2306.09021 (2023).
+        2. Macklin, Miles, and Matthias Muller. &quot;A constraint-based formulation of stable neo-hookean materials.&quot; Proceedings of the 14th ACM SIGGRAPH conference on motion, interaction and games. 2021.
+    &quot;&quot;&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/energy/elastic/_chen.py (Line 66:19 - Line 78:8), src/mkit/physics/energy/elastic/_wikipedia.py (Line 12:7 - Line 19:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn82" onclick="toggleCodeBlock('cloneGroup82', 'expandBtn82', 'collapseBtn82')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn82" onclick="toggleCodeBlock('cloneGroup82', 'expandBtn82', 'collapseBtn82')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup82"><code class="language-python text-sm text-gray-800">(
+    disp: jxt.ArrayLike,
+    points: jxt.ArrayLike,
+    point_data: Mapping[str, jxt.ArrayLike],
+    cell_data: Mapping[str, jxt.ArrayLike],
+    field_data: Mapping[str, jxt.ArrayLike],
+) -&gt; jax.Array:
+    &quot;&quot;&quot;Stable Neo-Hookean (Smith 2018).
+
+    Reference:
+        1. Chen, Yizhou, et al. &quot;Position-Based Nonlinear Gauss-Seidel for Quasistatic Hyperelasticity.&quot; arXiv preprint arXiv:2306.09021 (2023).
+        2. Smith, Breannan, Fernando De Goes, and Theodore Kim. &quot;Stable neo-hookean flesh simulation.&quot; ACM Transactions on Graphics (TOG) 37.2 (2018): 1-15.
+    &quot;&quot;&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/energy/elastic/_chen.py (Line 79:5 - Line 89:2), src/mkit/physics/energy/elastic/_chen.py (Line 52:5 - Line 62:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn83" onclick="toggleCodeBlock('cloneGroup83', 'expandBtn83', 'collapseBtn83')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn83" onclick="toggleCodeBlock('cloneGroup83', 'expandBtn83', 'collapseBtn83')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup83"><code class="language-python text-sm text-gray-800">_: Any
+    lambda_: jax.Array = jnp.asarray(cell_data[&quot;lambda&quot;])
+    mu: jax.Array = jnp.asarray(cell_data[&quot;mu&quot;])
+    lambda_hat: jax.Array = mu + lambda_
+    F: jax.Array = tetra.deformation_gradient(disp, points)  # (3, 3)
+    C: jax.Array = tetra.cauchy_strain(F)  # (3, 3)
+    J: jax.Array = jnp.linalg.det(F)  # ()
+    I1_C: jax.Array  # (3, 3)
+    I1_C, _, _ = m.invariants(C)
+    W: jax.Array = 0.5 * mu * I1_C + 0.5 * lambda_hat * (J - 1 - mu / lambda_hat) ** 2
+    return W</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/ops/registration/rigid/_main.py (Line 60:1 - Line 66:5), src/mkit/ops/registration/rigid/_trimesh.py (Line 43:1 - Line 49:5)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn84" onclick="toggleCodeBlock('cloneGroup84', 'expandBtn84', 'collapseBtn84')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn84" onclick="toggleCodeBlock('cloneGroup84', 'expandBtn84', 'collapseBtn84')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup84"><code class="language-python text-sm text-gray-800">def _preprocess(mesh: Any, weight: nt.FN3Like | None = None) -&gt; tm.Trimesh:
+    if weight is not None:
+        logger.warning(&quot;Weight is not supported, using mask instead.&quot;)
+    mesh: tm.Trimesh = mkit.io.trimesh.as_trimesh(
+        mkit.ops.registration.preprocess.mask_points(mesh, weight)
+    )
+    return mesh</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/typing/numpy/_export.py (Line 1:1 - Line 59:2), src/mkit/typing/torch/_export.py (Line 1:1 - Line 59:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn85" onclick="toggleCodeBlock('cloneGroup85', 'expandBtn85', 'collapseBtn85')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn85" onclick="toggleCodeBlock('cloneGroup85', 'expandBtn85', 'collapseBtn85')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup85"><code class="language-python text-sm text-gray-800">from jaxtyping import Bool, Float, Integer, Shaped
+
+from mkit.typing.array import (
+    ArrayLike,
+    BLike,
+    BNLike,
+    F3Like,
+    F4Like,
+    F33Like,
+    F34Like,
+    F43Like,
+    F44Like,
+    FLike,
+    FMN3Like,
+    FMNLike,
+    FN3Like,
+    FNLike,
+    FNNLike,
+    I2Like,
+    I3Like,
+    I4Like,
+    ILike,
+    IN2Like,
+    IN3Like,
+    IN4Like,
+    INLike,
+    is_array_like,
+)
+
+__all__ = [
+    &quot;ArrayLike&quot;,
+    &quot;BLike&quot;,
+    &quot;BNLike&quot;,
+    &quot;Bool&quot;,
+    &quot;F3Like&quot;,
+    &quot;F4Like&quot;,
+    &quot;F33Like&quot;,
+    &quot;F34Like&quot;,
+    &quot;F43Like&quot;,
+    &quot;F44Like&quot;,
+    &quot;FLike&quot;,
+    &quot;FMN3Like&quot;,
+    &quot;FMNLike&quot;,
+    &quot;FN3Like&quot;,
+    &quot;FNLike&quot;,
+    &quot;FNNLike&quot;,
+    &quot;Float&quot;,
+    &quot;I2Like&quot;,
+    &quot;I3Like&quot;,
+    &quot;I4Like&quot;,
+    &quot;ILike&quot;,
+    &quot;IN2Like&quot;,
+    &quot;IN3Like&quot;,
+    &quot;IN4Like&quot;,
+    &quot;INLike&quot;,
+    &quot;Integer&quot;,
+    &quot;Shaped&quot;,
+    &quot;is_array_like&quot;,
+]</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/typing/jax/_export.py (Line 1:1 - Line 59:2), src/mkit/typing/torch/_export.py (Line 1:1 - Line 59:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn86" onclick="toggleCodeBlock('cloneGroup86', 'expandBtn86', 'collapseBtn86')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn86" onclick="toggleCodeBlock('cloneGroup86', 'expandBtn86', 'collapseBtn86')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup86"><code class="language-python text-sm text-gray-800">from jaxtyping import Bool, Float, Integer, Shaped
+
+from mkit.typing.array import (
+    ArrayLike,
+    BLike,
+    BNLike,
+    F3Like,
+    F4Like,
+    F33Like,
+    F34Like,
+    F43Like,
+    F44Like,
+    FLike,
+    FMN3Like,
+    FMNLike,
+    FN3Like,
+    FNLike,
+    FNNLike,
+    I2Like,
+    I3Like,
+    I4Like,
+    ILike,
+    IN2Like,
+    IN3Like,
+    IN4Like,
+    INLike,
+    is_array_like,
+)
+
+__all__ = [
+    &quot;ArrayLike&quot;,
+    &quot;BLike&quot;,
+    &quot;BNLike&quot;,
+    &quot;Bool&quot;,
+    &quot;F3Like&quot;,
+    &quot;F4Like&quot;,
+    &quot;F33Like&quot;,
+    &quot;F34Like&quot;,
+    &quot;F43Like&quot;,
+    &quot;F44Like&quot;,
+    &quot;FLike&quot;,
+    &quot;FMN3Like&quot;,
+    &quot;FMNLike&quot;,
+    &quot;FN3Like&quot;,
+    &quot;FNLike&quot;,
+    &quot;FNNLike&quot;,
+    &quot;Float&quot;,
+    &quot;I2Like&quot;,
+    &quot;I3Like&quot;,
+    &quot;I4Like&quot;,
+    &quot;ILike&quot;,
+    &quot;IN2Like&quot;,
+    &quot;IN3Like&quot;,
+    &quot;IN4Like&quot;,
+    &quot;INLike&quot;,
+    &quot;Integer&quot;,
+    &quot;Shaped&quot;,
+    &quot;is_array_like&quot;,
+]</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/model/_problem.py (Line 46:5 - Line 55:2), exp/2024/08/07/linear-vs-hyper/src/main.py (Line 41:5 - Line 50:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn87" onclick="toggleCodeBlock('cloneGroup87', 'expandBtn87', 'collapseBtn87')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn87" onclick="toggleCodeBlock('cloneGroup87', 'expandBtn87', 'collapseBtn87')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup87"><code class="language-python text-sm text-gray-800">def solve(self) -&gt; scipy.optimize.OptimizeResult:
+        x0: npt.NDArray[np.floating] = np.zeros((self.n_free, 3))
+        try:
+            res: scipy.optimize.OptimizeResult = scipy.optimize.minimize(
+                self.fun,
+                x0.flatten(),
+                method=&quot;trust-constr&quot;,
+                jac=self.jac,
+                hess=self.hess,
+                options={&quot;disp&quot;: True,</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/model/_problem.py (Line 55:2 - Line 65:4), exp/2024/08/07/linear-vs-hyper/src/main.py (Line 50:5 - Line 59:5)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn88" onclick="toggleCodeBlock('cloneGroup88', 'expandBtn88', 'collapseBtn88')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn88" onclick="toggleCodeBlock('cloneGroup88', 'expandBtn88', 'collapseBtn88')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup88"><code class="language-python text-sm text-gray-800">},
+            )
+        except Exception as e:
+            res = scipy.optimize.OptimizeResult()
+            res[&quot;execution_time&quot;] = np.nan
+            res[&quot;message&quot;] = str(e)
+            res[&quot;success&quot;] = False
+            res[&quot;x&quot;] = x0.flatten()
+        return res
+
+    def</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/model/_problem.py (Line 63:9 - Line 75:10), exp/2024/08/07/linear-vs-hyper/src/main.py (Line 60:13 - Line 72:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn89" onclick="toggleCodeBlock('cloneGroup89', 'expandBtn89', 'collapseBtn89')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn89" onclick="toggleCodeBlock('cloneGroup89', 'expandBtn89', 'collapseBtn89')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup89"><code class="language-python text-sm text-gray-800">return res
+
+    def fun(self, x: npt.ArrayLike) -&gt; jax.Array:
+        disp: npt.NDArray[np.floating] = self.make_disp(x)
+        energy: jax.Array = self.model.energy(disp)
+        return energy
+
+    def jac(self, x: npt.ArrayLike) -&gt; jax.Array:
+        disp: npt.NDArray[np.floating] = self.make_disp(x)
+        jac: jax.Array = self.model.energy_jac(disp)
+        return jac[self.free_mask].flatten()
+
+    def hess(self, x: npt.ArrayLike</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/energy/_abc.py (Line 12:9 - Line 17:2), src/mkit/physics/energy/elastic/_wikipedia.py (Line 13:5 - Line 19:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn90" onclick="toggleCodeBlock('cloneGroup90', 'expandBtn90', 'collapseBtn90')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn90" onclick="toggleCodeBlock('cloneGroup90', 'expandBtn90', 'collapseBtn90')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup90"><code class="language-python text-sm text-gray-800">disp: jxt.ArrayLike,
+        points: jxt.ArrayLike,
+        point_data: Mapping[str, jxt.ArrayLike],
+        cell_data: Mapping[str, jxt.ArrayLike],
+        field_data: Mapping[str, jxt.ArrayLike],
+    ) -&gt; jax.Array: .</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/energy/_abc.py (Line 23:9 - Line 28:2), exp/2024/08/07/elasticity/src/plot-stress.py (Line 19:5 - Line 25:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn91" onclick="toggleCodeBlock('cloneGroup91', 'expandBtn91', 'collapseBtn91')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn91" onclick="toggleCodeBlock('cloneGroup91', 'expandBtn91', 'collapseBtn91')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup91"><code class="language-python text-sm text-gray-800">disp: jxt.ArrayLike,
+        points: jxt.ArrayLike,
+        point_data: Mapping[str, jxt.ArrayLike] = {},
+        cell_data: Mapping[str, jxt.ArrayLike] = {},
+        field_data: Mapping[str, jxt.ArrayLike] = {},
+    ) -&gt; jax.Array: .</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/energy/_abc.py (Line 41:8 - Line 48:7), exp/2024/08/07/elasticity/src/plot-stress.py (Line 18:7 - Line 25:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn92" onclick="toggleCodeBlock('cloneGroup92', 'expandBtn92', 'collapseBtn92')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn92" onclick="toggleCodeBlock('cloneGroup92', 'expandBtn92', 'collapseBtn92')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup92"><code class="language-python text-sm text-gray-800">(
+            disp: jxt.ArrayLike,
+            points: jxt.ArrayLike,
+            point_data: Mapping[str, jxt.ArrayLike] = {},
+            cell_data: Mapping[str, jxt.ArrayLike] = {},
+            field_data: Mapping[str, jxt.ArrayLike] = {},
+        ) -&gt; jax.Array:
+            return</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/physics/energy/_abc.py (Line 71:5 - Line 79:20), src/mkit/physics/energy/_abc.py (Line 21:5 - Line 25:8)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn93" onclick="toggleCodeBlock('cloneGroup93', 'expandBtn93', 'collapseBtn93')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn93" onclick="toggleCodeBlock('cloneGroup93', 'expandBtn93', 'collapseBtn93')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup93"><code class="language-python text-sm text-gray-800">def __call__(
+        self,
+        disp: jxt.ArrayLike,
+        points: jxt.ArrayLike,
+        point_data: Mapping[str, jxt.ArrayLike] = {},
+        cell_data: Mapping[str, jxt.ArrayLike] = {},
+        field_data: Mapping[str, jxt.ArrayLike] = {},
+    ) -&gt; jax.Array:
+        &quot;&quot;&quot;(4, 3) -&gt; ().&quot;&quot;&quot;</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/ops/transfer/_nearest.py (Line 51:10 - Line 60:6), src/mkit/ops/transfer/_nearest.py (Line 18:10 - Line 27:7)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn94" onclick="toggleCodeBlock('cloneGroup94', 'expandBtn94', 'collapseBtn94')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn94" onclick="toggleCodeBlock('cloneGroup94', 'expandBtn94', 'collapseBtn94')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup94"><code class="language-python text-sm text-gray-800">):
+    distance_threshold: float = 0.1
+    fill_value: nt.ArrayLike = np.nan
+
+    def __call__(
+        self, source: Any, target: Any, data: AttributesLike | None = None
+    ) -&gt; dict[str, AttributeArray]:
+        if not data:
+            return {}
+        raise</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/ops/transfer/_barycentric.py (Line 15:15 - Line 24:20), src/mkit/ops/transfer/_nearest.py (Line 18:11 - Line 60:20)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn95" onclick="toggleCodeBlock('cloneGroup95', 'expandBtn95', 'collapseBtn95')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn95" onclick="toggleCodeBlock('cloneGroup95', 'expandBtn95', 'collapseBtn95')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup95"><code class="language-python text-sm text-gray-800">(C2CMethod):
+    distance_threshold: float = 0.1
+    fill_value: nt.ArrayLike = np.nan
+
+    def __call__(
+        self, source: Any, target: Any, data: AttributesLike | None = None
+    ) -&gt; dict[str, AttributeArray]:
+        if not data:
+            return {}
+        raise NotImplementedError</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/ops/transfer/_barycentric.py (Line 28:15 - Line 37:3), src/mkit/ops/transfer/_nearest.py (Line 51:11 - Line 27:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn96" onclick="toggleCodeBlock('cloneGroup96', 'expandBtn96', 'collapseBtn96')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn96" onclick="toggleCodeBlock('cloneGroup96', 'expandBtn96', 'collapseBtn96')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup96"><code class="language-python text-sm text-gray-800">(P2PMethod):
+    distance_threshold: float = 0.1
+    fill_value: nt.ArrayLike = np.nan
+
+    def __call__(
+        self, source: Any, target: Any, data: AttributesLike | None = None
+    ) -&gt; dict[str, AttributeArray]:
+        if not data:
+            return {}
+        source: tm</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/ops/transfer/_auto.py (Line 52:10 - Line 73:15), src/mkit/ops/transfer/_auto.py (Line 18:10 - Line 39:15)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn97" onclick="toggleCodeBlock('cloneGroup97', 'expandBtn97', 'collapseBtn97')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn97" onclick="toggleCodeBlock('cloneGroup97', 'expandBtn97', 'collapseBtn97')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup97"><code class="language-python text-sm text-gray-800">):
+    distance_threshold: float = 0.1
+    fill_value: npt.ArrayLike = np.nan
+
+    def __call__(
+        self,
+        source: Any,
+        target: Any,
+        data: AttributesLike | None = None,
+    ) -&gt; dict[str, AttributeArray]:
+        if not data:
+            return {}
+        float_data: dict[str, FloatAttributeArray]
+        int_data: dict[str, IntAttributeArray]
+        float_data, int_data = _split_data(data)
+        return {
+            **self.barycentric(source, target, float_data),
+            **self.nearest(source, target, int_data),
+        }
+
+    @property
+    def barycentric(self) -&gt; P2PBarycentric</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/io/pyvista/_obj.py (Line 16:5 - Line 21:6), exp/2024/09/25/io-obj/src/main.py (Line 17:5 - Line 22:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn98" onclick="toggleCodeBlock('cloneGroup98', 'expandBtn98', 'collapseBtn98')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn98" onclick="toggleCodeBlock('cloneGroup98', 'expandBtn98', 'collapseBtn98')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup98"><code class="language-python text-sm text-gray-800">points: list[list[float]] = []
+    faces: list[list[int]] = []
+    group_ids: list[int] = []
+    group_names: list[str] = []
+    current_group_id: int = 0
+    for line in mkit.utils.strip_comments(fpath</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/io/pyvista/_obj.py (Line 21:2 - Line 44:24), exp/2024/09/25/io-obj/src/main.py (Line 22:2 - Line 45:7)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn99" onclick="toggleCodeBlock('cloneGroup99', 'expandBtn99', 'collapseBtn99')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn99" onclick="toggleCodeBlock('cloneGroup99', 'expandBtn99', 'collapseBtn99')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup99"><code class="language-python text-sm text-gray-800">fpath.read_text()):
+        cmd: str
+        values: list[str]
+        cmd, *values = line.split()
+        match cmd:
+            case &quot;v&quot;:
+                points.append([float(v) for v in values])
+            case &quot;f&quot;:
+                faces.append(parse_f(values))
+                if len(group_names) == 0:
+                    group_names.append(&quot;&quot;)
+                group_ids.append(current_group_id)
+            case &quot;g&quot;:
+                if len(values) &gt;= 1:
+                    if (name := values[0]) in group_names:
+                        current_group_id = group_names.index(name)
+                    else:
+                        group_names.append(name)
+                        current_group_id = len(group_names) - 1
+                else:
+                    group_names.append(&quot;&quot;)
+                    current_group_id = len(group_names) - 1
+            case &quot;vt&quot; | &quot;vn&quot;:
+                # TODO: load `vt`, `vn`</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/io/pyvista/_obj.py (Line 46:13 - Line 52:7), exp/2024/09/25/io-obj/src/main.py (Line 46:13 - Line 52:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn100" onclick="toggleCodeBlock('cloneGroup100', 'expandBtn100', 'collapseBtn100')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn100" onclick="toggleCodeBlock('cloneGroup100', 'expandBtn100', 'collapseBtn100')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup100"><code class="language-python text-sm text-gray-800">case _:
+                logger.warning(&quot;Unknown element: {}&quot;, line)
+    mesh: pv.PolyData = pv.PolyData.from_irregular_faces(points, faces)
+    if len(group_names) &gt; 1 or group_names[0] != &quot;&quot;:
+        mesh.cell_data[&quot;GroupIds&quot;] = group_ids
+        mesh.field_data[&quot;GroupNames&quot;] = group_names
+    return</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/io/pyvista/_obj.py (Line 59:2 - Line 72:7), exp/2024/09/25/io-obj/src/main.py (Line 60:3 - Line 73:6)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn101" onclick="toggleCodeBlock('cloneGroup101', 'expandBtn101', 'collapseBtn101')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn101" onclick="toggleCodeBlock('cloneGroup101', 'expandBtn101', 'collapseBtn101')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup101"><code class="language-python text-sm text-gray-800">)
+        if &quot;GroupIds&quot; in mesh.cell_data:
+            group_ids: nt.IN = mesh.cell_data[&quot;GroupIds&quot;]
+            group_names: npt.NDArray[np.str_]
+            if &quot;GroupNames&quot; in mesh.field_data:
+                group_names = mesh.field_data[&quot;GroupNames&quot;]
+            else:
+                group_names = np.full((len(np.unique(group_ids)),), &quot;&quot;)
+            last_group_id: int = -1
+            for f, group_id in zip(mesh.irregular_faces, group_ids, strict=True):
+                if group_id != last_group_id:
+                    group_name: str = group_names[group_id]
+                    if group_name:
+                        fprint</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/io/pyvista/_obj.py (Line 79:2 - Line 86:2), exp/2024/09/25/io-obj/src/main.py (Line 80:3 - Line 87:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn102" onclick="toggleCodeBlock('cloneGroup102', 'expandBtn102', 'collapseBtn102')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn102" onclick="toggleCodeBlock('cloneGroup102', 'expandBtn102', 'collapseBtn102')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup102"><code class="language-python text-sm text-gray-800">)
+
+
+def parse_f(values: list[str]) -&gt; list[int]:
+    splits: list[list[str]] = [v.split(&quot;/&quot;) for v in values]
+    v: list[int] = [int(s[0]) - 1 for s in splits]  # vertex indices
+    # TODO: load vertex texture coordinate indices &amp; vertex normal indices
+    return v</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/io/dicom/_dicom.py (Line 47:16 - Line 58:6), exp/2024/09/12/organize-ct/src/organize-CT.py (Line 41:12 - Line 52:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn103" onclick="toggleCodeBlock('cloneGroup103', 'expandBtn103', 'collapseBtn103')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn103" onclick="toggleCodeBlock('cloneGroup103', 'expandBtn103', 'collapseBtn103')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup103"><code class="language-python text-sm text-gray-800">(
+            age=data[&quot;PatientAge&quot;].value,
+            birth_date=data[&quot;PatientBirthDate&quot;].value,
+            date=data[&quot;AcquisitionDate&quot;].value,
+            id=data[&quot;PatientID&quot;].value,
+            name=str(data[&quot;PatientName&quot;].value),
+            sex=data[&quot;PatientSex&quot;].value,
+            time=data[&quot;AcquisitionTime&quot;].value,
+        )
+
+
+class</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/typing/jax.py (Line 5:1 - Line 29:2), src/mkit/typing/torch/_export.py (Line 3:1 - Line 27:14)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn104" onclick="toggleCodeBlock('cloneGroup104', 'expandBtn104', 'collapseBtn104')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn104" onclick="toggleCodeBlock('cloneGroup104', 'expandBtn104', 'collapseBtn104')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup104"><code class="language-python text-sm text-gray-800">from mkit.typing.array import (
+    ArrayLike,
+    BLike,
+    BNLike,
+    F3Like,
+    F4Like,
+    F33Like,
+    F34Like,
+    F43Like,
+    F44Like,
+    FLike,
+    FMN3Like,
+    FMNLike,
+    FN3Like,
+    FNLike,
+    FNNLike,
+    I2Like,
+    I3Like,
+    I4Like,
+    ILike,
+    IN2Like,
+    IN3Like,
+    IN4Like,
+    INLike,
+)</code></pre></div><div class="py-4"><p class="text-gray-600">src/mkit/typing/jax.py (Line 31:1 - Line 54:2), src/mkit/typing/jax/_types.py (Line 4:1 - Line 27:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn105" onclick="toggleCodeBlock('cloneGroup105', 'expandBtn105', 'collapseBtn105')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn105" onclick="toggleCodeBlock('cloneGroup105', 'expandBtn105', 'collapseBtn105')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup105"><code class="language-python text-sm text-gray-800">B = Bool[jax.Array, &quot;&quot;]
+BN = Bool[jax.Array, &quot;N&quot;]
+
+F = Float[jax.Array, &quot;&quot;]
+F3 = Float[jax.Array, &quot;3&quot;]
+F33 = Float[jax.Array, &quot;3 3&quot;]
+F34 = Float[jax.Array, &quot;3 4&quot;]
+F4 = Float[jax.Array, &quot;4&quot;]
+F43 = Float[jax.Array, &quot;4 3&quot;]
+F44 = Float[jax.Array, &quot;4 4&quot;]
+FMN = Float[jax.Array, &quot;M N&quot;]
+FMN3 = Float[jax.Array, &quot;M N 3&quot;]
+FN = Float[jax.Array, &quot;N&quot;]
+FN3 = Float[jax.Array, &quot;N 3&quot;]
+FNN = Float[jax.Array, &quot;N N&quot;]
+
+I = Integer[jax.Array, &quot;&quot;]  # noqa: E741
+I2 = Integer[jax.Array, &quot;2&quot;]
+I3 = Integer[jax.Array, &quot;3&quot;]
+I4 = Integer[jax.Array, &quot;4&quot;]
+IN = Integer[jax.Array, &quot;N&quot;]
+IN2 = Integer[jax.Array, &quot;N 2&quot;]
+IN3 = Integer[jax.Array, &quot;N 3&quot;]
+IN4 = Integer[jax.Array, &quot;N 4&quot;]</code></pre></div><!-- Add more clone groups for .txt format as needed         // Add more clone groups for .txt format as needed--></div></section><!-- Add more sections for other formats and clone groups as needed--></main><footer class="bg-white shadow mt-8 py-4"><div class="container mx-auto px-4 text-center"><p class="text-sm text-gray-600">This report is generated by jscpd, an open-source copy/paste detector.</p><p class="text-sm text-gray-600">jscpd is licensed under the MIT License.</p><a class="text-blue-500 text-sm" href="https://github.com/kucherenko/jscpd" target="_blank" rel="noopener noreferrer">View jscpd on GitHub</a></div></footer><script src="js/prism.js"></script><script>function toggleCodeBlock(codeBlockId, expandBtnId, collapseBtnId) {
+  const codeBlock = document.getElementById(codeBlockId);
+  const expandBtn = document.getElementById(expandBtnId);
+  const collapseBtn = document.getElementById(collapseBtnId);
+
+  codeBlock.classList.toggle('hidden');
+  expandBtn.classList.toggle('hidden');
+  collapseBtn.classList.toggle('hidden');
+}</script></body></html>

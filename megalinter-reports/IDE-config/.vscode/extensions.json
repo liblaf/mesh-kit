@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "Bridgecrew.checkov",
+        "ms-pyright.pyright",
+        "charliermarsh.ruff",
+        "esbenp.prettier-vscode",
+        "AquaSecurityOfficial.trivy-vulnerability-scanner",
+        "MS-CST-E.vscode-devskim",
+        "streetsidesoftware.code-spell-checker"
+    ]
+}
