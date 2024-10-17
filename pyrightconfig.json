@@ -1,9 +1,4 @@
 {
-  "typeCheckingMode": "standard",
-  "include": ["src/", "tools/", "exp/2024/10/"],
-
-  "reportArgumentType": "information",
-  "reportAssignmentType": "information",
-  "reportPrivateImportUsage": "none",
-  "reportRedeclaration": "none"
+  "$schema": "https://raw.githubusercontent.com/microsoft/pyright/main/packages/vscode-pyright/schemas/pyrightconfig.schema.json",
+  "extends": ".github/linters/pyrightconfig.json"
 }
