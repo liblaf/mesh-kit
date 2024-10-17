@@ -9,7 +9,7 @@ from mkit.io._register import REGISTRY
 from mkit.io._typing import ClassName as C  # noqa: N814
 
 if TYPE_CHECKING:
-    import mkit.typing.numpy as nt
+    import mkit.typing.numpy as tn
 
 
 def as_unstructured_grid(mesh: Any) -> pv.UnstructuredGrid:
@@ -20,11 +20,11 @@ def is_unstructured_grid(mesh: Any) -> TypeGuard[pv.UnstructuredGrid]:
     return isinstance(mesh, pv.UnstructuredGrid)
 
 
-def make_tet_mesh(points: nt.FN3Like, tetra: nt.IN4Like) -> pv.UnstructuredGrid:
-    points: nt.FN3 = np.asarray(points)
-    tetra: nt.IN4 = np.asarray(tetra)
+def make_tet_mesh(points: tn.FN3Like, tetra: tn.IN4Like) -> pv.UnstructuredGrid:
+    points: tn.FN3 = np.asarray(points)
+    tetra: tn.IN4 = np.asarray(tetra)
     cells: pv.CellArray = pv.CellArray.from_regular_cells(tetra)
-    celltypes: nt.IN = np.full((cells.n_cells,), pv.CellType.TETRA)
+    celltypes: tn.IN = np.full((cells.n_cells,), pv.CellType.TETRA)
     return pv.UnstructuredGrid(cells, celltypes, points)
 
 

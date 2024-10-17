@@ -11,7 +11,7 @@ from mkit.io._typing import ClassName as C  # noqa: N814
 if TYPE_CHECKING:
     import pyvista as pv
 
-    import mkit.typing.numpy as nt
+    import mkit.typing.numpy as tn
 
 
 def as_point_cloud(mesh: Any) -> o3d.geometry.PointCloud:
@@ -19,7 +19,7 @@ def as_point_cloud(mesh: Any) -> o3d.geometry.PointCloud:
 
 
 @REGISTRY.register(C.ARRAY_LIKE, C.OPEN3D_POINT_CLOUD, priority=-10)
-def array_to_point_cloud(points: nt.FN3Like) -> o3d.geometry.PointCloud:
+def array_to_point_cloud(points: tn.FN3Like) -> o3d.geometry.PointCloud:
     return o3d.geometry.PointCloud(
         o3d.utility.Vector3dVector(np.asarray(points, np.float64))
     )

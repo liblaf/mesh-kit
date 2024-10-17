@@ -1,4 +1,5 @@
 import collections
+from types import TracebackType
 from typing import Any, Literal, Self
 
 import dvclive
@@ -23,9 +24,9 @@ class Live:
         exp_message: str | None = None,
         exp_name: str | None = None,
         monitor_system: bool = False,
-        report: Literal["md", "notebook", "html", None] = None,
+        report: Literal["md", "notebook", "html"] | None = None,
         resume: bool = False,
-        save_dvc_exp: bool = True,
+        save_dvc_exp: bool = False,
     ) -> None:
         self.records = collections.defaultdict(dict)
         self.enable = enable
@@ -50,7 +51,12 @@ class Live:
         self._live.__enter__()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         if self._live is None:
             return
         self._live.__exit__(exc_type, exc_val, exc_tb)

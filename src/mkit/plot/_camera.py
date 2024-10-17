@@ -30,11 +30,11 @@ def load_camera(pl: pv.Plotter, fpath: StrPath) -> None:
 def save_camera(pl: pv.Plotter, fpath: StrPath) -> None:
     camera: pv.Camera = pl.camera
     data = CameraParams(
-        focal_point=camera.focal_point,  # pyright: ignore [reportArgumentType]
+        focal_point=camera.focal_point,
         parallel_projection=camera.parallel_projection,
         parallel_scale=camera.parallel_scale,
-        position=camera.position,  # pyright: ignore [reportArgumentType]
-        up=camera.up,  # pyright: ignore [reportArgumentType]
+        position=camera.position,
+        up=camera.up,
         view_angle=camera.view_angle,
         window_size=pl.window_size,
     )

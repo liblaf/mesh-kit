@@ -6,13 +6,14 @@ import mkit
 
 class ClassName(StrEnum):
     ARRAY_LIKE = "ArrayLike"
-    MESHIO = "meshio._mesh.Mesh"
+    MESHIO = "meshio.Mesh"
+    MKIT_TRIMESH = "mkit.TriMesh"
     OPEN3D_POINT_CLOUD = "open3d.geometry.PointCloud"
-    PYTORCH3D_MESHES = "pytorch3d.structures.meshes.Meshes"
-    PYVISTA_IMAGE_DATA = "pyvista.core.grid.ImageData"
-    PYVISTA_POLY_DATA = "pyvista.core.pointset.PolyData"
-    PYVISTA_UNSTRUCTURED_GRID = "pyvista.core.pointset.UnstructuredGrid"
-    TRIMESH = "trimesh.base.Trimesh"
+    PYTORCH3D_MESHES = "pytorch3d.structures.Meshes"
+    PYVISTA_IMAGE_DATA = "pyvista.ImageData"
+    PYVISTA_POLY_DATA = "pyvista.PolyData"
+    PYVISTA_UNSTRUCTURED_GRID = "pyvista.UnstructuredGrid"
+    TRIMESH = "trimesh.Trimesh"
 
 
 class UnsupportedConversionError(ValueError):

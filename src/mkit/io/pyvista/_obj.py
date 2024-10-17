@@ -7,7 +7,7 @@ import pyvista as pv
 from loguru import logger
 
 import mkit
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 from mkit.typing import StrPath
 
 
@@ -58,7 +58,7 @@ def save_obj(mesh: pv.PolyData, fpath: StrPath) -> None:
         for v in mesh.points:
             fprint("v", *v)
         if "GroupIds" in mesh.cell_data:
-            group_ids: nt.IN = mesh.cell_data["GroupIds"]
+            group_ids: tn.IN = mesh.cell_data["GroupIds"]
             group_names: npt.NDArray[np.str_]
             if "GroupNames" in mesh.field_data:
                 group_names = mesh.field_data["GroupNames"]

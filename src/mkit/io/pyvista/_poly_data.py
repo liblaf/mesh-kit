@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pyvista as pv
 
 import mkit
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 from mkit.io._register import REGISTRY
 from mkit.io._typing import ClassName as C  # noqa: N814
 
@@ -35,8 +35,8 @@ def is_point_cloud(mesh: pv.PolyData) -> bool:
     Returns:
         True if the PolyData object is a point cloud, False otherwise.
 
-    Reference:
-        1. <https://github.com/pyvista/pyvista/blob/556d86725f27c43e30445c877961910d0fff0893/pyvista/core/filters/poly_data.py#L1730-L1734>
+    References:
+        1. [pyvista/pyvista/core/filters/poly_data.py#L1730-L1734](https://github.com/pyvista/pyvista/blob/556d86725f27c43e30445c877961910d0fff0893/pyvista/core/filters/poly_data.py#L1730-L1734)
     """
     return (mesh.n_points + mesh.n_lines) == mesh.n_cells
 
@@ -57,7 +57,7 @@ REGISTRY.register(C.MESHIO, C.PYVISTA_POLY_DATA)(pv.wrap)
 
 
 @REGISTRY.register(C.ARRAY_LIKE, C.PYVISTA_POLY_DATA, priority=-10)
-def array_to_poly_data(points: nt.FN3Like) -> pv.PolyData:
+def array_to_poly_data(points: tn.FN3Like) -> pv.PolyData:
     return pv.wrap(np.asarray(points))  # pyright: ignore [reportReturnType]
 
 

@@ -1,6 +1,6 @@
 {
   "typeCheckingMode": "standard",
-  "include": ["src", "tools", "exp/2024/09/25"],
+  "include": ["src/", "tools/", "exp/2024/10/"],
 
   "reportArgumentType": "information",
   "reportAssignmentType": "information",

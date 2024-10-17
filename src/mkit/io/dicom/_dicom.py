@@ -7,7 +7,7 @@ import pydicom
 import pyvista as pv
 
 import mkit
-from mkit.io.dicom._meta import AcquisitionMeta, DatasetMeta, PatientMeta
+import mkit.io.dicom._meta as _m
 from mkit.typing import StrPath
 
 
@@ -39,12 +39,12 @@ class Acquisition:
         return self.meta.id
 
     @functools.cached_property
-    def meta(self) -> AcquisitionMeta:
+    def meta(self) -> _m.AcquisitionMeta:
         data: pydicom.FileDataset = pydicom.dcmread(
             self.dpath
             / self.dirfile["DirectoryRecordSequence"][0]["ReferencedFileID"][-1]
         )
-        return AcquisitionMeta(
+        return _m.AcquisitionMeta(
             age=data["PatientAge"].value,
             birth_date=data["PatientBirthDate"].value,
             date=data["AcquisitionDate"].value,
@@ -62,7 +62,7 @@ class Patient(Sequence[Acquisition]):
         self.dpath = Path(dpath)
 
     def __getitem__(self, idx: int) -> Acquisition:  # pyright: ignore [reportIncompatibleMethodOverride]
-        acq_meta: AcquisitionMeta = self.meta.acquisitions[idx]
+        acq_meta: _m.AcquisitionMeta = self.meta.acquisitions[idx]
         return Acquisition(self.dpath / acq_meta.date)
 
     def __len__(self) -> int:
@@ -73,8 +73,8 @@ class Patient(Sequence[Acquisition]):
         return self.meta.id
 
     @functools.cached_property
-    def meta(self) -> PatientMeta:
-        return mkit.utils.load_pydantic(PatientMeta, self.dpath / "patient.json")
+    def meta(self) -> _m.PatientMeta:
+        return mkit.utils.load_pydantic(_m.PatientMeta, self.dpath / "patient.json")
 
 
 class DICOMDataset(Mapping[str, Patient]):
@@ -93,5 +93,5 @@ class DICOMDataset(Mapping[str, Patient]):
         return len(self.meta.patients)
 
     @functools.cached_property
-    def meta(self) -> DatasetMeta:
-        return mkit.utils.load_pydantic(DatasetMeta, self.dpath / "dataset.json")
+    def meta(self) -> _m.DatasetMeta:
+        return mkit.utils.load_pydantic(_m.DatasetMeta, self.dpath / "dataset.json")

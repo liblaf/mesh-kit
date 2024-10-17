@@ -17,10 +17,8 @@ def as_meshes(mesh: Any) -> Meshes:
 
 
 @REGISTRY.register(C.PYVISTA_POLY_DATA, C.PYTORCH3D_MESHES)
-def pyvista_poly_data_to_pytorch3d(
-    mesh: pv.PolyData, *, progress_bar: bool = False
-) -> Meshes:
-    mesh = mesh.triangulate(progress_bar=progress_bar)
+def pyvista_poly_data_to_pytorch3d(mesh: pv.PolyData) -> Meshes:
+    mesh = mesh.triangulate()
     points: torch.Tensor = torch.as_tensor(mesh.points).reshape(1, mesh.n_points, 3)
     faces: torch.Tensor = torch.as_tensor(mesh.regular_faces).reshape(
         1, mesh.n_faces_strict, 3

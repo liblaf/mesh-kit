@@ -1,12 +1,15 @@
-import inspect
-from collections.abc import Callable
-from pathlib import Path
-from typing import TypedDict, TypeVar, Unpack
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, TypedDict, TypeVar, Unpack, get_type_hints
 
 import rich.traceback
 from loguru import logger
 
 import mkit
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from pathlib import Path
 
 _C = TypeVar("_C", bound=mkit.cli.BaseConfig)
 _T = TypeVar("_T")
@@ -30,9 +33,8 @@ def auto_run(
 
 def run(fn: Callable[[_C], _T], **kwargs: Unpack[Kwargs]) -> _T:
     rich.traceback.install(show_locals=True)
-    sig: inspect.Signature = inspect.signature(fn)
-    annotation: type[_C] = sig.parameters["cfg"].annotation
-    cfg: _C = annotation(**kwargs)
+    cls: type[_C] = get_type_hints(fn)["cfg"]
+    cfg: _C = cls(**kwargs)
     mkit.logging.init(cfg.log_level, cfg.log_file)
     logger.info("{}", cfg)
     return fn(cfg)

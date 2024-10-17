@@ -24,12 +24,7 @@ class Registry:
     def register(self, from_: str, to: str, priority: int = 0) -> Callable[[_F], _F]:
         def decorator(fn: _F) -> _F:
             item: RegistryItem = RegistryItem(priority, from_, to, fn)
-            self.converters.insert(
-                bisect.bisect_right(
-                    self.converters, item.priority, key=lambda item: item.priority
-                ),
-                item,
-            )
+            bisect.insort(self.converters, item, key=lambda item: item.priority)
             return fn
 
         return decorator

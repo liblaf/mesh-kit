@@ -2,6 +2,9 @@
   "[yaml]": {
     "editor.tabSize": 2
   },
+  "[python]": {
+    "editor.tabSize": 4
+  },
   "files.associations": {
     "*.wrap": "json"
   },

@@ -17,7 +17,7 @@ FN = Float[jax.Array, "N"]
 FN3 = Float[jax.Array, "N 3"]
 FNN = Float[jax.Array, "N N"]
 
-I = Integer[jax.Array, ""]  # noqa: E741
+I = Integer[jax.Array, ""]
 I2 = Integer[jax.Array, "2"]
 I3 = Integer[jax.Array, "3"]
 I4 = Integer[jax.Array, "4"]

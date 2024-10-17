@@ -8,13 +8,9 @@ from ._geometry import (
     AnyTetMesh,
     AnyTriMesh,
     AnyVolumeMesh,
-    AttributeArray,
-    AttributesLike,
+    AttrsLike,
 )
-from ._types import (
-    StrPath,
-)
-from ._utils import (
+from ._isinstance import (
     full_name,
     is_class_named,
     is_class_named_partial,
@@ -23,6 +19,8 @@ from ._utils import (
     is_named,
     is_named_partial,
 )
+from ._types import StrPath
+from ._utils import is_iterable, is_sequence
 from .array import is_array_like
 from .jax import is_jax
 from .numpy import is_numpy
@@ -37,8 +35,7 @@ __all__ = [
     "AnyTetMesh",
     "AnyTriMesh",
     "AnyVolumeMesh",
-    "AttributeArray",
-    "AttributesLike",
+    "AttrsLike",
     "StrPath",
     "array",
     "full_name",
@@ -47,10 +44,12 @@ __all__ = [
     "is_class_named_partial",
     "is_instance_named",
     "is_instance_named_partial",
+    "is_iterable",
     "is_jax",
     "is_named",
     "is_named_partial",
     "is_numpy",
+    "is_sequence",
     "is_torch",
     "jax",
     "numpy",

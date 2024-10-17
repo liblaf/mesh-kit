@@ -24,6 +24,7 @@ dependencies = [
   "pyvista>=0.44.1,<0.45",
   "ruamel-yaml>=0.18.6,<0.19",
   "scipy>=1.14.1,<2",
+  "sortedcontainers>=2.4.0,<3",
   "sparse>=0.15.4,<0.16",
   "taichi>=1.7.2,<2",
   "tetgen>=0.6.5,<0.7",
@@ -48,7 +49,7 @@ dev = [
   "marimo>=0.9,<0.10",
   "pdoc>=15,<16",
   "pyright>=1.1.377,<2",
-  "ruff>=0.6.2,<0.7",
+  "ruff>=0.6.2,<0.7", "mypy>=1.11.2,<2",
 ]
 docs = [
   "black>=24.8.0,<25",
