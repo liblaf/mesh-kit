@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 _T = TypeVar("_T", bound=pv.DataSet)
 
 
-class DataObject(Generic[_T], abc.ABC):
+class DataObjectBase(Generic[_T], abc.ABC):
     name: str | None = None
     _data: _T
     _path: Path | None = None
