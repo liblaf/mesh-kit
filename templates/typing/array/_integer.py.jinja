@@ -1,0 +1,7 @@
+from jaxtyping import Integer
+
+from mkit.typing import ArrayLike
+
+{% for s in shapes -%}
+I{{ s.replace(" ", "") }}Like = Integer[ArrayLike, "{{ s }}"]
+{% endfor %}

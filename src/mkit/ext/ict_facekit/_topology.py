@@ -73,14 +73,14 @@ GEOMETRIES: list[Geometry] = [
 
 def vertex_indices(*name: str) -> nt.IN:
     logger.warning("Vertex indices is not reliable!")
-    indices: nt.IN = np.concatenate([
-        np.r_[g.vertex_indices] for g in GEOMETRIES if g.name in name
-    ])
+    indices: nt.IN = np.concatenate(
+        [np.r_[g.vertex_indices] for g in GEOMETRIES if g.name in name]
+    )
     return indices
 
 
 def polygon_indices(*name: str) -> nt.IN:
-    indices: nt.IN = np.concatenate([
-        np.r_[g.polygon_indices] for g in GEOMETRIES if g.name in name
-    ])
+    indices: nt.IN = np.concatenate(
+        [np.r_[g.polygon_indices] for g in GEOMETRIES if g.name in name]
+    )
     return indices

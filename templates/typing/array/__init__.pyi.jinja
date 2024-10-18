@@ -1,0 +1,36 @@
+from ._export import Bool, Float, Integer, Shaped
+from ._types import ArrayLike
+from ._utils import is_array_like
+from ._bool import (
+{%- for s in shapes %}
+    B{{ s.replace(" ", "") }}Like,
+{%- endfor %}
+)
+from ._float import (
+{%- for s in shapes %}
+    F{{ s.replace(" ", "") }}Like,
+{%- endfor %}
+)
+from ._integer import (
+{%- for s in shapes %}
+    I{{ s.replace(" ", "") }}Like,
+{%- endfor %}
+)
+
+__all__ = [
+    "ArrayLike",
+    "Bool",
+    "Float",
+    "Integer",
+    "Shaped",
+    "is_array_like",
+{%- for s in shapes %}
+    "B{{ s.replace(" ", "") }}Like",
+{%- endfor %}
+{%- for s in shapes %}
+    "F{{ s.replace(" ", "") }}Like",
+{%- endfor %}
+{%- for s in shapes %}
+    "I{{ s.replace(" ", "") }}Like",
+{%- endfor %}
+]

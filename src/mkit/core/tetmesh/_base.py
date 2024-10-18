@@ -1,0 +1,34 @@
+from __future__ import annotations
+
+import numpy as np
+import pyvista as pv
+
+import mkit
+import mkit.math as m
+import mkit.typing as t
+import mkit.typing.numpy as tn
+
+
+class TetMeshBase(mkit.DataObject[pv.UnstructuredGrid]):
+    _data: pv.UnstructuredGrid
+
+    def __init__(
+        self,
+        points: tn.FN3Like,
+        tetras: tn.IN3Like,
+        point_data: t.AttrsLike | None = None,
+        cell_data: t.AttrsLike | None = None,
+        field_data: t.AttrsLike | None = None,
+    ) -> None:
+        points: tn.FN3 = m.as_numpy(points)
+        tetras: tn.IN4 = m.as_numpy(tetras)
+        cells: pv.CellArray = pv.CellArray.from_regular_cells(tetras)
+        cell_types: tn.IN = np.full((cells.n_cells,), pv.CellType.TETRA)
+        self._data = pv.UnstructuredGrid(cells, cell_types, points)
+        self.point_data = point_data
+        self.cell_data = cell_data
+        self.field_data = field_data
+
+    @property
+    def tetras(self) -> tn.IN4:
+        return self._data.cells_dict[pv.CellType.TETRA]

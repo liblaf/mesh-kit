@@ -1,13 +1,13 @@
 from typing import Any
 
-import mkit
+import mkit.typing as t
 
 
 def as_scalar(val: Any) -> float:
-    if mkit.typing.jax.is_jax(val):
+    if t.is_jax(val):
         return val.item()
-    if mkit.typing.numpy.is_numpy(val):
+    if t.is_numpy(val):
         return val.item()
-    if mkit.typing.torch.is_torch(val):
+    if t.is_torch(val):
         return val.item()
     return val

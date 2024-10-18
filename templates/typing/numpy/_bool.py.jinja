@@ -1,0 +1,6 @@
+import numpy as np
+from jaxtyping import Bool
+
+{% for s in shapes -%}
+B{{ s.replace(" ", "") }} = Bool[np.ndarray, "{{ s }}"]
+{% endfor %}

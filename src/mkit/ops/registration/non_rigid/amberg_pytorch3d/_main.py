@@ -128,10 +128,12 @@ class Amberg(nr.NonRigidRegistrationMethod):
         self, mesh: Meshes, weight_normal: float
     ) -> tt.Float[torch.Tensor, "1 N 6"]:
         return (
-            torch.hstack([
-                mesh.verts_packed(),
-                weight_normal * mesh.verts_normals_packed(),  # pyright: ignore [reportOperatorIssue]
-            ])
+            torch.hstack(
+                [
+                    mesh.verts_packed(),
+                    weight_normal * mesh.verts_normals_packed(),  # pyright: ignore [reportOperatorIssue]
+                ]
+            )
             .to(torch.float32)
             .reshape(1, -1, 6)
         )

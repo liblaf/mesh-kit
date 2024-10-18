@@ -5,6 +5,9 @@
   "[python]": {
     "editor.tabSize": 4
   },
+  "[jinja]": {
+    "editor.tabSize": 4
+  },
   "files.associations": {
     "*.wrap": "json"
   },

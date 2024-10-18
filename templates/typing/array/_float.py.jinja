@@ -1,0 +1,7 @@
+from jaxtyping import Float
+
+from mkit.typing import ArrayLike
+
+{% for s in shapes -%}
+F{{ s.replace(" ", "") }}Like = Float[ArrayLike, "{{ s }}"]
+{% endfor %}

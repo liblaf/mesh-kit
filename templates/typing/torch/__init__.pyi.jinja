@@ -1,0 +1,61 @@
+from ._utils import is_torch
+from ._export import (
+    ArrayLike,
+    Bool,
+    Float,
+    Integer,
+    Shaped,
+    is_array_like,
+{%- for s in shapes %}
+    B{{ s.replace(" ", "") }}Like,
+{%- endfor %}
+{%- for s in shapes %}
+    F{{ s.replace(" ", "") }}Like,
+{%- endfor %}
+{%- for s in shapes %}
+    I{{ s.replace(" ", "") }}Like,
+{%- endfor %}
+)
+from ._bool import (
+{%- for s in shapes %}
+    B{{ s.replace(" ", "") }},
+{%- endfor %}
+)
+from ._float import (
+{%- for s in shapes %}
+    F{{ s.replace(" ", "") }},
+{%- endfor %}
+)
+from ._integer import (
+{%- for s in shapes %}
+    I{{ s.replace(" ", "") }},
+{%- endfor %}
+)
+
+__all__ = [
+    "ArrayLike",
+    "Bool",
+    "Float",
+    "Integer",
+    "Shaped",
+    "is_array_like",
+    "is_torch",
+{%- for s in shapes %}
+    "B{{ s.replace(" ", "") }}",
+{%- endfor %}
+{%- for s in shapes %}
+    "F{{ s.replace(" ", "") }}",
+{%- endfor %}
+{%- for s in shapes %}
+    "I{{ s.replace(" ", "") }}",
+{%- endfor %}
+{%- for s in shapes %}
+    "B{{ s.replace(" ", "") }}Like",
+{%- endfor %}
+{%- for s in shapes %}
+    "F{{ s.replace(" ", "") }}Like",
+{%- endfor %}
+{%- for s in shapes %}
+    "I{{ s.replace(" ", "") }}Like",
+{%- endfor %}
+]

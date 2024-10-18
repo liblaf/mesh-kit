@@ -1,0 +1,6 @@
+import jax
+from jaxtyping import Integer
+
+{% for s in shapes -%}
+I{{ s.replace(" ", "") }} = Integer[jax.Array, "{{ s }}"]
+{% endfor %}

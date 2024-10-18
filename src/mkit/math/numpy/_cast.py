@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.typing as npt
 
-import mkit
+import mkit.typing as t
 
 
 def as_bool(x: npt.ArrayLike) -> npt.NDArray[np.bool]:
@@ -9,7 +9,7 @@ def as_bool(x: npt.ArrayLike) -> npt.NDArray[np.bool]:
 
 
 def as_numpy(x: npt.ArrayLike) -> npt.NDArray[...]:
-    if mkit.typing.is_torch(x):
+    if t.is_torch(x):
         return x.numpy(force=True)
     return np.asarray(x)
 
@@ -20,8 +20,9 @@ def cast(x: npt.ArrayLike, dtype: npt.DTypeLike) -> npt.NDArray[...]:
     if np.issubdtype(x.dtype, dtype):
         return x
     if np.isdtype(dtype, "bool"):
-        x = np.interp(x, [np.min(x), np.max(x)], [0, 1])
+        if np.min(x) < np.max(x):
+            x = np.interp(x, [np.min(x), np.max(x)], [0, 1])
         return x > 0.5
-    if np.isdtype(dtype, ("integral")):
+    if np.isdtype(dtype, "integral"):
         x = np.rint(x)
     return x.astype(dtype)

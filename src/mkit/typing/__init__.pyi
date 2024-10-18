@@ -21,7 +21,7 @@ from ._isinstance import (
 )
 from ._types import StrPath
 from ._utils import is_iterable, is_sequence
-from .array import is_array_like
+from .array import ArrayLike, is_array_like
 from .jax import is_jax
 from .numpy import is_numpy
 from .torch import is_torch
@@ -35,6 +35,7 @@ __all__ = [
     "AnyTetMesh",
     "AnyTriMesh",
     "AnyVolumeMesh",
+    "ArrayLike",
     "AttrsLike",
     "StrPath",
     "array",

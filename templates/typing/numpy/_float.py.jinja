@@ -1,0 +1,6 @@
+import numpy as np
+from jaxtyping import Float
+
+{% for s in shapes -%}
+F{{ s.replace(" ", "") }} = Float[np.ndarray, "{{ s }}"]
+{% endfor %}

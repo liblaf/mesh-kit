@@ -19,7 +19,7 @@ _WRITERS: dict[str, Callable[..., None]] = {
 }
 
 
-def load(fpath: StrPath, ext: str | None = None, **kwargs) -> Any:
+def load(fpath: StrPath, ext: str | None = None) -> Any:
     fpath: Path = Path(fpath)
     if ext is None:
         ext = fpath.suffix
@@ -27,10 +27,10 @@ def load(fpath: StrPath, ext: str | None = None, **kwargs) -> Any:
         msg: str = f"Unsupported file extension: {ext}"
         raise ValueError(msg)
     reader = _READERS[ext]
-    return reader(fpath, **kwargs)
+    return reader(fpath)
 
 
-def save(data: Any, fpath: StrPath, ext: str | None = None, **kwargs) -> None:
+def save(data: Any, fpath: StrPath, ext: str | None = None) -> None:
     fpath: Path = Path(fpath)
     if ext is None:
         ext = fpath.suffix
@@ -38,4 +38,4 @@ def save(data: Any, fpath: StrPath, ext: str | None = None, **kwargs) -> None:
         msg: str = f"Unsupported file extension: {ext}"
         raise ValueError(msg)
     writer = _WRITERS[ext]
-    writer(data, fpath, **kwargs)
+    writer(data, fpath)

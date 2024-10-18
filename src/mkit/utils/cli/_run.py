@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
     from pathlib import Path
 
-_C = TypeVar("_C", bound=mkit.cli.BaseConfig)
+_C = TypeVar("_C", bound=mkit.utils.cli.BaseConfig)
 _T = TypeVar("_T")
 
 
@@ -35,6 +35,6 @@ def run(fn: Callable[[_C], _T], **kwargs: Unpack[Kwargs]) -> _T:
     rich.traceback.install(show_locals=True)
     cls: type[_C] = get_type_hints(fn)["cfg"]
     cfg: _C = cls(**kwargs)
-    mkit.logging.init(cfg.log_level, cfg.log_file)
+    mkit.utils.init_logging(cfg.log_level, cfg.log_file)
     logger.info("{}", cfg)
     return fn(cfg)

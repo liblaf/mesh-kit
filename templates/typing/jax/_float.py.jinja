@@ -1,0 +1,6 @@
+import jax
+from jaxtyping import Float
+
+{% for s in shapes -%}
+F{{ s.replace(" ", "") }} = Float[jax.Array, "{{ s }}"]
+{% endfor %}

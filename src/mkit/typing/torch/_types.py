@@ -17,7 +17,7 @@ FN = Float[torch.Tensor, "N"]
 FN3 = Float[torch.Tensor, "N 3"]
 FNN = Float[torch.Tensor, "N N"]
 
-I = Integer[torch.Tensor, ""]  # noqa: E741
+I = Integer[torch.Tensor, ""]
 I2 = Integer[torch.Tensor, "2"]
 I3 = Integer[torch.Tensor, "3"]
 I4 = Integer[torch.Tensor, "4"]

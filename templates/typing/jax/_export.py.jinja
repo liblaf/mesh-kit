@@ -1,0 +1,33 @@
+from jaxtyping import Bool, Float, Integer, Shaped
+
+from mkit.typing.array import (
+    ArrayLike,
+    is_array_like,
+{%- for s in shapes %}
+    B{{ s.replace(" ", "") }}Like,
+{%- endfor %}
+{%- for s in shapes %}
+    F{{ s.replace(" ", "") }}Like,
+{%- endfor %}
+{%- for s in shapes %}
+    I{{ s.replace(" ", "") }}Like,
+{%- endfor %}
+)
+
+__all__ = [
+    "ArrayLike",
+    "Bool",
+    "Float",
+    "Integer",
+    "Shaped",
+    "is_array_like",
+{%- for s in shapes %}
+    "B{{ s.replace(" ", "") }}Like",
+{%- endfor %}
+{%- for s in shapes %}
+    "F{{ s.replace(" ", "") }}Like",
+{%- endfor %}
+{%- for s in shapes %}
+    "I{{ s.replace(" ", "") }}Like",
+{%- endfor %}
+]

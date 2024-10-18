@@ -5,8 +5,8 @@ from pathlib import Path
 import rich.traceback
 from loguru import logger
 
-from mkit.logging._handler import InterceptHandler
-from mkit.typing import StrPath
+import mkit.typing as t
+from mkit.utils.logging._handler import InterceptHandler
 
 DEFAULT_FILTER: dict[str | None, str | int | bool] = {
     "jax._src": logging.INFO,
@@ -14,7 +14,7 @@ DEFAULT_FILTER: dict[str | None, str | int | bool] = {
 }
 
 
-def init(level: str | int = logging.NOTSET, file: StrPath | None = None) -> None:
+def init(level: str | int = logging.NOTSET, file: t.StrPath | None = None) -> None:
     rich.traceback.install(show_locals=True)
     logger.remove()
     logger.add(sys.stderr, level=level, filter=DEFAULT_FILTER)

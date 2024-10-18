@@ -21,10 +21,12 @@ class LocalAffine(torch.nn.Module):
         points: tt.FN3 = torch.as_tensor(points).reshape((self.n_points, 3))
         points = torch.bmm(
             self.A.to(points.dtype), points.reshape((self.n_points, 3, 1))
-        ).reshape((
-            self.n_points,
-            3,
-        ))
+        ).reshape(
+            (
+                self.n_points,
+                3,
+            )
+        )
         points += self.b
         return points
 

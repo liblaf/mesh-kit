@@ -1,0 +1,6 @@
+import numpy as np
+from jaxtyping import Integer
+
+{% for s in shapes -%}
+I{{ s.replace(" ", "") }} = Integer[np.ndarray, "{{ s }}"]
+{% endfor %}

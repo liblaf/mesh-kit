@@ -1,0 +1,7 @@
+from jaxtyping import Bool
+
+from mkit.typing import ArrayLike
+
+{% for s in shapes -%}
+B{{ s.replace(" ", "") }}Like = Bool[ArrayLike, "{{ s }}"]
+{% endfor %}

@@ -1,0 +1,6 @@
+import jax
+from jaxtyping import Bool
+
+{% for s in shapes -%}
+B{{ s.replace(" ", "") }} = Bool[jax.Array, "{{ s }}"]
+{% endfor %}

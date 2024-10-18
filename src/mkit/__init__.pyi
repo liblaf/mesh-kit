@@ -13,12 +13,20 @@ from . import (
     utils,
 )
 from ._version import __version__
-from .core import Attrs, TriMesh
+from .core import DICOM, Attrs, DataObject, PointCloud, TetMesh, TriMesh, VoxelGrid
+from .utils.cli import BaseConfig, auto_run, run
 
 __all__ = [
+    "DICOM",
     "Attrs",
+    "BaseConfig",
+    "DataObject",
+    "PointCloud",
+    "TetMesh",
     "TriMesh",
+    "VoxelGrid",
     "__version__",
+    "auto_run",
     "cli",
     "core",
     "creation",
@@ -29,6 +37,7 @@ __all__ = [
     "ops",
     "physics",
     "plot",
+    "run",
     "typing",
     "utils",
 ]
