@@ -1,5 +1,4 @@
-# :schema https://json.schemastore.org/ruff.json
-
+#:schema https://json.schemastore.org/ruff.json
 extend = ".github/linters/.ruff.toml"
 
 [lint]
@@ -17,6 +16,7 @@ extend-ignore = [
 [lint.flake8-import-conventions.extend-aliases]
 "mkit.math" = "m"
 "mkit.typing" = "t"
+"mkit.typing.array" = "ta"
 "mkit.typing.jax" = "tj"
 "mkit.typing.numpy" = "tn"
 "mkit.typing.torch" = "tt"

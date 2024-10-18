@@ -1,4 +1,5 @@
 from jaxtyping import Bool, Float, Integer, Shaped
+from numpy.typing import NDArray
 
 from mkit.typing.array import (
     ArrayLike,
@@ -19,6 +20,7 @@ __all__ = [
     "Bool",
     "Float",
     "Integer",
+    "NDArray",
     "Shaped",
     "is_array_like",
 {%- for s in shapes %}

@@ -19,7 +19,7 @@ from ._isinstance import (
     is_named,
     is_named_partial,
 )
-from ._types import StrPath
+from ._types import Scalar, StrPath
 from ._utils import is_iterable, is_sequence
 from .array import ArrayLike, is_array_like
 from .jax import is_jax
@@ -37,6 +37,7 @@ __all__ = [
     "AnyVolumeMesh",
     "ArrayLike",
     "AttrsLike",
+    "Scalar",
     "StrPath",
     "array",
     "full_name",

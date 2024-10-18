@@ -14,12 +14,15 @@ class TetMeshBase(mkit.DataObject[pv.UnstructuredGrid]):
 
     def __init__(
         self,
-        points: tn.FN3Like,
-        tetras: tn.IN3Like,
+        points: tn.FN3Like | None = None,
+        tetras: tn.IN3Like | None = None,
         point_data: t.AttrsLike | None = None,
         cell_data: t.AttrsLike | None = None,
         field_data: t.AttrsLike | None = None,
     ) -> None:
+        if points is None or tetras is None:
+            self._data = pv.UnstructuredGrid()
+            return
         points: tn.FN3 = m.as_numpy(points)
         tetras: tn.IN4 = m.as_numpy(tetras)
         cells: pv.CellArray = pv.CellArray.from_regular_cells(tetras)

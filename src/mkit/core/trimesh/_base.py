@@ -13,12 +13,15 @@ class TriMeshBase(mkit.DataObject[pv.PolyData]):
 
     def __init__(
         self,
-        points: tn.FN3Like,
-        faces: tn.IN3Like,
+        points: tn.FN3Like | None = None,
+        faces: tn.IN3Like | None = None,
         point_data: t.AttrsLike | None = None,
         cell_data: t.AttrsLike | None = None,
         field_data: t.AttrsLike | None = None,
     ) -> None:
+        if points is None or faces is None:
+            self._data = pv.PolyData()
+            return
         self._data = pv.PolyData.from_regular_faces(
             m.as_numpy(points), m.as_numpy(faces)
         )

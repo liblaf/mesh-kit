@@ -451,6 +451,7 @@ from ._export import (
     IVNLike,
     IVTLike,
     IVVLike,
+    NDArray,
     Shaped,
     is_array_like,
 )
@@ -1353,6 +1354,7 @@ __all__ = [
     "IVTLike",
     "IVVLike",
     "Integer",
+    "NDArray",
     "Shaped",
     "is_array_like",
     "is_numpy",
