@@ -7,7 +7,7 @@ import pyvista as pv
 import trimesh as tm
 
 import mkit
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 from mkit.typing import AnySurfaceMesh
 
 if TYPE_CHECKING:
@@ -20,12 +20,12 @@ def sample_surface(
     point_data: Mapping[str, npt.ArrayLike] | pv.DataSetAttributes | None = None,
 ) -> pv.PolyData:
     mesh: tm.Trimesh = mkit.io.trimesh.as_trimesh(mesh)
-    samples: nt.FN3
-    face_index: nt.IN
+    samples: tn.FN3
+    face_index: tn.IN
     samples, face_index = mesh.sample(count, return_index=True)
     sample: pv.PolyData = pv.wrap(samples)
     if point_data is not None:
-        barycentric: nt.FN3 = tm.triangles.points_to_barycentric(
+        barycentric: tn.FN3 = tm.triangles.points_to_barycentric(
             mesh.triangles[face_index], samples
         )
         for k, v in point_data.items():

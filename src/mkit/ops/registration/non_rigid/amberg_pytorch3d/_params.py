@@ -3,10 +3,10 @@ from collections.abc import Generator, Iterable
 from typing import TypedDict
 
 import torch
-import trimesh.transformations as tr
+import trimesh.transformations as tf
 
 import mkit
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 import mkit.typing.torch as tt
 
 
@@ -29,10 +29,10 @@ class OptimParams:
 class OptimParamsDict(TypedDict, total=False):
     eps: float
     gamma: float
-    landmark_source_idx: nt.INLike
-    landmark_target_pos: nt.FN3Like
+    landmark_source_idx: tn.INLike
+    landmark_target_pos: tn.FN3Like
     max_iter: int
-    point_weights: nt.FNLike
+    point_weights: tn.FNLike
     threshold_distance: tt.FNLike
     threshold_normal: tt.FNLike
     weight_dist: float
@@ -72,7 +72,7 @@ class ParamsDict(TypedDict, total=False):
 class Params(Iterable[ICPParams]):
     lr: float = 1e-4
     n_points: int
-    normalization_transformation: nt.F44
+    normalization_transformation: tn.F44
     point_data: PointDataDict = dataclasses.field(default_factory=dict)
     steps: Iterable[ICPParamsDict] = dataclasses.field(
         default_factory=lambda: [
@@ -135,7 +135,7 @@ class Params(Iterable[ICPParams]):
         if value is None:
             return torch.empty((0, 3))
         return torch.as_tensor(
-            tr.transform_points(value, self.normalization_transformation)
+            tf.transform_points(value, self.normalization_transformation)
         )
 
     def get_threshold_distance(self, value: tt.FLike | tt.FNLike = 0.1) -> tt.FN:

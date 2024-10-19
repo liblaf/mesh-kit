@@ -30,7 +30,7 @@ def corotated(
     J: jax.Array = jnp.linalg.det(F)
     S: jax.Array  # (3, 3)
     R: jax.Array  # (3, 3)
-    S, R = m.polar(F)
+    _S, R = m.polar(F)
     W: jax.Array = mu * m.F2(F - R) + 0.5 * lambda_ * (J - 1) ** 2
     return W
 

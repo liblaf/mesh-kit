@@ -12,7 +12,7 @@ REGISTRY: pooch.Pooch = pooch.create(
 
 
 def get_template_face() -> pv.PolyData:
-    mesh: pv.PolyData = pv.read(REGISTRY.fetch("face.ply"))
+    mesh: pv.PolyData = pv.read(REGISTRY.fetch("face.ply"))  # pyright: ignore [reportAssignmentType]
     return mesh
 
 

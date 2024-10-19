@@ -3,8 +3,8 @@ from __future__ import annotations
 import pyvista as pv
 
 import mkit
-import mkit.math as m
-import mkit.typing as t
+import mkit.math as mm
+import mkit.typing as mt
 import mkit.typing.numpy as tn
 
 
@@ -15,15 +15,15 @@ class TriMeshBase(mkit.DataObject[pv.PolyData]):
         self,
         points: tn.FN3Like | None = None,
         faces: tn.IN3Like | None = None,
-        point_data: t.AttrsLike | None = None,
-        cell_data: t.AttrsLike | None = None,
-        field_data: t.AttrsLike | None = None,
+        point_data: mt.AttrsLike | None = None,
+        cell_data: mt.AttrsLike | None = None,
+        field_data: mt.AttrsLike | None = None,
     ) -> None:
         if points is None or faces is None:
             self._data = pv.PolyData()
             return
         self._data = pv.PolyData.from_regular_faces(
-            m.as_numpy(points), m.as_numpy(faces)
+            mm.as_numpy(points), mm.as_numpy(faces)
         )
         self.point_data = point_data
         self.cell_data = cell_data

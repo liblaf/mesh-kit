@@ -14,9 +14,13 @@ extend-ignore = [
 ]
 
 [lint.flake8-import-conventions.extend-aliases]
-"mkit.math" = "m"
-"mkit.typing" = "t"
+"mkit.io" = "mi"
+"mkit.io.exchange" = "mie"
+"mkit.math" = "mm"
+"mkit.ops" = "mo"
+"mkit.typing" = "mt"
 "mkit.typing.array" = "ta"
 "mkit.typing.jax" = "tj"
 "mkit.typing.numpy" = "tn"
 "mkit.typing.torch" = "tt"
+"tetgen" = "tg"

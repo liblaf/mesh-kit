@@ -5,7 +5,7 @@ import trimesh as tm
 from loguru import logger
 
 import mkit
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 from mkit.ops.registration import rigid
 
 
@@ -21,12 +21,12 @@ class TrimeshICP(rigid.RigidRegistrationMethod):
         self,
         source: Any,
         target: Any,
-        source_weight: nt.FNLike | None = None,
-        target_weight: nt.FNLike | None = None,
+        source_weight: tn.FNLike | None = None,
+        target_weight: tn.FNLike | None = None,
     ) -> rigid.RigidRegistrationResult:
         source: tm.Trimesh = _preprocess(source, source_weight)
         target: tm.Trimesh = _preprocess(target, target_weight)
-        matrix: nt.F44
+        matrix: tn.F44
         cost: float
         matrix, _transformed, cost = tm.registration.icp(
             source.vertices,
@@ -40,7 +40,7 @@ class TrimeshICP(rigid.RigidRegistrationMethod):
         return rigid.RigidRegistrationResult(transform=matrix, cost=cost)
 
 
-def _preprocess(mesh: Any, weight: nt.FN3Like | None = None) -> tm.Trimesh:
+def _preprocess(mesh: Any, weight: tn.FN3Like | None = None) -> tm.Trimesh:
     if weight is not None:
         logger.warning("Weight is not supported, using mask instead.")
     mesh: tm.Trimesh = mkit.io.trimesh.as_trimesh(

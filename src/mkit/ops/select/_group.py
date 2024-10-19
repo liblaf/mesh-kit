@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 import mkit
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 
 if TYPE_CHECKING:
     import pyvista as pv
@@ -24,8 +24,8 @@ def names_to_ids(
 
 
 def select_by_group_ids(
-    ids: Sequence[int], *, mesh: Any | None = None, group_ids: nt.INLike | None = None
-) -> nt.BN:
+    ids: Sequence[int], *, mesh: Any | None = None, group_ids: tn.INLike | None = None
+) -> tn.BN:
     if group_ids is None:
         mesh: pv.PolyData = mkit.io.pyvista.as_poly_data(mesh)
         group_ids = mesh.cell_data["GroupIds"]
@@ -36,9 +36,9 @@ def select_by_group_names(
     names: Sequence[str],
     *,
     mesh: Any | None = None,
-    group_ids: nt.INLike | None = None,
-    group_names: nt.Shaped[nt.ArrayLike, " N"] | None = None,
-) -> nt.BN:
+    group_ids: tn.INLike | None = None,
+    group_names: tn.Shaped[tn.ArrayLike, " N"] | None = None,
+) -> tn.BN:
     return select_by_group_ids(
         names_to_ids(names, mesh=mesh, group_names=group_names),
         mesh=mesh,

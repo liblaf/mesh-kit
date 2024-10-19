@@ -12,7 +12,7 @@ from pytorch3d.structures import Meshes
 import mkit
 import mkit.ops.registration.non_rigid as nr
 import mkit.ops.registration.non_rigid.amberg_pytorch3d._params as p
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 import mkit.typing.torch as tt
 from mkit.ops.registration.non_rigid.amberg_pytorch3d._local_affine import LocalAffine
 
@@ -96,11 +96,11 @@ class Amberg(nr.NonRigidRegistrationMethod):
         return result
 
     @functools.cached_property
-    def normalization_transformation(self) -> nt.F44:
+    def normalization_transformation(self) -> tn.F44:
         return mkit.ops.transform.norm_transformation(self._source)
 
     @functools.cached_property
-    def denorm_transformation(self) -> nt.F44:
+    def denorm_transformation(self) -> tn.F44:
         return mkit.ops.transform.denorm_transformation(self._source)
 
     def _find_correspondences(

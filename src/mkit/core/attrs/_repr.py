@@ -7,12 +7,12 @@ import numpy as np
 import prettytable
 import pyvista as pv
 
-import mkit.math as m
-import mkit.typing as t
+import mkit.math as mm
+import mkit.typing as mt
 import mkit.typing.numpy as tn
 from mkit.core.attrs._base import AttrsBase
 
-_T = TypeVar("_T", bound=t.Scalar)
+_T = TypeVar("_T", bound=mt.Scalar)
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -37,7 +37,7 @@ class DescribeResult(Generic[_T]):
 
 
 def describe_array(arr: tn.ArrayLike) -> DescribeResult:
-    arr: np.ndarray = m.as_numpy(arr)
+    arr: np.ndarray = mm.as_numpy(arr)
     values: tn.NDArray
     counts: tn.NDArray[np.intp]
     values, counts = np.unique(arr, return_counts=True, axis=0)
@@ -60,7 +60,7 @@ def describe_array(arr: tn.ArrayLike) -> DescribeResult:
     return result
 
 
-def format_scalar(_field_name: str, value: t.Scalar | None) -> str:
+def format_scalar(_field_name: str, value: mt.Scalar | None) -> str:
     if value is None:
         return ""
     if isinstance(value, float | np.floating):

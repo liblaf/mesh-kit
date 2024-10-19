@@ -1,8 +1,8 @@
 import dataclasses
 
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 
 
 @dataclasses.dataclass(kw_only=True)
 class NonRigidRegistrationResult:
-    points: nt.FN3
+    points: tn.FN3

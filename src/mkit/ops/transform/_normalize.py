@@ -1,10 +1,10 @@
 from typing import Any
 
 import pyvista as pv
-import trimesh.transformations as tt
+import trimesh.transformations as tf
 
 import mkit
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 
 
 def normalize(
@@ -14,14 +14,14 @@ def normalize(
     inplace: bool = False,
 ) -> pv.PolyData:
     mesh: pv.PolyData = mkit.io.pyvista.as_poly_data(mesh)
-    matrix: nt.F44 = norm_transformation(mesh)
+    matrix: tn.F44 = norm_transformation(mesh)
     mesh = mesh.transform(
         matrix, transform_all_input_vectors=transform_all_input_vectors, inplace=inplace
     )
     return mesh
 
 
-def norm_transformation(mesh: Any) -> nt.F44:
+def norm_transformation(mesh: Any) -> tn.F44:
     """Computes the normalization transformation matrix for a given mesh.
 
     This function calculates the inverse of the denormalization transformation
@@ -35,11 +35,11 @@ def norm_transformation(mesh: Any) -> nt.F44:
     Returns:
         The normalization transformation matrix.
     """
-    matrix: nt.F44 = tt.inverse_matrix(denorm_transformation(mesh))
+    matrix: tn.F44 = tf.inverse_matrix(denorm_transformation(mesh))
     return matrix
 
 
-def denorm_transformation(mesh: Any) -> nt.F44:
+def denorm_transformation(mesh: Any) -> tn.F44:
     """Applies a denormalization transformation to the given mesh.
 
     This function converts the input mesh to a PyVista PolyData object,
@@ -54,5 +54,5 @@ def denorm_transformation(mesh: Any) -> nt.F44:
         A 4x4 transformation matrix that scales and translates the mesh.
     """
     mesh: pv.PolyData = mkit.io.pyvista.as_poly_data(mesh)
-    matrix: nt.F44 = tt.scale_and_translate(mesh.length, mesh.center)
+    matrix: tn.F44 = tf.scale_and_translate(mesh.length, mesh.center)
     return matrix

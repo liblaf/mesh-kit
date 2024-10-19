@@ -1,11 +1,11 @@
 import dataclasses
 
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 
 
 @dataclasses.dataclass(kw_only=True)
 class GlobalRegistrationResult:
-    correspondence_set: nt.IN2
+    correspondence_set: tn.IN2
     fitness: float
     inlier_rmse: float
-    transform: nt.F44
+    transform: tn.F44

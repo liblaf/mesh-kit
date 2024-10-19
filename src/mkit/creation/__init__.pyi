@@ -1,3 +1,3 @@
-from . import tet
+from . import tetmesh
 
-__all__ = ["tet"]
+__all__ = ["tetmesh"]

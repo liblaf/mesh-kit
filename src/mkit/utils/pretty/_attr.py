@@ -3,8 +3,8 @@ from typing import Any
 import numpy as np
 import pydantic
 
-import mkit.math as m
-import mkit.typing as t
+import mkit.math as mm
+import mkit.typing as mt
 
 
 class SummaryAttr(pydantic.BaseModel):
@@ -13,7 +13,7 @@ class SummaryAttr(pydantic.BaseModel):
 
 
 def summary_attr(value: Any) -> SummaryAttr:
-    if t.is_array_like(value):
-        value: np.ndarray = m.as_numpy(value)
+    if mt.is_array_like(value):
+        value: np.ndarray = mm.as_numpy(value)
         return SummaryAttr(type=value.dtype)
     return SummaryAttr(type=type(value))

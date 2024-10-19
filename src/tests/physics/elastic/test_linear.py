@@ -35,7 +35,7 @@ def disp_random(model: Model) -> jax.Array:
 
 @pytest.fixture
 def model() -> Model:
-    mesh: pv.UnstructuredGrid = mkit.creation.tet.box()
+    mesh: pv.UnstructuredGrid = mkit.creation.tetmesh.box()
     mesh.cell_data.update({"mu": 1.0, "lambda": 3.0})  # pyright: ignore [reportArgumentType]
     model = Model(mesh, elastic.linear)
     return model

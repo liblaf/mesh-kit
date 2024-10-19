@@ -3,7 +3,7 @@ from typing import NamedTuple
 import numpy as np
 from loguru import logger
 
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 
 """
 ### Face Model Topology
@@ -71,16 +71,16 @@ GEOMETRIES: list[Geometry] = [
 ]
 
 
-def vertex_indices(*name: str) -> nt.IN:
+def vertex_indices(*name: str) -> tn.IN:
     logger.warning("Vertex indices is not reliable!")
-    indices: nt.IN = np.concatenate(
+    indices: tn.IN = np.concatenate(
         [np.r_[g.vertex_indices] for g in GEOMETRIES if g.name in name]
     )
     return indices
 
 
-def polygon_indices(*name: str) -> nt.IN:
-    indices: nt.IN = np.concatenate(
+def polygon_indices(*name: str) -> tn.IN:
+    indices: tn.IN = np.concatenate(
         [np.r_[g.polygon_indices] for g in GEOMETRIES if g.name in name]
     )
     return indices

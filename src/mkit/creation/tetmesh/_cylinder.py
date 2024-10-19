@@ -4,6 +4,6 @@ import mkit
 
 
 def cylinder() -> pv.UnstructuredGrid:
-    surface: pv.PolyData = pv.Cylinder()
+    surface: pv.PolyData = pv.Cylinder()  # pyright: ignore [reportAssignmentType]
     tetmesh: pv.UnstructuredGrid = mkit.ext.tetwild(surface)
     return tetmesh

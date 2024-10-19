@@ -2,12 +2,12 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
-import trimesh.transformations as tt
+import trimesh.transformations as tf
 
 import mkit
 import mkit.ops.registration as reg
 import mkit.ops.registration.preprocess as pre
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 
 if TYPE_CHECKING:
     import pyvista as pv
@@ -19,7 +19,7 @@ def global_registration(
     source: Any,
     target: Any,
     *,
-    init: nt.F44Like | None = None,
+    init: tn.F44Like | None = None,
     inverse: bool = False,
     method: Literal["open3d"] = "open3d",
     normalize: bool = True,
@@ -28,29 +28,29 @@ def global_registration(
     result: reg.GlobalRegistrationResult
     if inverse:
         if init is not None:
-            init = tt.inverse_matrix(init)
+            init = tf.inverse_matrix(init)
         result = global_registration(
             target, source, init=init, method=method, normalize=normalize, **kwargs
         )
-        result.transform = tt.inverse_matrix(result.transform)
+        result.transform = tf.inverse_matrix(result.transform)
         return result
     source = pre.simplify_mesh(source)
     target = pre.simplify_mesh(target)
     if init is None:
-        init = tt.identity_matrix()
-    init: nt.F44 = np.asarray(init)
+        init = tf.identity_matrix()
+    init: tn.F44 = np.asarray(init)
     source = source.transform(init, inplace=False, progress_bar=True)
     if normalize:
-        source_norm: nt.F44 = mkit.ops.transform.norm_transformation(source)
-        target_denorm: nt.F44 = mkit.ops.transform.denorm_transformation(target)
+        source_norm: tn.F44 = mkit.ops.transform.norm_transformation(source)
+        target_denorm: tn.F44 = mkit.ops.transform.denorm_transformation(target)
         source: pv.PolyData = mkit.ops.transform.normalize(source)
         target: pv.PolyData = mkit.ops.transform.normalize(target)
     else:
-        source_norm = tt.identity_matrix()
-        target_denorm = tt.identity_matrix()
+        source_norm = tf.identity_matrix()
+        target_denorm = tf.identity_matrix()
     fn = _METHODS[method]
     result = fn(source, target, **kwargs)
-    result.transform = tt.concatenate_matrices(
+    result.transform = tf.concatenate_matrices(
         target_denorm, result.transform, source_norm, init
     )
     return result

@@ -1,6 +1,6 @@
 import torch
 
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 import mkit.typing.torch as tt
 
 
@@ -10,7 +10,7 @@ class LocalAffine(torch.nn.Module):
     edges: tt.IN2
     n_points: int
 
-    def __init__(self, n_points: int, edges: nt.IN2Like) -> None:
+    def __init__(self, n_points: int, edges: tn.IN2Like) -> None:
         super().__init__()
         self.A = torch.nn.Parameter(torch.eye(3).tile(n_points, 1, 1))
         self.b = torch.nn.Parameter(torch.zeros(n_points, 3))

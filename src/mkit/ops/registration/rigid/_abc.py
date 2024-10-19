@@ -1,7 +1,7 @@
 import abc
 from typing import Any
 
-import mkit.typing.numpy as nt
+import mkit.typing.numpy as tn
 from mkit.ops.registration.rigid import RigidRegistrationResult
 
 
@@ -11,6 +11,6 @@ class RigidRegistrationMethod(abc.ABC):
         self,
         source: Any,
         target: Any,
-        source_weight: nt.FNLike | None = None,
-        target_weight: nt.FNLike | None = None,
+        source_weight: tn.FNLike | None = None,
+        target_weight: tn.FNLike | None = None,
     ) -> RigidRegistrationResult: ...

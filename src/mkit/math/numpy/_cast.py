@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.typing as npt
 
-import mkit.typing as t
+import mkit.typing as mt
 
 
 def as_bool(x: npt.ArrayLike) -> npt.NDArray[np.bool]:
@@ -9,7 +9,7 @@ def as_bool(x: npt.ArrayLike) -> npt.NDArray[np.bool]:
 
 
 def as_numpy(x: npt.ArrayLike) -> npt.NDArray[...]:
-    if t.is_torch(x):
+    if mt.is_torch(x):
         return x.numpy(force=True)
     return np.asarray(x)
 

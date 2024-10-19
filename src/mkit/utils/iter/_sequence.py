@@ -1,7 +1,7 @@
 from collections.abc import Iterable, Sequence
 from typing import Any, TypeVar
 
-import mkit.typing as t
+import mkit.typing as mt
 
 _T = TypeVar("_T")
 
@@ -10,12 +10,12 @@ def flatten(
     iterable: _T | Iterable[_T] | Iterable[Iterable[_T]] | Iterable,
     base_type: tuple[type, ...] = (str, bytes),
 ) -> Iterable[_T]:
-    if not t.is_iterable(iterable, base_type):
+    if not mt.is_iterable(iterable, base_type):
         yield iterable  # pyright: ignore [reportReturnType]
         return
 
     for item in iterable:
-        if t.is_iterable(item, base_type):
+        if mt.is_iterable(item, base_type):
             yield from flatten(item)
         else:
             yield item
