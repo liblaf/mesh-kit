@@ -8,14 +8,12 @@ from mkit.utils import serialize
 _C = TypeVar("_C", bound=pydantic.BaseModel)
 
 
-def load_pydantic(
-    cls: type[_C], fpath: StrPath, ext: str | None = None, **kwargs
-) -> _C:
-    data: Any = serialize.load(fpath, ext, **kwargs)
+def load_pydantic(fpath: StrPath, cls: type[_C], *, ext: str | None = None) -> _C:
+    data: Any = serialize.load(fpath, ext=ext)
     return cls.model_validate(data)
 
 
 def save_pydantic(
-    data: pydantic.BaseModel, fpath: StrPath, ext: str | None = None, **kwargs
+    fpath: StrPath, data: pydantic.BaseModel, *, ext: str | None = None
 ) -> None:
-    serialize.save(data.model_dump(), fpath, ext, **kwargs)
+    serialize.save(fpath, data.model_dump(), ext=ext)

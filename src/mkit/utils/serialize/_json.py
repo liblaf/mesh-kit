@@ -11,7 +11,7 @@ def load_json(fpath: StrPath) -> Any:
         return json.load(fp)
 
 
-def save_json(data: Any, fpath: StrPath) -> None:
+def save_json(fpath: StrPath, data: Any) -> None:
     fpath: Path = Path(fpath)
     with fpath.open("w") as fp:
         json.dump(data, fp)

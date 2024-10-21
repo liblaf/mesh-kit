@@ -2,8 +2,7 @@ from . import cli, func, iter, logging, pretty, serialize, text
 from .func import kwargs_to_positional
 from .iter import flatten, is_subsequence, merge_mapping
 from .live import Live
-from .logging import init as init_logging
-from .logging import log_time
+from .logging import log_time, timer, warning_once
 from .serialize import load, load_pydantic, save, save_pydantic
 from .text import strip_comments
 
@@ -12,7 +11,6 @@ __all__ = [
     "cli",
     "flatten",
     "func",
-    "init_logging",
     "is_subsequence",
     "iter",
     "kwargs_to_positional",
@@ -27,4 +25,6 @@ __all__ = [
     "serialize",
     "strip_comments",
     "text",
+    "timer",
+    "warning_once",
 ]

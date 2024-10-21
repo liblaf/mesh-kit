@@ -5191,7 +5191,7 @@ packages:
   name: mesh-kit
   version: 0.0.1
   path: .
-  sha256: 0c1d5936f1d29e5bd1dfe65c562b29d06116babd7ccf12eee1edb912701e5eb5
+  sha256: 61746c207487ee685f65bf1e7642bf361a004c907c08526107ce1afd53724f7e
   requires_dist:
   - confz>=2.0.1,<3
   - dvclive>=3.48.0,<4
@@ -5212,6 +5212,7 @@ packages:
   - pydicom>=3.0.0,<4
   - pytetwild>=0.1.dev1,<0.2
   - pyvista>=0.44.1,<0.45
+  - rich>=13.9.2,<14
   - ruamel-yaml>=0.18.6,<0.19
   - scipy>=1.14.1,<2
   - seaborn>=0.13.2,<0.14

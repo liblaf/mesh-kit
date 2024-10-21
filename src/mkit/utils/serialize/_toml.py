@@ -12,7 +12,7 @@ def load_toml(fpath: StrPath) -> tomlkit.TOMLDocument:
         return tomlkit.load(fp)
 
 
-def save_toml(data: Any, fpath: StrPath, *, sort_keys: bool = False) -> None:
+def save_toml(fpath: StrPath, data: Any, *, sort_keys: bool = False) -> None:
     fpath: Path = Path(fpath)
     with fpath.open("w") as fp:
         tomlkit.dump(data, fp, sort_keys=sort_keys)

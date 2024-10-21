@@ -6,6 +6,7 @@ extend-ignore = [
   "ARG001",
   "ARG002",
   "B007",
+  "DTZ007",
   "E741",
   "F722",
   "N803",
@@ -16,11 +17,14 @@ extend-ignore = [
 [lint.flake8-import-conventions.extend-aliases]
 "mkit.io" = "mi"
 "mkit.io.exchange" = "mie"
+"mkit.io.formats" = "mif"
 "mkit.math" = "mm"
 "mkit.ops" = "mo"
+"mkit.struct" = "ms"
 "mkit.typing" = "mt"
 "mkit.typing.array" = "ta"
 "mkit.typing.jax" = "tj"
 "mkit.typing.numpy" = "tn"
 "mkit.typing.torch" = "tt"
+"mkit.utils" = "mu"
 "tetgen" = "tg"

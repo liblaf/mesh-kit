@@ -8,4 +8,6 @@ class UnsupportedConversionError(ValueError):
     to: type
 
     def __init__(self, from_: Any, to: type) -> None:
-        super().__init__(f"Cannot convert from {from_:r} to {to:r}")
+        super().__init__(f"Cannot convert from {from_} to {to}")
+        self.from_ = from_
+        self.to = to

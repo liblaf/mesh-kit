@@ -5,13 +5,13 @@ from typing import TYPE_CHECKING, TypedDict, TypeVar, Unpack, get_type_hints
 import rich.traceback
 from loguru import logger
 
-import mkit
+import mkit.utils as mu
 
 if TYPE_CHECKING:
     from collections.abc import Callable
     from pathlib import Path
 
-_C = TypeVar("_C", bound=mkit.utils.cli.BaseConfig)
+_C = TypeVar("_C", bound=mu.cli.BaseConfig)
 _T = TypeVar("_T")
 
 
@@ -35,6 +35,6 @@ def run(fn: Callable[[_C], _T], **kwargs: Unpack[Kwargs]) -> _T:
     rich.traceback.install(show_locals=True)
     cls: type[_C] = get_type_hints(fn)["cfg"]
     cfg: _C = cls(**kwargs)
-    mkit.utils.init_logging(cfg.log_level, cfg.log_file)
+    mu.logging.init(cfg.log_level, cfg.log_file)
     logger.info("{}", cfg)
     return fn(cfg)

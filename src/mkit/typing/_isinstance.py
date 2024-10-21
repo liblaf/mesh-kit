@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from typing import Any
 
-import mkit
+import mkit.utils as mu
 
 
 def full_name(obj: Any) -> str:
@@ -26,15 +26,15 @@ def full_name(obj: Any) -> str:
 
 
 def is_class_named(cls: type, name: str | Sequence[str]) -> bool:
-    return any((full_name(cls) in mkit.utils.flatten(name)) for cls in cls.__mro__)
+    return any((full_name(cls) in mu.flatten(name)) for cls in cls.__mro__)
 
 
 def is_class_named_partial(cls: type, name: str | Sequence[str]) -> bool:
     for clazz in cls.__mro__:
         class_parts: list[str] = full_name(clazz).split(".")
-        for n in mkit.utils.flatten(name):
+        for n in mu.flatten(name):
             name_parts: list[str] = n.split(".")
-            if mkit.utils.is_subsequence(name_parts, class_parts):
+            if mu.is_subsequence(name_parts, class_parts):
                 return True
     return False
 

@@ -1,24 +1,46 @@
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import mkit
-from mkit.typing import StrPath
+import mkit.io as mi
+import mkit.typing as mt
+
+if TYPE_CHECKING:
+    import pyvista as pv
 
 
-def save(mesh: Any, fpath: StrPath, *, ext: str | None = None) -> None:
-    fpath: Path = Path(fpath)
+class UnsupportedFormatError(ValueError):
+    ext: str
+
+    def __init__(self, ext: str) -> None:
+        super().__init__(f"Unsupported file format: {ext:r}")
+        self.ext = ext
+
+
+def save(
+    path: mt.StrPath,
+    data: Any,
+    *,
+    ext: str | None = None,
+    point_data: mt.AttrsLike | None = None,
+    cell_data: mt.AttrsLike | None = None,
+    field_data: mt.AttrsLike | None = None,
+) -> None:
+    path: Path = Path(path)
     if ext is None:
-        ext = fpath.suffix
+        ext = path.suffix
     match ext:
-        case ".obj":
-            fpath.parent.mkdir(parents=True, exist_ok=True)
-            mkit.io.pyvista.save_obj(mesh, fpath)
-        case ".ply" | ".vtp":
-            fpath.parent.mkdir(parents=True, exist_ok=True)
-            mkit.io.pyvista.as_poly_data(mesh).save(fpath)
+        case ".obj" | ".ply" | ".vtp":
+            data: pv.PolyData = mi.pyvista.as_poly_data(
+                data, point_data=point_data, cell_data=cell_data, field_data=field_data
+            )
+            path.parent.mkdir(parents=True, exist_ok=True)
+            if ext == ".obj":
+                mi.pyvista.poly_data.save_obj(path, data)
+            else:
+                data.save(path)
         case ".vtu":
-            fpath.parent.mkdir(parents=True, exist_ok=True)
-            mkit.io.pyvista.as_unstructured_grid(mesh).save(fpath)
+            raise NotImplementedError
+        case ".vti":
+            raise NotImplementedError
         case _:
-            msg: str = f"Unsupported file extension: {ext!r}"
-            raise ValueError(msg)
+            raise UnsupportedFormatError(ext)

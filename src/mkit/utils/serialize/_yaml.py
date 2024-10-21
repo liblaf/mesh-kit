@@ -13,7 +13,7 @@ def load_yaml(fpath: StrPath) -> Any:
         return yaml.load(fp)
 
 
-def save_yaml(data: Any, fpath: StrPath) -> None:
+def save_yaml(fpath: StrPath, data: Any) -> None:
     fpath: Path = Path(fpath)
     yaml = YAML()
     with fpath.open("w") as fp:
