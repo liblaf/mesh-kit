@@ -1,5 +1,13 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pooch
-import pyvista as pv
+
+import mkit.io as mi
+
+if TYPE_CHECKING:
+    import pyvista as pv
 
 REGISTRY: pooch.Pooch = pooch.create(
     pooch.os_cache("mesh-kit"),
@@ -12,24 +20,24 @@ REGISTRY: pooch.Pooch = pooch.create(
 
 
 def get_template_face() -> pv.PolyData:
-    mesh: pv.PolyData = pv.read(REGISTRY.fetch("face.ply"))  # pyright: ignore [reportAssignmentType]
+    mesh: pv.PolyData = mi.pyvista.load_poly_data(REGISTRY.fetch("face.ply"))
     return mesh
 
 
 def get_template_skull() -> pv.PolyData:
-    mesh: pv.PolyData = pv.read(REGISTRY.fetch("skull.ply"))
+    mesh: pv.PolyData = mi.pyvista.load_poly_data(REGISTRY.fetch("skull.ply"))
     return mesh
 
 
 def get_template_maxilla() -> pv.PolyData:
     skull: pv.PolyData = get_template_skull()
     bodies: pv.MultiBlock = skull.split_bodies().as_polydata_blocks()
-    maxilla: pv.PolyData = bodies[0]
+    maxilla: pv.PolyData = bodies[0]  # pyright: ignore [reportAssignmentType]
     return maxilla
 
 
 def get_template_mandible() -> pv.PolyData:
     skull: pv.PolyData = get_template_skull()
     bodies: pv.MultiBlock = skull.split_bodies().as_polydata_blocks()
-    mandible: pv.PolyData = bodies[1]
+    mandible: pv.PolyData = bodies[1]  # pyright: ignore [reportAssignmentType]
     return mandible

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import trimesh.transformations as tf
@@ -10,8 +10,6 @@ import mkit.typing.numpy as tn
 
 if TYPE_CHECKING:
     import pyvista as pv
-
-_T = TypeVar("_T")
 
 
 def normalization_transformation(mesh: Any) -> tn.F44:
@@ -23,23 +21,23 @@ def denormalization_transformation(mesh: Any) -> tn.F44:
     return tf.scale_and_translate(mesh.length, mesh.center)
 
 
-def normalize(mesh: _T, *, transform_all_input_vectors: bool = False) -> _T:
-    mesh_pv: pv.PolyData = mi.pyvista.as_poly_data(mesh)
-    mesh_pv = mesh_pv.transform(
+def normalize(mesh: Any, *, transform_all_input_vectors: bool = False) -> pv.PolyData:
+    mesh: pv.PolyData = mi.pyvista.as_poly_data(mesh)
+    mesh = mesh.transform(
         normalization_transformation(mesh),
         transform_all_input_vectors=transform_all_input_vectors,
         inplace=False,
     )  # pyright: ignore [reportAssignmentType]
-    return mi.convert(mesh_pv, type(mesh))
+    return mesh
 
 
 def denormalize(
-    mesh: _T, reference: Any, *, transform_all_input_vectors: bool = False
-) -> _T:
-    mesh_pv: pv.PolyData = mi.pyvista.as_poly_data(mesh)
-    mesh_pv = mesh_pv.transform(
+    mesh: Any, reference: Any, *, transform_all_input_vectors: bool = False
+) -> pv.PolyData:
+    mesh: pv.PolyData = mi.pyvista.as_poly_data(mesh)
+    mesh = mesh.transform(
         denormalization_transformation(reference),
         transform_all_input_vectors=transform_all_input_vectors,
         inplace=False,
     )  # pyright: ignore [reportAssignmentType]
-    return mi.convert(mesh_pv, type(mesh))
+    return mesh

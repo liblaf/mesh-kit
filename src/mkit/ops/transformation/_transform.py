@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, TypeVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 import mkit.io as mi
 import mkit.math as mm
@@ -7,21 +9,19 @@ import mkit.typing.numpy as tn
 if TYPE_CHECKING:
     import pyvista as pv
 
-_T = TypeVar("_T")
-
 
 def transform(
-    mesh: _T,
+    mesh: Any,
     transformation: tn.F44Like | None = None,
     *,
     transform_all_input_vectors: bool = False,
-) -> _T:
+) -> pv.PolyData:
+    mesh: pv.PolyData = mi.pyvista.as_poly_data(mesh)
     if transformation is None:
         return mesh
-    mesh_pv: pv.PolyData = mi.pyvista.as_poly_data(mesh)
-    mesh_pv = mesh_pv.transform(
+    mesh = mesh.transform(
         mm.as_numpy(transformation),
         transform_all_input_vectors=transform_all_input_vectors,
         inplace=False,
     )  # pyright: ignore [reportAssignmentType]
-    return mi.convert(mesh_pv, type(mesh))
+    return mesh

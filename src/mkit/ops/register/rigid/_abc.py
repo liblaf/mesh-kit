@@ -5,7 +5,9 @@ from typing import TYPE_CHECKING, Any
 
 import attrs
 import numpy as np
+import pyvista as pv
 
+import mkit.io as mi
 import mkit.math as mm
 import mkit.ops as mo
 import mkit.typing.numpy as tn
@@ -17,8 +19,8 @@ if TYPE_CHECKING:
 
 @attrs.define
 class RigidRegistrationBase(abc.ABC):
-    source: Any
-    target: Any
+    source: pv.PolyData = attrs.field(converter=mi.pyvista.as_poly_data)
+    target: pv.PolyData = attrs.field(converter=mi.pyvista.as_poly_data)
     source_weights: tn.FN | None = attrs.field(
         default=None, converter=lambda x: None if x is None else mm.as_numpy(x)
     )
@@ -45,27 +47,43 @@ class RigidRegistrationBase(abc.ABC):
         default=None, init=False
     )
 
+    def __attrs_post_init__(self) -> None:
+        if self.source_weights is not None:
+            self.source.point_data["PointWeights"] = self.source_weights
+        if self.target_weights is not None:
+            self.target.point_data["PointWeights"] = self.target_weights
+
     def preprocess_source(self) -> Any:
-        mesh: Any = self.source
+        mesh: pv.PolyData = self.source
         if self.simplify:
-            mesh = mo.simplify(mesh)
+            if "PointWeights" in mesh.point_data:
+                mu.warning_once("Simplification is not supported with point weights.")
+            else:
+                mesh = mo.simplify(mesh)
         mesh = mo.transform(mesh, self.init_transform)
         if self.normalize:
             self.source_normalization_transformation = mo.normalization_transformation(
                 mesh
             )
             mesh = mo.normalize(mesh)
+        if "PointWeights" in mesh.point_data:
+            mesh = mo.select_points(mesh, mesh.point_data["PointWeights"] > 0)
         return mesh
 
     def preprocess_target(self) -> Any:
         mesh: Any = self.target
         if self.simplify:
-            mesh = mo.simplify(mesh)
+            if "PointWeights" in mesh.point_data:
+                mu.warning_once("Simplification is not supported with point weights.")
+            else:
+                mesh = mo.simplify(mesh)
         if self.normalize:
             self.target_denormalization_transformation = (
                 mo.denormalization_transformation(mesh)
             )
             mesh = mo.normalize(mesh)
+        if "PointWeights" in mesh.point_data:
+            mesh = mo.select_points(mesh, mesh.point_data["PointWeights"] > 0)
         return mesh
 
     def postprocess(

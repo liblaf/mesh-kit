@@ -19,12 +19,38 @@ class Config(mu.cli.BaseConfig):
     ).expanduser()
 
 
+GROUP_NAMES_MATCH: list[str] = [
+    "Caruncle",
+    "Chin",
+    "EyelidBottom",
+    "EyelidInnerBottom",
+    "EyelidInnerTop",
+    "EyelidOuterBottom",
+    "EyelidOuterTop",
+    "EyelidTop",
+    "Face",
+    "LipBottom",
+    "LipOuterBottom",
+    "LipOuterTop",
+    "LipTop",
+]
+GROUP_NAMES_REMOVE: list[str] = [
+    "MouthSocketBottom",
+    "MouthSocketTop",
+    "EyeSocketTop",
+    "EyeSocketBottom",
+]
+
+
 def main(cfg: Config) -> None:
     source: pv.PolyData = mi.pyvista.load_poly_data(cfg.source)
     target: pv.PolyData = me.sculptor.get_template_face()
-    ic(source.field_data["GroupNames"])
+    source = mo.select_by_group_names(source, GROUP_NAMES_REMOVE, invert=True)
     rigid = mo.RigidICP(
-        source, target, init_transform=tf.rotation_matrix(np.pi / 2, [1, 0, 0])
+        source,
+        target,
+        source_weights=mo.mask_by_group_names(source, GROUP_NAMES_MATCH),
+        init_transform=tf.rotation_matrix(np.pi / 2, [1, 0, 0]),
     )
     result: mo.RigidRegistrationResult = rigid.register()
     mi.save("data/source.obj", source)
